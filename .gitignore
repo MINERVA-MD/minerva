@@ -1,0 +1,9 @@
+/dist
+/release
+/.idea
+/coverage
+/node_modules
+.DS_Store
+.env*
+logs
+!.gitkeep
