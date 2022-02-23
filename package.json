@@ -56,8 +56,8 @@
     "ts-node": "^10.5.0",
     "typescript": "^4.5.5",
     "vite": "^2.8.0",
-    "vitest": "^0.3.2",
     "vite-plugin-resolve": "^1.4.3",
+    "vitest": "^0.3.2",
     "vue-tsc": "^0.31.2"
   },
   "dependencies": {
