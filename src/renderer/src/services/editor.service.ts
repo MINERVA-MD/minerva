@@ -1,0 +1,83 @@
+import { EditorState, basicSetup, EditorView } from '@codemirror/basic-setup';
+import {
+	sendableUpdates,
+	receiveUpdates,
+	collab,
+	getSyncedVersion,
+	type Update,
+} from '@codemirror/collab';
+import { markdown } from '@codemirror/lang-markdown';
+import { Text } from '@codemirror/text';
+import { ViewPlugin, drawSelection } from '@codemirror/view';
+import { ChangeSet, type Extension } from '@codemirror/state';
+import type { Socket } from 'socket.io-client';
+
+export default class EditorService {
+	doc: Text;
+
+	updates: Update[];
+
+	socket: Socket | null;
+
+	view: EditorView | null = null;
+
+	constructor(
+		documentData: { doc: string[]; updates: Update[] } = {
+			doc: [''],
+			updates: [],
+		},
+		socket: Socket | null = null,
+	) {
+		this.doc = Text.of(documentData.doc);
+		this.updates = documentData.updates;
+		this.socket = socket;
+	}
+
+	generateEditor() {
+		const state = EditorState.create({
+			doc: this.doc,
+			extensions: [
+				basicSetup,
+				markdown(),
+				collab({ startVersion: this.updates.length }),
+				EditorView.lineWrapping,
+				this.editorClient(this.socket),
+			],
+		});
+
+		const view = new EditorView({
+			state,
+			parent: document.body,
+		});
+
+		this.view = view;
+	}
+
+	editorClient(socket: Socket | null) {
+		if (socket !== null) {
+			const plugin = ViewPlugin.define(view => ({
+				update(editorUpdate) {
+					if (editorUpdate.docChanged) {
+						const unsentUpdates = sendableUpdates(view.state).map(
+							u => {
+								const serializedUpdate = {
+									updateJSON: u.changes.toJSON(),
+									clientID: u.clientID,
+								};
+
+								return serializedUpdate;
+							},
+						);
+
+						socket.emit('clientOpUpdate', {
+							version: getSyncedVersion(view.state),
+							updates: unsentUpdates,
+						});
+					}
+				},
+			}));
+			return plugin;
+		}
+		return ViewPlugin.define(view => ({}));
+	}
+}
