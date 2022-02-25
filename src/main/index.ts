@@ -1,6 +1,8 @@
 import { app, BrowserWindow, shell } from 'electron'
 import { release } from 'os'
 import { join } from 'path'
+import fs from 'fs'
+import GitService from './services/git.service'
 
 // Disable GPU Acceleration for Windows 7
 if (release().startsWith('6.1')) app.disableHardwareAcceleration()
@@ -19,6 +21,7 @@ async function createWindow() {
   win = new BrowserWindow({
     title: 'Main window',
     webPreferences: {
+      nodeIntegration: true,
       preload: join(__dirname, '../preload/index.cjs')
     },
   })
@@ -68,3 +71,5 @@ app.on('activate', () => {
     createWindow()
   }
 })
+
+new GitService();

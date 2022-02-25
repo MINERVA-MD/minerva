@@ -1,40 +1,43 @@
 {
-    "eslint.validate": [
-        "javascript",
-        "javascriptreact",
-        "typescript",
-        "typescriptreact"
-    ],
+	"eslint.validate": [
+		"javascript",
+		"javascriptreact",
+		"typescript",
+		"typescriptreact"
+	],
 
-    "editor.codeActionsOnSave": { "source.fixAll.eslint": true }, 
-    "eslint.alwaysShowStatus": true, 
-    "files.autoSave": "onFocusChange",
+	"editor.codeActionsOnSave": { "source.fixAll.eslint": true },
+	"eslint.alwaysShowStatus": true,
+	"files.autoSave": "onFocusChange",
 
-    "editor.formatOnSave":  true,
-    "[javascript]":  {
-        "editor.formatOnSave":  false,
-    },
+	"editor.formatOnSave": true,
+	"[javascript]": {
+		"editor.formatOnSave": false
+	},
 
-    "[typescript]":  {
-    "editor.formatOnSave":  false,
-    },
-    "prettier.tabWidth": 4,
-    "[jsonc]": {
+	"[typescript]": {
+		"editor.formatOnSave": false
+	},
+	"prettier.tabWidth": 4,
+	"[jsonc]": {
+		"editor.quickSuggestions": {
+			"strings": true
+		},
+		"editor.suggest.insertMode": "replace"
+	},
 
-        "editor.quickSuggestions": {
-            "strings": true
-        },
-        "editor.suggest.insertMode": "replace"
-    },
+	"editor.quickSuggestions": {
+		"strings": true
+	},
 
-    "editor.quickSuggestions": {
-        "strings": true
-    },
-    
-    "tailwindCSS.experimental.classRegex": [
-            "cntl`([^`]*)", // cntl`...`
-    ],
-    "tailwindCSS.includeLanguages": { "javascriptreact": "html", "typescriptreact": "html", "plaintext": "html" },
-    "emmet.triggerExpansionOnTab": true,
-    "tailwindCSS.emmetCompletions": true,
+	"tailwindCSS.experimental.classRegex": [
+		"cntl`([^`]*)" // cntl`...`
+	],
+	"tailwindCSS.includeLanguages": {
+		"javascriptreact": "html",
+		"typescriptreact": "html",
+		"plaintext": "html"
+	},
+	"emmet.triggerExpansionOnTab": true,
+	"tailwindCSS.emmetCompletions": true
 }
