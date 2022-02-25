@@ -1,15 +1,15 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable class-methods-use-this */
 import { EditorState, basicSetup, EditorView } from '@codemirror/basic-setup';
 import {
 	sendableUpdates,
-	receiveUpdates,
 	collab,
 	getSyncedVersion,
 	type Update,
 } from '@codemirror/collab';
 import { markdown } from '@codemirror/lang-markdown';
 import { Text } from '@codemirror/text';
-import { ViewPlugin, drawSelection } from '@codemirror/view';
-import { ChangeSet, type Extension } from '@codemirror/state';
+import { ViewPlugin } from '@codemirror/view';
 import type { Socket } from 'socket.io-client';
 
 export default class EditorService {
