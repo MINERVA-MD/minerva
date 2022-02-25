@@ -19,18 +19,24 @@ export default {
 
 	methods: {
 		startCollabSession() {
+			console.log(this.view)
 			const roomId = "3265";
-			const {socket}	= new SocketService(roomId);
+			const {socket, view} = new SocketService(roomId);
 			if (socket) {
 				this.socket = socket;
 			}
+			this.view = view;
 		},
 		
 		newEditorService () {
-			this.view = null;
-			new EditorService().generateEditor()
+			const editor = new EditorService().generateEditor()
+			return editor;
 		}
 	},
+
+	unmounted() {
+		this.view.destroy
+	}
 
 };
 </script>
