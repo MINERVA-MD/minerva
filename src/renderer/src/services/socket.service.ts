@@ -1,20 +1,47 @@
+import { receiveUpdates } from '@codemirror/collab';
+import { ChangeSet } from '@codemirror/state';
+import type { EditorView } from '@codemirror/view';
 import { io, Socket } from 'socket.io-client';
+import EditorService from './editor.service';
 
 export default class SocketService {
 	socket: Socket;
 
 	roomId: string;
 
+	view: null | EditorView;
+
 	constructor(roomId: string) {
 		// /this.socket = io('https://text-sockets.herokuapp.com/');
+		this.
 		this.socket = io('http://localhost:8080/');
 		this.roomId = roomId;
-		this.joinRoom(roomId);
+		this.socket.emit('join', roomId);
+		this.socket.on('joined', documentData => {
+			const editor = new EditorService(documentData, this.socket);
+			this.view = editor.generateEditor();
+
+			if (this.view !== null) {
+				this.socket.on('serverOpUpdate', changes => {
+					const deserializedChangeSet = changes.updates.map(u => {
+						return {
+							changes: ChangeSet.fromJSON(u.updateJSON),
+							clientID: u.clientID,
+						};
+					});
+					this.view.dispatch(
+						receiveUpdates(this.view.state, deserializedChangeSet),
+					);
+				});
+			}
+		});
 	}
 
-	joinRoom(roomId: string) {
-		this.roomId = roomId;
-		this.socket.emit('join', roomId);
+	getView() {
+		if (this.view) {
+			return this.view;
+		}
+		return false;
 	}
 
 	disconnect() {

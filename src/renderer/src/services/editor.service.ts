@@ -51,6 +51,7 @@ export default class EditorService {
 		});
 
 		this.view = view;
+		return view;
 	}
 
 	editorClient(socket: Socket | null) {
