@@ -1,25 +1,28 @@
 <template id="test">
 	Hi 🌮
 	<button v-on:click="startCollabSession"> Collab Session</button>
+	<br>
+	<br>
 </template>
 
 <script lang="ts">
 import { io, Socket } from 'socket.io-client';
 import EditorService from '../services/editor.service';
 import SocketService from '../services/socket.service';
+import type { EditorView } from '@codemirror/view';
 
 export default {
-	data() {
+	data(): {view: EditorView,
+	socket: Socket} {
 		return {
 			view: this.newEditorService(),
 			socket: io(''),
-			test: 'asd',
 		};
 	},
 
 	methods: {
 		startCollabSession() {
-			console.log(this.view)
+			this.view.destroy();
 			const roomId = "3265";
 			const {socket, view} = new SocketService(roomId);
 			if (socket) {
@@ -35,7 +38,7 @@ export default {
 	},
 
 	unmounted() {
-		this.view.destroy
+		this.view.destroy();
 	}
 
 };
