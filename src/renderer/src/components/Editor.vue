@@ -1,21 +1,36 @@
 <template id="test">
 	Hi 🌮
-	<button>Collab Session</button>
+	<button v-on:click="startCollabSession"> Collab Session</button>
 </template>
 
 <script lang="ts">
-import { io } from 'socket.io-client';
+import { io, Socket } from 'socket.io-client';
 import EditorService from '../services/editor.service';
+import SocketService from '../services/socket.service';
 
 export default {
 	data() {
 		return {
-			view: new EditorService().generateEditor(),
+			view: this.newEditorService(),
+			socket: io(''),
+			test: 'asd',
 		};
 	},
 
-	methods: {},
+	methods: {
+		startCollabSession() {
+			const roomId = "3265";
+			const {socket}	= new SocketService(roomId);
+			if (socket) {
+				this.socket = socket;
+			}
+		},
+		
+		newEditorService () {
+			this.view = null;
+			new EditorService().generateEditor()
+		}
+	},
 
-	unmounted() {},
 };
 </script>
