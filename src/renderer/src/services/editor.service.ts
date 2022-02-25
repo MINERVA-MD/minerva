@@ -1,3 +1,4 @@
+/* eslint-disable import/no-relative-packages */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable class-methods-use-this */
 import { EditorState, basicSetup, EditorView } from '@codemirror/basic-setup';
@@ -53,6 +54,11 @@ export default class EditorService {
 		this.view = view;
 		return view;
 	}
+
+	// parseMD(test: string) {
+	// 	const md = parse(test);
+	// 	return md;
+	// }
 
 	editorClient(socket: Socket | null) {
 		if (socket !== null) {
