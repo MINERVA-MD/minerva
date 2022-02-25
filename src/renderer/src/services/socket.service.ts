@@ -13,10 +13,9 @@ export default class SocketService {
 	view: EditorView;
 
 	constructor(roomId: string) {
-		// /this.socket = io('https://text-sockets.herokuapp.com/');
+		this.socket = io('https://text-sockets.herokuapp.com/');
+		// this.socket = io('http://localhost:8080/');
 		this.view = new EditorView();
-
-		this.socket = io('http://localhost:8080/');
 		this.roomId = roomId;
 		this.socket.emit('join', roomId);
 		this.socket.on('joined', documentData => {
