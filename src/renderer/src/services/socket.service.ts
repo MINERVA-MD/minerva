@@ -6,9 +6,10 @@ export default class SocketService {
 	roomId: string;
 
 	constructor(roomId: string) {
-		this.socket = io('https://text-sockets.herokuapp.com/');
+		// /this.socket = io('https://text-sockets.herokuapp.com/');
+		this.socket = io('http://localhost:8080/');
 		this.roomId = roomId;
-		this.socket.emit('join', roomId);
+		this.joinRoom(roomId);
 	}
 
 	joinRoom(roomId: string) {
@@ -19,4 +20,8 @@ export default class SocketService {
 	disconnect() {
 		this.socket.close();
 	}
+
+	// listen() {
+	// 	this.socket.on('joined', documentData => {});
+	// }
 }
