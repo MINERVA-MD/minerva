@@ -10,7 +10,6 @@ import EditorService from '../services/editor.service';
 export default {
 	data() {
 		return {
-			test: 'poop',
 			view: new EditorService().generateEditor(),
 		};
 	},
