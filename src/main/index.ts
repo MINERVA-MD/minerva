@@ -21,7 +21,6 @@ async function createWindow() {
   win = new BrowserWindow({
     title: 'Main window',
     webPreferences: {
-      nodeIntegration: true,
       preload: join(__dirname, '../preload/index.cjs')
     },
   })
@@ -71,5 +70,6 @@ app.on('activate', () => {
     createWindow()
   }
 })
+
 
 new GitService();

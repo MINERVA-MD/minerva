@@ -11,6 +11,7 @@ import { io, Socket } from 'socket.io-client';
 import EditorService from '../services/editor.service';
 import SocketService from '../services/socket.service';
 import type { EditorView } from '@codemirror/view';
+import GithubClientService from '../services/github-client.service';
 
 export default {
 	data(): { view: EditorView; socket: Socket } {
@@ -34,6 +35,10 @@ export default {
 		newEditorService() {
 			const editor = new EditorService().generateEditor();
 			return editor;
+		},
+
+		testGit() {
+			const res = new GithubClientService().getGithub();
 		},
 	},
 

@@ -68,14 +68,14 @@
     "@codemirror/state": "^0.19.9",
     "@codemirror/text": "^0.19.6",
     "@codemirror/view": "^0.19.45",
+    "axios": "^0.26.0",
     "fs": "^0.0.1-security",
     "md4rs-src": "file:src/renderer/src/services/pkg",
     "pinia": "^2.0.11",
     "simple-git": "^3.2.6",
     "socket.io-client": "^4.4.1",
     "vue": "^3.2.30",
-    "vue-router": "^4.0.12",
-    "xhr2": "^0.2.1"
+    "vue-router": "^4.0.12"
   },
   "env": {
     "//": "Used in build scripts",
