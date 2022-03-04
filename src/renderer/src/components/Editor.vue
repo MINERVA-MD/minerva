@@ -13,6 +13,13 @@
 	</select>
 	<br />
 	<br />
+	<div
+		class="view-container"
+		style="display: grid; grid-template-columns: 1fr 1fr"
+	>
+		<div id="editor-container"></div>
+		<div id="parsed-html"></div>
+	</div>
 </template>
 
 <script lang="ts">
@@ -28,14 +35,14 @@ import type { Update } from '@codemirror/collab';
 
 export default defineComponent({
 	data(): {
-		view: EditorView;
+		view: EditorView | null;
 		socket: Socket | null;
 		gitService: IGitClientService | null;
 		repos: GitRepo[] | null;
 		currentRepo: string;
 	} {
 		return {
-			view: this.newEditorService(),
+			view: null,
 			socket: null,
 			gitService: null,
 			repos: null,
@@ -44,6 +51,7 @@ export default defineComponent({
 	},
 
 	mounted() {
+		this.view = this.newEditorService();
 		// listeners
 		window.ipcRenderer.on('repos', (event, userRepos) => {
 			this.repos = userRepos;
