@@ -14,4 +14,6 @@ export default {
 	</div>
 </template>
 
-<style></style>
+<style>
+@import './css/github-markdown.css';
+</style>
