@@ -1,5 +1,7 @@
+/* eslint-disable no-use-before-define */
 import fs from 'fs';
 import { contextBridge, ipcRenderer } from 'electron';
+import { marked } from 'marked';
 import { domReady } from './utils';
 import { useLoading } from './loading';
 
@@ -15,6 +17,7 @@ const { appendLoading, removeLoading } = useLoading();
 contextBridge.exposeInMainWorld('fs', fs);
 contextBridge.exposeInMainWorld('removeLoading', removeLoading);
 contextBridge.exposeInMainWorld('ipcRenderer', withPrototype(ipcRenderer));
+contextBridge.exposeInMainWorld('parse', marked.parse);
 
 // `exposeInMainWorld` can't detect attributes and methods of `prototype`, manually patching it.
 function withPrototype(obj: Record<string, any>) {

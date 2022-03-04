@@ -45,7 +45,7 @@ export default class EditorService {
 
 		const view = new EditorView({
 			state,
-			parent: document.getElementById('editor-container'),
+			parent: document.getElementById('editor-container') || undefined, // document.getElementById('editor'),
 		});
 
 		this.view = view;

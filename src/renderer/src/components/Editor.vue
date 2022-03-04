@@ -17,8 +17,13 @@
 		class="view-container"
 		style="display: grid; grid-template-columns: 1fr 1fr"
 	>
-		<div id="editor-container"></div>
-		<div id="parsed-html"></div>
+		<div
+			id="editor-container"
+			style="border-right: 1px lightgray solid; height: 90vh"
+		></div>
+		<div id="parsed-html">
+			<!-- {{ this.view.state.doc.toString() }} -->
+		</div>
 	</div>
 </template>
 
@@ -40,6 +45,7 @@ export default defineComponent({
 		gitService: IGitClientService | null;
 		repos: GitRepo[] | null;
 		currentRepo: string;
+		parsedHTML: string;
 	} {
 		return {
 			view: null,
@@ -47,6 +53,7 @@ export default defineComponent({
 			gitService: null,
 			repos: null,
 			currentRepo: '',
+			parsedHTML: '',
 		};
 	},
 
@@ -73,13 +80,15 @@ export default defineComponent({
 		createCollabSession() {},
 
 		joinCollabSession() {
-			this.view.destroy();
-			const roomId = '3265';
-			const { socket, view } = new SocketService(roomId);
-			if (socket) {
-				this.socket = socket;
+			if (this.view) {
+				this.view.destroy();
+				const roomId = '3265';
+				const { socket, view } = new SocketService(roomId);
+				if (socket) {
+					this.socket = socket;
+				}
+				this.view = view;
 			}
-			this.view = view;
 		},
 
 		newEditorService(startDoc: string = '', startUpdates: Update[] = []) {
@@ -99,7 +108,7 @@ export default defineComponent({
 	},
 
 	unmounted() {
-		this.view.destroy();
+		if (this.view) this.view.destroy();
 	},
 });
 </script>
