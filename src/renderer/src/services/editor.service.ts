@@ -23,10 +23,7 @@ export default class EditorService {
 	view: EditorView | null = null;
 
 	constructor(
-		documentData: { doc: string[]; updates: Update[] } = {
-			doc: [''],
-			updates: [],
-		},
+		documentData: { doc: string[]; updates: Update[] },
 		socket: Socket | null = null,
 	) {
 		this.doc = Text.of(documentData.doc);

@@ -19,6 +19,8 @@ export default class SocketService {
 		this.roomId = roomId;
 		this.socket.emit('join', roomId);
 		this.socket.on('joined', documentData => {
+			// this should be for joining not creating since creating should take in
+			// current doc state
 			const editor = new EditorService(documentData, this.socket);
 			this.view = editor.generateEditor();
 
