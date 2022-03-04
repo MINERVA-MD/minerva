@@ -3,7 +3,7 @@
 	<button v-on:click="createCollabSession">Create Collab</button>
 	<button v-on:click="joinCollabSession">Join Collab</button>
 	<button v-on:click="testGit">Connect Git</button>
-	<select name="repos" id="repos" v-model="currentRepo">
+	<select name="repos" id="repos" v-model="repoSelect">
 		<option default disabled value="">
 			{{ gitService ? 'Repositories' : 'No Git Service' }}
 		</option>
@@ -21,9 +21,11 @@
 			id="editor-container"
 			style="border-right: 1px lightgray solid; height: 90vh"
 		></div>
-		<div id="parsed-html">
-			<!-- {{ this.view.state.doc.toString() }} -->
-		</div>
+		<div
+			class="markdown-body light-scheme"
+			id="parsed-html"
+			v-html="this.parsedHTML"
+		></div>
 	</div>
 </template>
 
@@ -44,7 +46,8 @@ export default defineComponent({
 		socket: Socket | null;
 		gitService: IGitClientService | null;
 		repos: GitRepo[] | null;
-		currentRepo: string;
+		repoSelect: string;
+		repo: string;
 		parsedHTML: string;
 	} {
 		return {
@@ -52,26 +55,29 @@ export default defineComponent({
 			socket: null,
 			gitService: null,
 			repos: null,
-			currentRepo: '',
+			repoSelect: '',
+			repo: '',
 			parsedHTML: '',
 		};
 	},
 
 	mounted() {
-		this.view = this.newEditorService();
+		this.view = this.newEditorService(this);
 		// listeners
 		window.ipcRenderer.on('repos', (event, userRepos) => {
 			this.repos = userRepos;
 		});
 		window.ipcRenderer.on('repo-content', (event, repoContent) => {
 			console.log(repoContent);
-			this.view = this.newEditorService(repoContent);
+			this.view = this.newEditorService(this, repoContent);
 		});
 	},
 
 	updated() {
-		if (this.currentRepo) {
-			const url = `https://raw.githubusercontent.com/${this.gitService?.username}/${this.currentRepo}/main/README.md`;
+		if (this.repoSelect !== this.repo) {
+			console.log(this.repoSelect + ' ' + this.repo);
+			this.repo = this.repoSelect;
+			const url = `https://raw.githubusercontent.com/${this.gitService?.username}/${this.repo}/main/README.md`;
 			this.gitService?.getRepoContent(url);
 		}
 	},
@@ -91,12 +97,16 @@ export default defineComponent({
 			}
 		},
 
-		newEditorService(startDoc: string = '', startUpdates: Update[] = []) {
+		newEditorService(
+			component: any,
+			startDoc: string = '',
+			startUpdates: Update[] = [],
+		) {
 			if (this.view) {
 				this.view.destroy();
 			}
 			const doc = startDoc.split('\n');
-			return new EditorService({
+			return new EditorService(component, {
 				doc: doc,
 				updates: startUpdates,
 			}).generateEditor();
