@@ -22,22 +22,22 @@ export default class EditorService {
 
 	view: EditorView | null = null;
 
-	vueEditor: any;
+	vueComponent: any;
 
 	constructor(
-		vueEditor: any,
+		vueComponent: any,
 		documentData: { doc: string[]; updates: Update[] },
 		socket: Socket | null = null,
 	) {
 		this.doc = Text.of(documentData.doc);
 		this.updates = documentData.updates;
 		this.socket = socket;
-		this.vueEditor = vueEditor;
+		this.vueComponent = vueComponent;
 		const documenString = documentData.doc.join('\n');
-		this.vueEditor.parsedHTML = window.parse(documenString);
+		this.vueComponent.parsedHTML = window.parse(documenString);
 	}
 
-	generateEditor() {
+	generateEditor(vueComponent: any) {
 		const state = EditorState.create({
 			doc: this.doc,
 			extensions: [
@@ -45,7 +45,7 @@ export default class EditorService {
 				markdown(),
 				collab({ startVersion: this.updates.length }),
 				EditorView.lineWrapping,
-				this.editorClient(this.vueEditor, this.socket),
+				this.editorClient(vueComponent, this.socket),
 			],
 		});
 
@@ -63,12 +63,19 @@ export default class EditorService {
 	// 	return md;
 	// }
 
-	editorClient(component: any, socket: Socket | null) {
+	editorClient(vueComponent: any, socket: Socket | null) {
 		let plugin;
 		if (socket !== null) {
 			plugin = ViewPlugin.define(view => ({
 				update(editorUpdate) {
 					if (editorUpdate.docChanged) {
+						// update parser
+						const doc = view.state.doc.toJSON();
+						const documentString = doc.join('\n');
+						// eslint-disable-next-line no-param-reassign
+						vueComponent.parsedHTML = window.parse(documentString);
+
+						// send updates to server
 						const unsentUpdates = sendableUpdates(view.state).map(
 							u => {
 								const serializedUpdate = {
@@ -87,17 +94,18 @@ export default class EditorService {
 					}
 				},
 			}));
+		} else {
+			plugin = ViewPlugin.define(view => ({
+				update(editorUpdate) {
+					if (editorUpdate.docChanged) {
+						const doc = view.state.doc.toJSON();
+						const documentString = doc.join('\n');
+						// eslint-disable-next-line no-param-reassign
+						vueComponent.parsedHTML = window.parse(documentString);
+					}
+				},
+			}));
 		}
-		plugin = ViewPlugin.define(view => ({
-			update(editorUpdate) {
-				if (editorUpdate.docChanged) {
-					const doc = view.state.doc.toJSON();
-					const documentString = doc.join('\n');
-					// eslint-disable-next-line no-param-reassign
-					component.parsedHTML = window.parse(documentString);
-				}
-			},
-		}));
 		return plugin;
 	}
 }
