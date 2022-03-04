@@ -12,6 +12,7 @@ import { markdown } from '@codemirror/lang-markdown';
 import { Text } from '@codemirror/text';
 import { ViewPlugin } from '@codemirror/view';
 import type { Socket } from 'socket.io-client';
+import { marked } from 'marked';
 
 export default class EditorService {
 	doc: Text;
@@ -34,7 +35,7 @@ export default class EditorService {
 		this.socket = socket;
 		this.vueComponent = vueComponent;
 		const documenString = documentData.doc.join('\n');
-		this.vueComponent.parsedHTML = window.parse(documenString);
+		this.vueComponent.parsedHTML = marked.parse(documenString);
 	}
 
 	generateEditor(vueComponent: any) {
@@ -73,7 +74,7 @@ export default class EditorService {
 						const doc = view.state.doc.toJSON();
 						const documentString = doc.join('\n');
 						// eslint-disable-next-line no-param-reassign
-						vueComponent.parsedHTML = window.parse(documentString);
+						vueComponent.parsedHTML = marked.parse(documentString);
 
 						// send updates to server
 						const unsentUpdates = sendableUpdates(view.state).map(
@@ -101,7 +102,7 @@ export default class EditorService {
 						const doc = view.state.doc.toJSON();
 						const documentString = doc.join('\n');
 						// eslint-disable-next-line no-param-reassign
-						vueComponent.parsedHTML = window.parse(documentString);
+						vueComponent.parsedHTML = marked.parse(documentString);
 					}
 				},
 			}));

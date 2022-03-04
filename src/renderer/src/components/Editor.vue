@@ -24,7 +24,7 @@
 		<div
 			class="markdown-body light-scheme"
 			id="parsed-html"
-			v-html="this.parsedHTML"
+			v-html="parsedHTML"
 		></div>
 	</div>
 </template>
