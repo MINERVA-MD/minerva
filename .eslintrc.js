@@ -9,6 +9,7 @@ module.exports = {
         'airbnb-base',
         'plugin:@typescript-eslint/recommended',
         'plugin:prettier/recommended',
+        'plugin:vue/vue3-recommended',
     ],
     plugins: ['prettier', 'eslint-plugin-tsdoc', '@typescript-eslint', 'import', 'eslint-plugin-tsdoc'],
     ignorePatterns: ['.eslintrc.js', 'jest.config.js'],

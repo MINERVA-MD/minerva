@@ -12,8 +12,9 @@ import EditorService from '../services/editor.service';
 import SocketService from '../services/socket.service';
 import type { EditorView } from '@codemirror/view';
 import GithubClientService from '../services/github-client.service';
+import { defineComponent } from 'vue-demi';
 
-export default {
+export default defineComponent({
 	data(): { view: EditorView; socket: Socket } {
 		return {
 			view: this.newEditorService(),
@@ -38,12 +39,12 @@ export default {
 		},
 
 		testGit() {
-			const res = new GithubClientService().getGithub();
+			const res = new GithubClientService().getRepos();
 		},
 	},
 
 	unmounted() {
 		this.view.destroy();
 	},
-};
+});
 </script>

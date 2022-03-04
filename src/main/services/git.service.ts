@@ -10,11 +10,11 @@ export default class GitService {
 
 	listen() {
 		ipcMain.on('github-connect', (event, data) => {
-			console.log(this.allUserRepos('testminerva'));
+			console.log(this.getAllUserRepos('testminerva'));
 		});
 	}
 
-	async allUserRepos(username: string) {
+	async getAllUserRepos(username: string) {
 		const repos = [];
 
 		// GitHub endpoint, dynamically passing in specified username
@@ -25,7 +25,8 @@ export default class GitService {
 		const response = await axios.get(url);
 		const data = await response.data;
 		data.forEach((item: any) => {
-			console.log(item.name);
+			repos.push(item);
 		});
+		console.log(repos);
 	}
 }
