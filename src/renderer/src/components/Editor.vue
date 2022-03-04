@@ -2,7 +2,7 @@
 	Hi 🌮
 	<button v-on:click="createCollabSession">Create Collab</button>
 	<button v-on:click="joinCollabSession">Join Collab</button>
-	<button v-on:click="testGit">Connect Git</button>
+	<button v-on:click="connectGit">Connect Git</button>
 	<select name="repos" id="repos" v-model="repoSelect">
 		<option default disabled value="">
 			{{ gitService ? 'Repositories' : 'No Git Service' }}
@@ -63,19 +63,19 @@ export default defineComponent({
 
 	mounted() {
 		this.view = this.newEditorService(this);
+
 		// listeners
 		window.ipcRenderer.on('repos', (event, userRepos) => {
 			this.repos = userRepos;
 		});
 		window.ipcRenderer.on('repo-content', (event, repoContent) => {
-			console.log(repoContent);
+			if (this.view) this.view.destroy();
 			this.view = this.newEditorService(this, repoContent);
 		});
 	},
 
 	updated() {
 		if (this.repoSelect !== this.repo) {
-			console.log(this.repoSelect + ' ' + this.repo);
 			this.repo = this.repoSelect;
 			const url = `https://raw.githubusercontent.com/${this.gitService?.username}/${this.repo}/main/README.md`;
 			this.gitService?.getRepoContent(url);
@@ -89,11 +89,10 @@ export default defineComponent({
 			if (this.view) {
 				this.view.destroy();
 				const roomId = '3265';
-				const { socket, view } = new SocketService(roomId);
-				if (socket) {
-					this.socket = socket;
+				const socketService = new SocketService(this, roomId);
+				if (socketService.socket) {
+					this.socket = socketService.socket;
 				}
-				this.view = view;
 			}
 		},
 
@@ -109,10 +108,10 @@ export default defineComponent({
 			return new EditorService(component, {
 				doc: doc,
 				updates: startUpdates,
-			}).generateEditor();
+			}).generateEditor(this);
 		},
 
-		testGit() {
+		connectGit() {
 			this.gitService = new GithubClientService('testminerva');
 		},
 	},
