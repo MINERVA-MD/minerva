@@ -1,25 +1,63 @@
 <template id="test">
 	Hi 🌮
-	<button v-on:click="startCollabSession">Collab Session</button>
-	<button v-on:click="testGit">Git</button>
+	<button v-on:click="startCollabSession">Join Collab</button>
+	<button v-on:click="testGit">Connect Git</button>
+	<select name="repos" id="repos" v-model="currentRepo">
+		<option default disabled value="">
+			{{ gitService ? 'Repositories' : 'No Git Service' }}
+		</option>
+		<option v-for="repo in repos" :value="repo.name" :key="repo.name">
+			{{ repo.name }}
+		</option>
+	</select>
 	<br />
 	<br />
 </template>
 
 <script lang="ts">
-import { io, Socket } from 'socket.io-client';
+import type { Socket } from 'socket.io-client';
 import EditorService from '../services/editor.service';
 import SocketService from '../services/socket.service';
 import type { EditorView } from '@codemirror/view';
 import GithubClientService from '../services/github-client.service';
 import { defineComponent } from 'vue-demi';
+import type IGitClientService from '../Interfaces/IGitClientService';
+import type { GitRepo } from '@/typings/GitService';
+import type { Update } from '@codemirror/collab';
 
 export default defineComponent({
-	data(): { view: EditorView; socket: Socket } {
+	data(): {
+		view: EditorView;
+		socket: Socket | null;
+		gitService: IGitClientService | null;
+		repos: GitRepo[] | null;
+		currentRepo: string;
+	} {
 		return {
 			view: this.newEditorService(),
-			socket: io(''),
+			socket: null,
+			gitService: null,
+			repos: null,
+			currentRepo: '',
 		};
+	},
+
+	mounted() {
+		// listeners
+		window.ipcRenderer.on('repos', (event, userRepos) => {
+			this.repos = userRepos;
+		});
+		window.ipcRenderer.on('repo-content', (event, repoContent) => {
+			console.log(repoContent);
+			this.view = this.newEditorService(repoContent);
+		});
+	},
+
+	updated() {
+		if (this.currentRepo) {
+			const url = `https://raw.githubusercontent.com/${this.gitService?.username}/${this.currentRepo}/main/README.md`;
+			this.gitService?.getRepoContent(url);
+		}
 	},
 
 	methods: {
@@ -33,13 +71,19 @@ export default defineComponent({
 			this.view = view;
 		},
 
-		newEditorService() {
-			const editor = new EditorService().generateEditor();
-			return editor;
+		newEditorService(startDoc: string = '', startUpdates: Update[] = []) {
+			if (this.view) {
+				this.view.destroy();
+			}
+			const doc = startDoc.split('\n');
+			return new EditorService({
+				doc: doc,
+				updates: startUpdates,
+			}).generateEditor();
 		},
 
 		testGit() {
-			const res = new GithubClientService().getRepos();
+			this.gitService = new GithubClientService('testminerva');
 		},
 	},
 
