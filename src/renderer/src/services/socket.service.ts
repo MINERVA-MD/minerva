@@ -12,8 +12,8 @@ export default class SocketService {
 	vueComponent: any;
 
 	constructor(vueComponent: any, roomId: string) {
-		this.socket = io('https://text-sockets.herokuapp.com/');
-		// this.socket = io('http://localhost:8080/');
+		// this.socket = io('https://text-sockets.herokuapp.com/');
+		this.socket = io('http://localhost:8080/');
 
 		this.vueComponent = vueComponent;
 		// perhaps split this constructor into two funcs, one for join and one for create
@@ -39,9 +39,9 @@ export default class SocketService {
 							};
 						},
 					);
-					this.vueComponent.view.dispatch(
+					vueComponent.view.dispatch(
 						receiveUpdates(
-							this.vueComponent.view.state,
+							vueComponent.view.state,
 							deserializedChangeSet,
 						),
 					);
