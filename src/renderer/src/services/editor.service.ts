@@ -38,7 +38,7 @@ export default class EditorService {
 		this.vueComponent.parsedHTML = marked.parse(documenString);
 	}
 
-	generateEditor(vueComponent: any) {
+	generateEditor() {
 		const state = EditorState.create({
 			doc: this.doc,
 			extensions: [
@@ -46,7 +46,7 @@ export default class EditorService {
 				markdown(),
 				collab({ startVersion: this.updates.length }),
 				EditorView.lineWrapping,
-				this.editorClient(vueComponent, this.socket),
+				this.editorClient(this.vueComponent, this.socket),
 			],
 		});
 

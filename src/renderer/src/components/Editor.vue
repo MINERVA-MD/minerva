@@ -1,5 +1,6 @@
 <template id="test">
 	Hi 🌮
+	<button v-on:click="newBlankEditor">New</button>
 	<button v-on:click="createCollabSession">Create Collab</button>
 	<button v-on:click="joinCollabSession">Join Collab</button>
 	<button v-on:click="connectGit">Connect Git</button>
@@ -43,7 +44,7 @@ import type { Update } from '@codemirror/collab';
 export default defineComponent({
 	data(): {
 		view: EditorView | null;
-		socket: Socket | null;
+		socketService: SocketService | null;
 		gitService: IGitClientService | null;
 		repos: GitRepo[] | null;
 		repoSelect: string;
@@ -52,7 +53,7 @@ export default defineComponent({
 	} {
 		return {
 			view: null,
-			socket: null,
+			socketService: null,
 			gitService: null,
 			repos: null,
 			repoSelect: '',
@@ -86,13 +87,11 @@ export default defineComponent({
 		createCollabSession() {},
 
 		joinCollabSession() {
-			if (this.view) {
-				this.view.destroy();
+			this.view?.destroy();
+			if (!this.socketService) {
 				const roomId = '3265';
-				const socketService = new SocketService(this, roomId);
-				if (socketService.socket) {
-					this.socket = socketService.socket;
-				}
+				this.socketService = new SocketService(this, roomId);
+				this.view = this.socketService.getView();
 			}
 		},
 
@@ -108,11 +107,16 @@ export default defineComponent({
 			return new EditorService(component, {
 				doc: doc,
 				updates: startUpdates,
-			}).generateEditor(this);
+			}).generateEditor();
 		},
 
 		connectGit() {
 			this.gitService = new GithubClientService('testminerva');
+		},
+
+		newBlankEditor() {
+			this.view?.destroy();
+			this.view = this.newEditorService(this);
 		},
 	},
 
