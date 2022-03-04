@@ -1,6 +1,7 @@
 <template id="test">
 	Hi 🌮
-	<button v-on:click="startCollabSession">Join Collab</button>
+	<button v-on:click="createCollabSession">Create Collab</button>
+	<button v-on:click="joinCollabSession">Join Collab</button>
 	<button v-on:click="testGit">Connect Git</button>
 	<select name="repos" id="repos" v-model="currentRepo">
 		<option default disabled value="">
@@ -61,7 +62,9 @@ export default defineComponent({
 	},
 
 	methods: {
-		startCollabSession() {
+		createCollabSession() {},
+
+		joinCollabSession() {
 			this.view.destroy();
 			const roomId = '3265';
 			const { socket, view } = new SocketService(roomId);
