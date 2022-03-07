@@ -71,6 +71,8 @@ export default defineComponent({
 		});
 		window.ipcRenderer.on('repo-content', (event, repoContent) => {
 			if (this.view) this.view.destroy();
+			this.socketService?.view.destroy();
+			this.socketService = null;
 			this.view = this.newEditorService(this, repoContent);
 		});
 	},
