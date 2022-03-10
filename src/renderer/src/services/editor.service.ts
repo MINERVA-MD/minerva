@@ -59,11 +59,6 @@ export default class EditorService {
 		return view;
 	}
 
-	// parseMD(test: string) {
-	// 	const md = parse(test);
-	// 	return md;
-	// }
-
 	editorClient(vueComponent: any, socket: Socket | null) {
 		let plugin;
 		if (socket !== null) {
