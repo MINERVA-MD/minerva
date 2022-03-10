@@ -75,7 +75,7 @@ export default defineComponent({
 		});
 		window.ipcRenderer.on('repo-content', (event, repoContent) => {
 			if (this.view) this.view.destroy();
-			this.view = this.newEditorService(this, repoContent);
+			this.view = this.newEditorService(this, false, repoContent);
 		});
 	},
 
@@ -90,14 +90,14 @@ export default defineComponent({
 	methods: {
 		createCollabSession() {
 			//this.socketService = new SocketService(this);
+			// const docJSON = this.view?.state.doc.toJSON();
+			// this.view?.destroy();
+			// this.view = this.newEditorService(this, true);
 			this.roomId = EditorService.generateRoomId();
 			this.editorService?.socketsCreateNewRoom(this.roomId);
 		},
 
 		joinCollabSession() {
-			if (!this.editorService?.socket) {
-				this.editorService?.openSocketConnection();
-			}
 			this.roomId = this.inputRoomId;
 			this.editorService?.socketsJoinRoom(this.roomId);
 			this.inputRoomId = '';
@@ -105,6 +105,7 @@ export default defineComponent({
 
 		newEditorService(
 			component: any,
+			socket = false,
 			startDoc: string = '',
 			startUpdates: Update[] = [],
 		) {
@@ -112,10 +113,14 @@ export default defineComponent({
 				this.view.destroy();
 			}
 			const doc = startDoc.split('\n');
-			this.editorService = new EditorService(component, {
-				doc: doc,
-				updates: startUpdates,
-			});
+			this.editorService = new EditorService(
+				component,
+				{
+					doc: doc,
+					updates: startUpdates,
+				},
+				socket,
+			);
 
 			return this.editorService.generateEditor();
 		},
@@ -128,8 +133,8 @@ export default defineComponent({
 			this.roomId = '';
 			this.view?.destroy();
 			this.view = this.newEditorService(this);
-			this.socketService?.disconnect();
-			this.socketService = null;
+			// this.socketService?.disconnect();
+			// this.socketService = null;
 		},
 	},
 
