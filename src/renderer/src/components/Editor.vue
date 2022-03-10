@@ -32,7 +32,6 @@
 </template>
 
 <script lang="ts">
-import type { Socket } from 'socket.io-client';
 import EditorService from '../services/editor.service';
 import type { EditorView } from '@codemirror/view';
 import GithubClientService from '../services/github-client.service';
@@ -132,10 +131,10 @@ export default defineComponent({
 
 		newBlankEditor() {
 			this.roomId = '';
+			if (this.editorService?.socket)
+				this.editorService.disconnectSocket();
 			this.view?.destroy();
 			this.view = this.newEditorService(this);
-			// this.socketService?.disconnect();
-			// this.socketService = null;
 		},
 	},
 
