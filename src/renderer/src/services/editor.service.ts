@@ -33,6 +33,7 @@ export default class EditorService {
 	constructor(
 		vueComponent: any,
 		documentData: { doc: string[]; updates: Update[] },
+		socket: boolean,
 	) {
 		this.doc = Text.of(documentData.doc);
 		this.updates = documentData.updates;
@@ -40,6 +41,12 @@ export default class EditorService {
 		const documenString = documentData.doc.join('\n');
 		this.vueComponent.parsedHTML = marked.parse(documenString);
 		this.view = new EditorView();
+		if (socket) {
+			// this.socket = io('https://text-sockets.herokuapp.com/');
+			this.socket = io('http://localhost:8080/');
+		} else {
+			this.socket = null;
+		}
 	}
 
 	generateEditor(doc?: Text) {
@@ -47,7 +54,6 @@ export default class EditorService {
 		if (doc) {
 			docText = doc;
 		}
-		console.log(docText);
 
 		const state = EditorState.create({
 			doc: docText,
@@ -56,7 +62,7 @@ export default class EditorService {
 				markdown(),
 				collab({ startVersion: this.updates.length }),
 				EditorView.lineWrapping,
-				this.editorClient(this.vueComponent),
+				this.editorClient(this.vueComponent, this.socket),
 			],
 		});
 
@@ -71,61 +77,45 @@ export default class EditorService {
 
 	// setDocumentState(documentData: { doc: string[]; updates: Update[] }) {}
 
-	editorClient(vueComponent: any) {
-		const { socket } = this;
-		let plugin;
-		if (socket !== null) {
-			plugin = ViewPlugin.define(view => ({
-				update(editorUpdate) {
-					if (editorUpdate.docChanged) {
-						// update parser
-						const doc = view.state.doc.toJSON();
-						const documentString = doc.join('\n');
-						// eslint-disable-next-line no-param-reassign
-						vueComponent.parsedHTML = marked.parse(documentString);
+	editorClient(vueComponent: any, socket: Socket | null) {
+		const that = this;
+		const plugin = ViewPlugin.define(view => ({
+			update(editorUpdate) {
+				if (editorUpdate.docChanged) {
+					// update parser
+					const doc = view.state.doc.toJSON();
+					const documentString = doc.join('\n');
+					// eslint-disable-next-line no-param-reassign
+					vueComponent.parsedHTML = marked.parse(documentString);
 
-						// send updates to server
-						const unsentUpdates = sendableUpdates(view.state).map(
-							u => {
-								const serializedUpdate = {
-									updateJSON: u.changes.toJSON(),
-									clientID: u.clientID,
-								};
+					// send updates to server
+					const unsentUpdates = sendableUpdates(view.state).map(u => {
+						const serializedUpdate = {
+							updateJSON: u.changes.toJSON(),
+							clientID: u.clientID,
+						};
 
-								return serializedUpdate;
-							},
-						);
-						console.log(unsentUpdates);
+						return serializedUpdate;
+					});
+					console.log(unsentUpdates);
 
-						socket.emit('clientOpUpdate', {
-							version: getSyncedVersion(view.state),
-							updates: unsentUpdates,
-						});
-					}
-				},
-			}));
-		} else {
-			plugin = ViewPlugin.define(view => ({
-				update(editorUpdate) {
-					if (editorUpdate.docChanged) {
-						const doc = view.state.doc.toJSON();
-						const documentString = doc.join('\n');
-						// eslint-disable-next-line no-param-reassign
-						vueComponent.parsedHTML = marked.parse(documentString);
-					}
-				},
-			}));
-		}
+					that.socket?.emit('clientOpUpdate', {
+						version: getSyncedVersion(view.state),
+						updates: unsentUpdates,
+					});
+				}
+			},
+		}));
 		return plugin;
 	}
 
 	openSocketConnection() {
 		// this.socket = io('https://text-sockets.herokuapp.com/');
-		return io('http://localhost:8080/');
+		this.socket = io('http://localhost:8080/');
 	}
 
 	socketsCreateNewRoom(roomId: string) {
-		this.socket = this.openSocketConnection();
+		this.openSocketConnection();
 		this.roomId = roomId;
 		this.doc = this.view.state.doc;
 
@@ -138,49 +128,47 @@ export default class EditorService {
 		});
 
 		this.socket?.on('created', documentData => {
-			console.log(documentData.doc, this.view.state);
-			this.vueComponent.editorService.setDocumentState(documentData);
-			if (this.vueComponent.view !== null) {
-				this.socket?.on('serverOpUpdate', changes => {
-					const deserializedChangeSet = changes.updates.map(
-						(u: { updateJSON: any; clientID: string }) => {
-							return {
-								changes: ChangeSet.fromJSON(u.updateJSON),
-								clientID: u.clientID,
-							};
-						},
-					);
-					this.view?.dispatch(
-						receiveUpdates(this.view.state, deserializedChangeSet),
-					);
-				});
-			}
+			this.socket?.on('serverOpUpdate', changes => {
+				console.log(changes);
+				const deserializedChangeSet = changes.updates.map(
+					(u: { updateJSON: any; clientID: string }) => {
+						return {
+							changes: ChangeSet.fromJSON(u.updateJSON),
+							clientID: u.clientID,
+						};
+					},
+				);
+				this.view?.update([
+					receiveUpdates(this.view.state, deserializedChangeSet),
+				]);
+			});
 		});
 	}
 
 	socketsJoinRoom(roomId: string) {
-		this.roomId = roomId;
+		this.openSocketConnection();
 		this.view.destroy();
+		this.roomId = roomId;
 
 		this.socket?.emit('join', this.roomId);
 		this.socket?.on('joined', documentData => {
-			console.log(documentData.doc);
-			this.generateEditor(Text.of(documentData.doc));
-			if (this.vueComponent.view !== null) {
-				this.socket?.on('serverOpUpdate', changes => {
-					const deserializedChangeSet = changes.updates.map(
-						(u: { updateJSON: any; clientID: string }) => {
-							return {
-								changes: ChangeSet.fromJSON(u.updateJSON),
-								clientID: u.clientID,
-							};
-						},
-					);
-					this.view?.dispatch(
-						receiveUpdates(this.view.state, deserializedChangeSet),
-					);
-				});
-			}
+			this.view = this.generateEditor(Text.of(documentData.doc));
+			this.vueComponent.view = this.view;
+
+			this.socket?.on('serverOpUpdate', changes => {
+				const deserializedChangeSet = changes.updates.map(
+					(u: { updateJSON: any; clientID: string }) => {
+						return {
+							changes: ChangeSet.fromJSON(u.updateJSON),
+							clientID: u.clientID,
+						};
+					},
+				);
+				console.log(deserializedChangeSet);
+				this.view?.update([
+					receiveUpdates(this.view.state, deserializedChangeSet),
+				]);
+			});
 		});
 	}
 
