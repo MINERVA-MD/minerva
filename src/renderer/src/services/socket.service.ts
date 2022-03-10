@@ -17,7 +17,7 @@ export default class SocketService {
 	constructor(vueComponent: any, roomId?: string | null) {
 		// define socket connection
 		this.socket = io('https://text-sockets.herokuapp.com/');
-		this.socket = io('http://localhost:8080/');
+		// this.socket = io('http://localhost:8080/');
 
 		this.vueComponent = vueComponent;
 
