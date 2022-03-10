@@ -78,34 +78,49 @@ export default class EditorService {
 	// setDocumentState(documentData: { doc: string[]; updates: Update[] }) {}
 
 	editorClient(vueComponent: any, socket: Socket | null) {
-		const that = this;
-		const plugin = ViewPlugin.define(view => ({
-			update(editorUpdate) {
-				if (editorUpdate.docChanged) {
-					// update parser
-					const doc = view.state.doc.toJSON();
-					const documentString = doc.join('\n');
-					// eslint-disable-next-line no-param-reassign
-					vueComponent.parsedHTML = marked.parse(documentString);
+		let plugin;
+		if (socket !== null) {
+			plugin = ViewPlugin.define(view => ({
+				update(editorUpdate) {
+					if (editorUpdate.docChanged) {
+						// update parser
+						const doc = view.state.doc.toJSON();
+						const documentString = doc.join('\n');
+						// eslint-disable-next-line no-param-reassign
+						vueComponent.parsedHTML = marked.parse(documentString);
 
-					// send updates to server
-					const unsentUpdates = sendableUpdates(view.state).map(u => {
-						const serializedUpdate = {
-							updateJSON: u.changes.toJSON(),
-							clientID: u.clientID,
-						};
+						// send updates to server
+						const unsentUpdates = sendableUpdates(view.state).map(
+							u => {
+								const serializedUpdate = {
+									updateJSON: u.changes.toJSON(),
+									clientID: u.clientID,
+								};
 
-						return serializedUpdate;
-					});
-					console.log(unsentUpdates);
+								return serializedUpdate;
+							},
+						);
+						console.log(unsentUpdates);
 
-					that.socket?.emit('clientOpUpdate', {
-						version: getSyncedVersion(view.state),
-						updates: unsentUpdates,
-					});
-				}
-			},
-		}));
+						socket.emit('clientOpUpdate', {
+							version: getSyncedVersion(view.state),
+							updates: unsentUpdates,
+						});
+					}
+				},
+			}));
+		} else {
+			plugin = ViewPlugin.define(view => ({
+				update(editorUpdate) {
+					if (editorUpdate.docChanged) {
+						const doc = view.state.doc.toJSON();
+						const documentString = doc.join('\n');
+						// eslint-disable-next-line no-param-reassign
+						vueComponent.parsedHTML = marked.parse(documentString);
+					}
+				},
+			}));
+		}
 		return plugin;
 	}
 
@@ -115,7 +130,6 @@ export default class EditorService {
 	}
 
 	socketsCreateNewRoom(roomId: string) {
-		this.openSocketConnection();
 		this.roomId = roomId;
 		this.doc = this.view.state.doc;
 
@@ -138,6 +152,7 @@ export default class EditorService {
 						};
 					},
 				);
+				console.log(deserializedChangeSet);
 				this.view?.update([
 					receiveUpdates(this.view.state, deserializedChangeSet),
 				]);
@@ -146,15 +161,13 @@ export default class EditorService {
 	}
 
 	socketsJoinRoom(roomId: string) {
-		this.openSocketConnection();
-		this.view.destroy();
 		this.roomId = roomId;
+		this.view.destroy();
 
 		this.socket?.emit('join', this.roomId);
 		this.socket?.on('joined', documentData => {
+			console.log(documentData.doc);
 			this.view = this.generateEditor(Text.of(documentData.doc));
-			this.vueComponent.view = this.view;
-
 			this.socket?.on('serverOpUpdate', changes => {
 				const deserializedChangeSet = changes.updates.map(
 					(u: { updateJSON: any; clientID: string }) => {
@@ -164,7 +177,6 @@ export default class EditorService {
 						};
 					},
 				);
-				console.log(deserializedChangeSet);
 				this.view?.update([
 					receiveUpdates(this.view.state, deserializedChangeSet),
 				]);
