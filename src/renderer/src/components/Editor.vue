@@ -1,8 +1,7 @@
 <template id="test">
-	Hi 🌮
 	<button v-on:click="newBlankEditor">New</button>
 	<button v-on:click="createCollabSession">Create Collab</button>
-	<input type="text" v-bind="roomId" placeholder="room id" />
+	<input type="text" v-model="roomId" placeholder="room id" />
 	<button v-on:click="joinCollabSession">Join Collab</button>
 	<button v-on:click="connectGit">Connect Git</button>
 	<select name="repos" id="repos" v-model="repoSelect">
@@ -13,7 +12,7 @@
 			{{ repo.name }}
 		</option>
 	</select>
-	<p>{{ roomId }}</p>
+	<span v-if="socketService"> room id: {{ roomId }} </span>
 	<br />
 	<br />
 	<div
@@ -95,9 +94,8 @@ export default defineComponent({
 
 		joinCollabSession() {
 			this.view?.destroy();
-			if (!this.socketService) {
-				const roomId = '3265';
-				this.socketService = new SocketService(this, roomId);
+			if (!this.socketService && this.roomId) {
+				this.socketService = new SocketService(this, this.roomId);
 				this.view = this.socketService.getView();
 			}
 		},

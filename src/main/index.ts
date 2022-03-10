@@ -25,6 +25,7 @@ async function createWindow() {
     webPreferences: {
       preload: join(__dirname, '../preload/index.cjs')
     },
+    autoHideMenuBar: true,
   })
 
   if (app.isPackaged) {
