@@ -198,7 +198,7 @@ export default class EditorService {
 		return result;
 	}
 
-	disconnect() {
+	disconnectSocket() {
 		this.socket?.close();
 	}
 }
