@@ -2,6 +2,7 @@
 	Hi 🌮
 	<button v-on:click="newBlankEditor">New</button>
 	<button v-on:click="createCollabSession">Create Collab</button>
+	<input type="text" v-bind="roomId" placeholder="room id" />
 	<button v-on:click="joinCollabSession">Join Collab</button>
 	<button v-on:click="connectGit">Connect Git</button>
 	<select name="repos" id="repos" v-model="repoSelect">
@@ -12,6 +13,7 @@
 			{{ repo.name }}
 		</option>
 	</select>
+	<p>{{ roomId }}</p>
 	<br />
 	<br />
 	<div
@@ -50,6 +52,7 @@ export default defineComponent({
 		repoSelect: string;
 		repo: string;
 		parsedHTML: string;
+		roomId: string;
 	} {
 		return {
 			view: null,
@@ -59,6 +62,7 @@ export default defineComponent({
 			repoSelect: '',
 			repo: '',
 			parsedHTML: '',
+			roomId: '',
 		};
 	},
 
@@ -84,7 +88,10 @@ export default defineComponent({
 	},
 
 	methods: {
-		createCollabSession() {},
+		createCollabSession() {
+			this.view?.destroy();
+			this.socketService = new SocketService(this);
+		},
 
 		joinCollabSession() {
 			this.view?.destroy();
