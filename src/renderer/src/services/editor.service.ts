@@ -42,8 +42,7 @@ export default class EditorService {
 		this.vueComponent.parsedHTML = marked.parse(documenString);
 		this.view = new EditorView();
 		if (socket) {
-			// this.socket = io('https://text-sockets.herokuapp.com/');
-			this.socket = io('http://localhost:8080/');
+			this.socket = this.openSocketConnection();
 		} else {
 			this.socket = null;
 		}
@@ -125,8 +124,8 @@ export default class EditorService {
 	}
 
 	openSocketConnection() {
-		// this.socket = io('https://text-sockets.herokuapp.com/');
-		this.socket = io('http://localhost:8080/');
+		return io('https://text-sockets.herokuapp.com/');
+		// return io('http://localhost:8080/');
 	}
 
 	socketsCreateNewRoom(roomId: string) {
@@ -165,7 +164,6 @@ export default class EditorService {
 
 		this.socket?.emit('join', this.roomId);
 		this.socket?.on('joined', documentData => {
-			console.log('here');
 			this.view = this.generateEditor(Text.of(documentData.doc));
 			this.vueComponent.view = this.view;
 
