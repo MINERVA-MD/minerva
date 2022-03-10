@@ -89,15 +89,16 @@ export default defineComponent({
 
 	methods: {
 		createCollabSession() {
-			//this.socketService = new SocketService(this);
-			// const docJSON = this.view?.state.doc.toJSON();
-			// this.view?.destroy();
-			// this.view = this.newEditorService(this, true);
+			const docJSON = this.view?.state.doc.toJSON();
+			this.view?.destroy();
+			this.view = this.newEditorService(this, true, docJSON?.join('\n'));
 			this.roomId = EditorService.generateRoomId();
 			this.editorService?.socketsCreateNewRoom(this.roomId);
 		},
 
 		joinCollabSession() {
+			this.view?.destroy();
+			this.view = this.newEditorService(this, true);
 			this.roomId = this.inputRoomId;
 			this.editorService?.socketsJoinRoom(this.roomId);
 			this.inputRoomId = '';
