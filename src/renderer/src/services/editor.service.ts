@@ -59,6 +59,10 @@ export default class EditorService {
 		return view;
 	}
 
+	setDocumentState(documentData: { doc: string[]; updates: Update[] }) {
+		
+	}
+
 	editorClient(vueComponent: any, socket: Socket | null) {
 		let plugin;
 		if (socket !== null) {

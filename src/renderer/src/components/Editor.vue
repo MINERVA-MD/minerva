@@ -1,7 +1,7 @@
 <template id="test">
 	<button v-on:click="newBlankEditor">New</button>
 	<button v-on:click="createCollabSession">Create Collab</button>
-	<input type="text" v-model="roomId" placeholder="room id" />
+	<input type="text" v-model="inputRoomId" placeholder="room id" />
 	<button v-on:click="joinCollabSession">Join Collab</button>
 	<button v-on:click="connectGit">Connect Git</button>
 	<select name="repos" id="repos" v-model="repoSelect">
@@ -44,6 +44,7 @@ import type { Update } from '@codemirror/collab';
 
 export default defineComponent({
 	data(): {
+		editorService: EditorService | null;
 		view: EditorView | null;
 		socketService: SocketService | null;
 		gitService: IGitClientService | null;
@@ -51,9 +52,11 @@ export default defineComponent({
 		repoSelect: string;
 		repo: string;
 		parsedHTML: string;
-		roomId: string;
+		inputRoomId: string;
+		roomId: string | null;
 	} {
 		return {
+			editorService: null,
 			view: null,
 			socketService: null,
 			gitService: null,
@@ -61,6 +64,7 @@ export default defineComponent({
 			repoSelect: '',
 			repo: '',
 			parsedHTML: '',
+			inputRoomId: '',
 			roomId: '',
 		};
 	},
@@ -88,16 +92,18 @@ export default defineComponent({
 
 	methods: {
 		createCollabSession() {
-			this.view?.destroy();
 			this.socketService = new SocketService(this);
+			if (this.editorService) {
+				this.editorService.socket = this.socketService.socket;
+			}
+			this.roomId = this.socketService.roomId;
+			console.log(this.view?.state.doc.toJSON());
 		},
 
 		joinCollabSession() {
-			this.view?.destroy();
-			if (!this.socketService && this.roomId) {
-				this.socketService = new SocketService(this, this.roomId);
-				this.view = this.socketService.getView();
-			}
+			this.socketService = new SocketService(this, this.inputRoomId);
+			this.roomId = this.inputRoomId;
+			this.inputRoomId = '';
 		},
 
 		newEditorService(
@@ -109,10 +115,12 @@ export default defineComponent({
 				this.view.destroy();
 			}
 			const doc = startDoc.split('\n');
-			return new EditorService(component, {
+			this.editorService = new EditorService(component, {
 				doc: doc,
 				updates: startUpdates,
-			}).generateEditor();
+			});
+
+			return this.editorService.generateEditor();
 		},
 
 		connectGit() {
@@ -122,6 +130,8 @@ export default defineComponent({
 		newBlankEditor() {
 			this.view?.destroy();
 			this.view = this.newEditorService(this);
+			this.socketService?.disconnect();
+			this.socketService = null;
 		},
 	},
 

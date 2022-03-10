@@ -1,3 +1,4 @@
+/* eslint-disable no-plusplus */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { receiveUpdates } from '@codemirror/collab';
 import { ChangeSet } from '@codemirror/state';
@@ -12,75 +13,103 @@ export default class SocketService {
 
 	vueComponent: any;
 
-	// view: EditorView;
+	view: EditorView | null = null;
 
 	constructor(vueComponent: any, roomId?: string | null) {
-		// define socket connection
-		this.socket = io('https://text-sockets.herokuapp.com/');
-		// this.socket = io('http://localhost:8080/');
+		// this.socket = io('https://text-sockets.herokuapp.com/');
+		this.socket = io('http://localhost:8080/');
 
 		this.vueComponent = vueComponent;
 
-		// no roomid means new session
+		// new session
 		if (!roomId) {
-			this.roomId = null;
-			this.vueComponent.view = new EditorService(vueComponent, {
-				doc: [''],
-				updates: [],
-			}).generateEditor();
+			this.roomId = SocketService.generateRoomId();
+			console.log(this.vueComponent.view.state.doc);
+			this.view = new EditorService(
+				vueComponent,
+				{
+					doc: this.vueComponent.view.state.doc.toJSON(),
+					updates: [],
+				},
+				this.socket,
+			).generateEditor();
+			this.vueComponent.view.destroy();
+			this.socketsCreateNewRoom();
+			// create collab out of existing session
 		} else {
 			this.roomId = roomId;
+			console.log(this.vueComponent.view.state.doc.toJSON());
+			this.view = this.vueComponent.view;
+			this.socketsJoinRoom();
 		}
-
-		// this.socket = io('https://text-sockets.herokuapp.com/');
-		// // this.socket = io('http://localhost:8080/');
-		// this.view = new EditorService(vueComponent, {
-		// 	doc: [''],
-		// 	updates: [],
-		// }).generateEditor();
-		// this.vueComponent = vueComponent;
-		// // perhaps split this constructor into two funcs, one for join and one for create
-		// this.roomId = roomId;
-		// this.socket.emit('join', roomId);
-		// this.socket.on('joined', documentData => {
-		// 	// this should be for joining not creating since creating should take in
-		// 	// current doc state
-		// 	this.view.destroy();
-		// 	const editor = new EditorService(
-		// 		vueComponent,
-		// 		documentData,
-		// 		this.socket,
-		// 	);
-		// 	this.view = editor.generateEditor();
-
-		// 	if (this.view !== null) {
-		// 		this.socket.on('serverOpUpdate', changes => {
-		// 			const deserializedChangeSet = changes.updates.map(
-		// 				(u: { updateJSON: any; clientID: string }) => {
-		// 					return {
-		// 						changes: ChangeSet.fromJSON(u.updateJSON),
-		// 						clientID: u.clientID,
-		// 					};
-		// 				},
-		// 			);
-		// 			this.view.dispatch(
-		// 				receiveUpdates(this.view.state, deserializedChangeSet),
-		// 			);
-		// 		});
-		// 	}
-		// });
 	}
 
-	getView() {
-		if (this.vueComponent.view) return this.vueComponent.view;
-		return false;
+	socketsCreateNewRoom() {
+		this.socket.emit('create', {
+			roomId: this.roomId,
+			documentData: {
+				doc: this.view?.state.doc,
+				updates: [],
+			},
+		});
+		this.socket.on('created', documentData => {
+			console.log(documentData.updates);
+			this.vueComponent.editorService.setDocumentState(documentData);
+			if (this.vueComponent.view !== null) {
+				this.socket.on('serverOpUpdate', changes => {
+					const deserializedChangeSet = changes.updates.map(
+						(u: { updateJSON: any; clientID: string }) => {
+							return {
+								changes: ChangeSet.fromJSON(u.updateJSON),
+								clientID: u.clientID,
+							};
+						},
+					);
+					this.view?.dispatch(
+						receiveUpdates(this.view.state, deserializedChangeSet),
+					);
+				});
+			}
+		});
+	}
+
+	socketsJoinRoom() {
+		this.socket.emit('join', this.roomId);
+		this.socket.on('joined', documentData => {
+			this.vueComponent.editorService.setDocumentState(documentData);
+			if (this.vueComponent.view !== null) {
+				this.socket.on('serverOpUpdate', changes => {
+					const deserializedChangeSet = changes.updates.map(
+						(u: { updateJSON: any; clientID: string }) => {
+							return {
+								changes: ChangeSet.fromJSON(u.updateJSON),
+								clientID: u.clientID,
+							};
+						},
+					);
+					this.view?.dispatch(
+						receiveUpdates(this.view.state, deserializedChangeSet),
+					);
+				});
+			}
+		});
+	}
+
+	static generateRoomId() {
+		let result = '';
+		const roomIdLength = 5;
+		const characters =
+			'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+		const charactersLength = characters.length;
+		for (let i = 0; i < roomIdLength; i++) {
+			result += characters.charAt(
+				Math.floor(Math.random() * charactersLength),
+			);
+		}
+		return result;
 	}
 
 	disconnect() {
 		this.socket.close();
 	}
-
-	// listen() {
-	// 	this.socket.on('joined', documentData => {});
-	// }
 }
