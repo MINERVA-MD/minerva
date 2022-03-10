@@ -143,7 +143,6 @@ export default class EditorService {
 
 		this.socket?.on('created', documentData => {
 			this.socket?.on('serverOpUpdate', changes => {
-				console.log(changes);
 				const deserializedChangeSet = changes.updates.map(
 					(u: { updateJSON: any; clientID: string }) => {
 						return {
@@ -152,7 +151,7 @@ export default class EditorService {
 						};
 					},
 				);
-				console.log(deserializedChangeSet);
+
 				this.view?.update([
 					receiveUpdates(this.view.state, deserializedChangeSet),
 				]);
@@ -166,8 +165,10 @@ export default class EditorService {
 
 		this.socket?.emit('join', this.roomId);
 		this.socket?.on('joined', documentData => {
-			console.log(documentData.doc);
+			console.log('here');
 			this.view = this.generateEditor(Text.of(documentData.doc));
+			this.vueComponent.view = this.view;
+
 			this.socket?.on('serverOpUpdate', changes => {
 				const deserializedChangeSet = changes.updates.map(
 					(u: { updateJSON: any; clientID: string }) => {
