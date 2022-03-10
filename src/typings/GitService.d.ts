@@ -1,0 +1,1 @@
+export type GitRepo = { name: string; cloneUrl: string }
