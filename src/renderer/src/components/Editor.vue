@@ -12,7 +12,7 @@
 			{{ repo.name }}
 		</option>
 	</select>
-	<span v-if="socketService"> room id: {{ roomId }} </span>
+	<span v-if="roomId"> room id: {{ roomId }} </span>
 	<br />
 	<br />
 	<div
@@ -34,7 +34,6 @@
 <script lang="ts">
 import type { Socket } from 'socket.io-client';
 import EditorService from '../services/editor.service';
-import SocketService from '../services/socket.service';
 import type { EditorView } from '@codemirror/view';
 import GithubClientService from '../services/github-client.service';
 import { defineComponent } from 'vue-demi';
@@ -46,7 +45,6 @@ export default defineComponent({
 	data(): {
 		editorService: EditorService | null;
 		view: EditorView | null;
-		socketService: SocketService | null;
 		gitService: IGitClientService | null;
 		repos: GitRepo[] | null;
 		repoSelect: string;
@@ -58,7 +56,6 @@ export default defineComponent({
 		return {
 			editorService: null,
 			view: null,
-			socketService: null,
 			gitService: null,
 			repos: null,
 			repoSelect: '',
@@ -92,17 +89,17 @@ export default defineComponent({
 
 	methods: {
 		createCollabSession() {
-			this.socketService = new SocketService(this);
-			if (this.editorService) {
-				this.editorService.socket = this.socketService.socket;
-			}
-			this.roomId = this.socketService.roomId;
-			console.log(this.view?.state.doc.toJSON());
+			//this.socketService = new SocketService(this);
+			this.roomId = EditorService.generateRoomId();
+			this.editorService?.socketsCreateNewRoom(this.roomId);
 		},
 
 		joinCollabSession() {
-			this.socketService = new SocketService(this, this.inputRoomId);
+			if (!this.editorService?.socket) {
+				this.editorService?.openSocketConnection();
+			}
 			this.roomId = this.inputRoomId;
+			this.editorService?.socketsJoinRoom(this.roomId);
 			this.inputRoomId = '';
 		},
 
@@ -128,6 +125,7 @@ export default defineComponent({
 		},
 
 		newBlankEditor() {
+			this.roomId = '';
 			this.view?.destroy();
 			this.view = this.newEditorService(this);
 			this.socketService?.disconnect();
