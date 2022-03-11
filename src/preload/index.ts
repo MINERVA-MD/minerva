@@ -1,7 +1,6 @@
 /* eslint-disable no-use-before-define */
 import fs from 'fs';
 import { contextBridge, ipcRenderer } from 'electron';
-import { marked } from 'marked';
 import { domReady } from './utils';
 import { useLoading } from './loading';
 
