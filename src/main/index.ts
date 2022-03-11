@@ -1,4 +1,5 @@
 import { app, BrowserWindow, shell } from 'electron'
+import { ipcMain } from 'electron'
 import { release } from 'os'
 import { join } from 'path'
 import fs from 'fs'
@@ -75,4 +76,6 @@ app.on('activate', () => {
 })
 
 
-new GitService();
+ipcMain.on('github-connect', async (event, username) => {
+  new GitService(username)
+});

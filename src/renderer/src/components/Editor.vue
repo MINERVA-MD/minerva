@@ -67,22 +67,13 @@ export default defineComponent({
 
 	mounted() {
 		this.view = this.newEditorService(this);
-
-		// listeners
-		window.ipcRenderer.on('repos', (event, userRepos) => {
-			this.repos = userRepos;
-		});
-		window.ipcRenderer.on('repo-content', (event, repoContent) => {
-			if (this.view) this.view.destroy();
-			this.view = this.newEditorService(this, false, repoContent);
-		});
 	},
 
 	updated() {
 		if (this.repoSelect !== this.repo) {
 			this.repo = this.repoSelect;
-			const url = `https://raw.githubusercontent.com/${this.gitService?.username}/${this.repo}/main/README.md`;
-			this.gitService?.getRepoContent(url);
+
+			// clone
 		}
 	},
 
@@ -125,8 +116,10 @@ export default defineComponent({
 			return this.editorService.generateEditor();
 		},
 
-		connectGit() {
+		async connectGit() {
 			this.gitService = new GithubClientService('testminerva');
+			this.repos = await this.gitService.getRepoList();
+			console.log(this.repos);
 		},
 
 		newBlankEditor() {
