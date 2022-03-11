@@ -12,6 +12,13 @@
 			{{ repo.name }}
 		</option>
 	</select>
+	<button
+		type="button"
+		style="background-color: green; color: white"
+		v-on:click="commitChanges"
+	>
+		commit
+	</button>
 	<span v-if="roomId"> room id: {{ roomId }} </span>
 	<br />
 	<br />
@@ -69,11 +76,17 @@ export default defineComponent({
 		this.view = this.newEditorService(this);
 	},
 
-	updated() {
+	async updated() {
 		if (this.repoSelect !== this.repo) {
 			this.repo = this.repoSelect;
-
 			// clone
+			window.ipcRenderer.invoke('clone-repo', this.repo);
+			const fileContents = await window.ipcRenderer.invoke(
+				'get-file-content',
+				this.repo,
+			);
+			if (this.view) this.view.destroy();
+			this.view = this.newEditorService(this, false, fileContents);
 		}
 	},
 
@@ -117,9 +130,24 @@ export default defineComponent({
 		},
 
 		async connectGit() {
-			this.gitService = new GithubClientService('testminerva');
+			this.gitService = new GithubClientService(
+				'testminerva',
+				'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',
+			);
 			this.repos = await this.gitService.getRepoList();
 			console.log(this.repos);
+		},
+
+		async commitChanges() {
+			const editorJSON = this.view?.state.doc.toJSON();
+			const editorText = editorJSON?.join('\n');
+
+			await window.ipcRenderer.invoke(
+				'commit-changes',
+				this.repo,
+				'README.md',
+				editorText,
+			);
 		},
 
 		newBlankEditor() {

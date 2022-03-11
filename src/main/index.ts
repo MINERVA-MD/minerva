@@ -2,7 +2,6 @@ import { app, BrowserWindow, shell } from 'electron'
 import { ipcMain } from 'electron'
 import { release } from 'os'
 import { join } from 'path'
-import fs from 'fs'
 import GitService from './services/git.service'
 
 // Disable GPU Acceleration for Windows 7
@@ -76,6 +75,6 @@ app.on('activate', () => {
 })
 
 
-ipcMain.on('github-connect', async (event, username) => {
-  new GitService(username)
+ipcMain.on('github-connect', async (event, username, token) => {
+  new GitService(username, token)
 });
