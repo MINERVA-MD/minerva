@@ -129,8 +129,8 @@ export default class EditorService {
 	}
 
 	openSocketConnection() {
-		// return io('https://text-sockets.herokuapp.com/');
-		return io('http://localhost:8080/');
+		return io('https://text-sockets.herokuapp.com/');
+		// return io('http://localhost:8080/');
 	}
 
 	socketsCreateNewRoom(roomId: string) {
