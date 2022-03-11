@@ -48,10 +48,15 @@ export default class EditorService {
 		}
 	}
 
-	generateEditor(doc?: Text) {
+	generateEditor(doc?: Text, updates?: Update[]) {
 		let docText: Text = this.doc;
 		if (doc) {
 			docText = doc;
+		}
+
+		let version: number = this.updates.length;
+		if (updates) {
+			version = updates.length;
 		}
 
 		const state = EditorState.create({
@@ -59,7 +64,7 @@ export default class EditorService {
 			extensions: [
 				basicSetup,
 				markdown(),
-				collab({ startVersion: this.updates.length }),
+				collab({ startVersion: version }),
 				EditorView.lineWrapping,
 				this.editorClient(this.vueComponent, this.socket),
 			],
@@ -124,8 +129,8 @@ export default class EditorService {
 	}
 
 	openSocketConnection() {
-		return io('https://text-sockets.herokuapp.com/');
-		// return io('http://localhost:8080/');
+		// return io('https://text-sockets.herokuapp.com/');
+		return io('http://localhost:8080/');
 	}
 
 	socketsCreateNewRoom(roomId: string) {
@@ -159,12 +164,15 @@ export default class EditorService {
 	}
 
 	socketsJoinRoom(roomId: string) {
-		this.roomId = roomId;
 		this.view.destroy();
+		this.roomId = roomId;
 
 		this.socket?.emit('join', this.roomId);
 		this.socket?.on('joined', documentData => {
-			this.view = this.generateEditor(Text.of(documentData.doc));
+			this.view = this.generateEditor(
+				Text.of(documentData.doc),
+				documentData.updates,
+			);
 			this.vueComponent.view = this.view;
 
 			this.socket?.on('serverOpUpdate', changes => {
