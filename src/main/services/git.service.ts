@@ -56,7 +56,7 @@ export default class GitService {
 						`${this.localRepoPath}/${repoName}/${fileName}`,
 						editorText,
 					);
-					await this.commitAndPush();
+					await this.commitAndPush(repoName);
 					return 'success';
 				} catch (error) {
 					return error;
@@ -79,9 +79,10 @@ export default class GitService {
 		return repos;
 	}
 
-	async commitAndPush() {
+	async commitAndPush(repoName: string) {
 		try {
 			await simpleGit()
+				.cwd(`${this.localRepoPath}/${repoName}`)
 				.add('./*')
 				.commit('committed from Minerva!')
 				.push(['-u', 'origin', 'main'], () => {
