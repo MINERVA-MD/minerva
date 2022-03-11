@@ -12,6 +12,13 @@
 			{{ repo.name }}
 		</option>
 	</select>
+	<button
+		type="button"
+		style="background-color: green; color: white"
+		v-on:click="commitChanges"
+	>
+		commit
+	</button>
 	<span v-if="roomId"> room id: {{ roomId }} </span>
 	<br />
 	<br />
@@ -67,22 +74,19 @@ export default defineComponent({
 
 	mounted() {
 		this.view = this.newEditorService(this);
-
-		// listeners
-		window.ipcRenderer.on('repos', (event, userRepos) => {
-			this.repos = userRepos;
-		});
-		window.ipcRenderer.on('repo-content', (event, repoContent) => {
-			if (this.view) this.view.destroy();
-			this.view = this.newEditorService(this, false, repoContent);
-		});
 	},
 
-	updated() {
+	async updated() {
 		if (this.repoSelect !== this.repo) {
 			this.repo = this.repoSelect;
-			const url = `https://raw.githubusercontent.com/${this.gitService?.username}/${this.repo}/main/README.md`;
-			this.gitService?.getRepoContent(url);
+			// clone
+			window.ipcRenderer.invoke('clone-repo', this.repo);
+			const fileContents = await window.ipcRenderer.invoke(
+				'get-file-content',
+				this.repo,
+			);
+			if (this.view) this.view.destroy();
+			this.view = this.newEditorService(this, false, fileContents);
 		}
 	},
 
@@ -125,8 +129,25 @@ export default defineComponent({
 			return this.editorService.generateEditor();
 		},
 
-		connectGit() {
-			this.gitService = new GithubClientService('testminerva');
+		async connectGit() {
+			this.gitService = new GithubClientService(
+				'testminerva',
+				'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',
+			);
+			this.repos = await this.gitService.getRepoList();
+			console.log(this.repos);
+		},
+
+		async commitChanges() {
+			const editorJSON = this.view?.state.doc.toJSON();
+			const editorText = editorJSON?.join('\n');
+
+			await window.ipcRenderer.invoke(
+				'commit-changes',
+				this.repo,
+				'README.md',
+				editorText,
+			);
 		},
 
 		newBlankEditor() {

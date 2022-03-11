@@ -1,21 +1,28 @@
 import type { GitRepo } from '../../../typings/GitService';
-import type IGitClientService from '../Interfaces/IGitClientService';
+// import type IGitClientService from '../Interfaces/IGitClientService';
 
-export default class GithubClientService implements IGitClientService {
+export default class GithubClientService /* implements IGitClientService */ {
 	username: string;
 
-	repositories: GitRepo[] = [];
+	repo: string;
 
-	constructor(username: string) {
+	token: string;
+
+	userRepositories: GitRepo[] = [];
+
+	constructor(username: string, token: string) {
 		this.username = username;
-		this.getRepos();
+		this.repo = '';
+		this.token = token;
+		window.ipcRenderer.send('github-connect', this.username, this.token);
 	}
 
-	getRepos(): void {
-		window.ipcRenderer.send('github-connect', this.username);
-	}
+	async getRepoList(): Promise<GitRepo[]> {
+		this.userRepositories = await window.ipcRenderer.invoke(
+			'get-repo-list',
+			this.username,
+		);
 
-	getRepoContent(repoUrl: string) {
-		window.ipcRenderer.send('get-repo-content', repoUrl);
+		return this.userRepositories;
 	}
 }
