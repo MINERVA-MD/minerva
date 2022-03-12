@@ -14,6 +14,8 @@ export default class GitService {
 
 	localRepoPath = '';
 
+	remote = '';
+
 	constructor(username: string, token: string) {
 		this.localRepoPath = `${app.getPath('documents')}/minerva_repos`;
 		this.username = username;
@@ -32,6 +34,7 @@ export default class GitService {
 		ipcMain.handle('clone-repo', async (event, repoName: string) => {
 			// await this.checkPathExists();
 			const remote = `https://${this.token}@github.com/${this.username}/${repoName}.git`;
+			this.remote = remote;
 			await simpleGit()
 				.clone(remote, `${this.localRepoPath}/${repoName}`)
 				.catch(e => console.log(e));
@@ -85,7 +88,7 @@ export default class GitService {
 				.cwd(`${this.localRepoPath}/${repoName}`)
 				.add('./*')
 				.commit('committed from Minerva!')
-				.push(['-u', 'origin', 'main'], () => {
+				.push(['-u', this.remote, 'main'], () => {
 					console.log('successfully pushed');
 				});
 		} catch (error) {
