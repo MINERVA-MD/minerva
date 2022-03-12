@@ -132,7 +132,7 @@ export default defineComponent({
 		async connectGit() {
 			this.gitService = new GithubClientService(
 				'testminerva',
-				'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',
+				'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',
 			);
 			this.repos = await this.gitService.getRepoList();
 			console.log(this.repos);
