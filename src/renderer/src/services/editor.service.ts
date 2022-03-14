@@ -100,11 +100,9 @@ export default class EditorService {
 									updateJSON: u.changes.toJSON(),
 									clientID: u.clientID,
 								};
-
 								return serializedUpdate;
 							},
 						);
-						console.log(unsentUpdates);
 
 						socket.emit('clientOpUpdate', {
 							version: getSyncedVersion(view.state),
