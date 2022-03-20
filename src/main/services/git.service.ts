@@ -34,14 +34,9 @@ export default class GitService {
 			// await this.checkPathExists();
 			const remote = `https://${this.token}@github.com/${this.username}/${repoName}.git`;
 			this.remote = remote;
-			try {
-				await simpleGit()
-					.clone(remote, `${this.localRepoPath}/${repoName}`)
-					.catch(e => console.log(e));
-			} catch (error) {
-				console.log(error);
-				return error;
-			}
+			await simpleGit()
+				.clone(remote, `${this.localRepoPath}/${repoName}`)
+				.catch(e => console.log(e));
 		});
 
 		ipcMain.handle(
