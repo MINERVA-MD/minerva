@@ -1,7 +1,7 @@
 import type { GitRepo } from '../../../typings/GitService';
-// import type IGitClientService from '../Interfaces/IGitClientService';
+import type IGitClientService from '../Interfaces/IGitClientService';
 
-export default class GithubClientService /* implements IGitClientService */ {
+export default class GithubClientService implements IGitClientService {
 	username: string;
 
 	repo: string;
@@ -24,5 +24,17 @@ export default class GithubClientService /* implements IGitClientService */ {
 		);
 
 		return this.userRepositories;
+	}
+
+	async cloneSelectedRepo() {
+		await window.ipcRenderer.invoke('clone-repo', this.repo);
+	}
+
+	async getReadMeContents() {
+		const fileContents = await window.ipcRenderer.invoke(
+			'get-file-content',
+			this.repo,
+		);
+		return fileContents;
 	}
 }

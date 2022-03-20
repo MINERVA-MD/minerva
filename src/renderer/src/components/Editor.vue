@@ -51,7 +51,7 @@ export default defineComponent({
 	data(): {
 		editorService: EditorService | null;
 		view: EditorView | null;
-		gitService: IGitClientService | null;
+		gitService: GithubClientService | null;
 		repos: GitRepo[] | null;
 		repoSelect: string;
 		repo: string;
@@ -77,14 +77,13 @@ export default defineComponent({
 	},
 
 	async updated() {
-		if (this.repoSelect !== this.repo) {
+		if (this.repoSelect !== this.repo && this.gitService) {
 			this.repo = this.repoSelect;
-			// clone
-			window.ipcRenderer.invoke('clone-repo', this.repo);
-			const fileContents = await window.ipcRenderer.invoke(
-				'get-file-content',
-				this.repo,
-			);
+			this.gitService.repo = this.repo;
+
+			await this.gitService.cloneSelectedRepo();
+			const fileContents = await this.gitService.getReadMeContents();
+
 			if (this.view) this.view.destroy();
 			this.view = this.newEditorService(this, false, fileContents);
 		}
@@ -135,7 +134,6 @@ export default defineComponent({
 				'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',
 			);
 			this.repos = await this.gitService.getRepoList();
-			console.log(this.repos);
 		},
 
 		async commitChanges() {
