@@ -86,6 +86,7 @@ export default class EditorService {
 		if (socket !== null) {
 			plugin = ViewPlugin.define(view => ({
 				update(editorUpdate) {
+					console.log(editorUpdate.state.selection.main.head);
 					if (editorUpdate.docChanged) {
 						// update parser
 						const doc = view.state.doc.toJSON();
@@ -114,6 +115,7 @@ export default class EditorService {
 		} else {
 			plugin = ViewPlugin.define(view => ({
 				update(editorUpdate) {
+					console.log(editorUpdate.state.selection.main.head);
 					if (editorUpdate.docChanged) {
 						const doc = view.state.doc.toJSON();
 						const documentString = doc.join('\n');
