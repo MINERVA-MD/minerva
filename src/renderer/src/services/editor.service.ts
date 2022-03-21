@@ -12,10 +12,10 @@ import {
 } from '@codemirror/collab';
 import { markdown } from '@codemirror/lang-markdown';
 import { Text } from '@codemirror/text';
-import { ViewPlugin } from '@codemirror/view';
+import { Decoration, ViewPlugin, WidgetType } from '@codemirror/view';
 import { io, Socket } from 'socket.io-client';
 import { marked } from 'marked';
-import { ChangeSet } from '@codemirror/state';
+import { ChangeSet, StateField } from '@codemirror/state';
 
 export default class EditorService {
 	doc: Text;
@@ -87,6 +87,7 @@ export default class EditorService {
 			plugin = ViewPlugin.define(view => ({
 				update(editorUpdate) {
 					console.log(editorUpdate.state.selection.main.head);
+
 					if (editorUpdate.docChanged) {
 						// update parser
 						const doc = view.state.doc.toJSON();

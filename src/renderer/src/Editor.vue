@@ -1,5 +1,6 @@
-<template id="test">
-	<button v-on:click="newBlankEditor">New</button>
+<template>
+	<NavBar />
+	<!-- <button v-on:click="newBlankEditor">New</button>
 	<button v-on:click="createCollabSession">Create Collab</button>
 	<input type="text" v-model="inputRoomId" placeholder="room id" />
 	<button v-on:click="joinCollabSession">Join Collab</button>
@@ -18,7 +19,7 @@
 		v-on:click="commitChanges"
 	>
 		commit
-	</button>
+	</button> -->
 	<span v-if="roomId"> room id: {{ roomId }} </span>
 	<br />
 	<br />
@@ -39,11 +40,12 @@
 </template>
 
 <script lang="ts">
-import EditorService from '../services/editor.service';
+import NavBar from './components/NavBar.vue';
+import EditorService from './services/editor.service';
 import type { EditorView } from '@codemirror/view';
-import GithubClientService from '../services/github-client.service';
+import GithubClientService from './services/github-client.service';
 import { defineComponent } from 'vue-demi';
-import type IGitClientService from '../Interfaces/IGitClientService';
+import type IGitClientService from './Interfaces/IGitClientService';
 import type { GitRepo } from '@/typings/GitService';
 import type { Update } from '@codemirror/collab';
 
@@ -115,6 +117,7 @@ export default defineComponent({
 			if (this.view) {
 				this.view.destroy();
 			}
+
 			const doc = startDoc.split('\n');
 			this.editorService = new EditorService(
 				component,
@@ -160,5 +163,6 @@ export default defineComponent({
 	unmounted() {
 		if (this.view) this.view.destroy();
 	},
+	components: { NavBar },
 });
 </script>
