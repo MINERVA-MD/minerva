@@ -37,6 +37,7 @@
 			v-html="parsedHTML"
 		></div>
 	</div>
+	<p class="">Hi</p>
 </template>
 
 <script lang="ts">
@@ -166,3 +167,4 @@ export default defineComponent({
 	components: { NavBar },
 });
 </script>
+<style></style>
