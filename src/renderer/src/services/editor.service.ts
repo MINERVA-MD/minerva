@@ -12,10 +12,10 @@ import {
 } from '@codemirror/collab';
 import { markdown } from '@codemirror/lang-markdown';
 import { Text } from '@codemirror/text';
-import { ViewPlugin } from '@codemirror/view';
+import { Decoration, ViewPlugin, WidgetType } from '@codemirror/view';
 import { io, Socket } from 'socket.io-client';
 import { marked } from 'marked';
-import { ChangeSet } from '@codemirror/state';
+import { ChangeSet, StateField } from '@codemirror/state';
 
 export default class EditorService {
 	doc: Text;
@@ -86,6 +86,10 @@ export default class EditorService {
 		if (socket !== null) {
 			plugin = ViewPlugin.define(view => ({
 				update(editorUpdate) {
+					console.log(
+						view.domAtPos(editorUpdate.state.selection.main.head),
+					);
+
 					if (editorUpdate.docChanged) {
 						// update parser
 						const doc = view.state.doc.toJSON();
@@ -100,11 +104,9 @@ export default class EditorService {
 									updateJSON: u.changes.toJSON(),
 									clientID: u.clientID,
 								};
-
 								return serializedUpdate;
 							},
 						);
-						console.log(unsentUpdates);
 
 						socket.emit('clientOpUpdate', {
 							version: getSyncedVersion(view.state),
@@ -116,6 +118,9 @@ export default class EditorService {
 		} else {
 			plugin = ViewPlugin.define(view => ({
 				update(editorUpdate) {
+					console.log(
+						view.domAtPos(editorUpdate.state.selection.main.head),
+					);
 					if (editorUpdate.docChanged) {
 						const doc = view.state.doc.toJSON();
 						const documentString = doc.join('\n');

@@ -1,5 +1,6 @@
 <script lang="ts">
-import Editor from './components/Editor.vue';
+import Editor from './Editor.vue';
+import './css/index.css';
 
 export default {
 	components: {
@@ -9,9 +10,7 @@ export default {
 </script>
 
 <template>
-	<div>
-		<Editor />
-	</div>
+	<Editor />
 </template>
 
 <style>
