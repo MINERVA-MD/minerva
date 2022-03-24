@@ -23,8 +23,7 @@ export default class GitService {
 		this.listen();
 	}
 
-	// listen for git service on connect and modify api endpoints
-	// accordingly
+	// listen for git service on connect and modify api endpoints accordingly
 	listen() {
 		ipcMain.handle('get-repo-list', async (event, username: string) => {
 			const repos: GitRepo[] = await this.getAllUserRepos();
@@ -43,11 +42,16 @@ export default class GitService {
 		ipcMain.handle(
 			'get-file-content',
 			async (event, repoName: string, fileName = 'README.md') => {
-				const fileData = await fs.promises.readFile(
-					`${this.localRepoPath}/${repoName}/${fileName}`,
-					'utf8',
-				);
-				return fileData;
+				try {
+					const fileData = await fs.promises.readFile(
+						`${this.localRepoPath}/${repoName}/${fileName}`,
+						'utf8',
+					);
+					return fileData;
+				} catch (error) {
+					console.log(error);
+					return error;
+				}
 			},
 		);
 

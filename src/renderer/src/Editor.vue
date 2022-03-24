@@ -1,5 +1,6 @@
-<template id="test">
-	<button v-on:click="newBlankEditor">New</button>
+<template>
+	<NavBar />
+	<!-- <button v-on:click="newBlankEditor">New</button>
 	<button v-on:click="createCollabSession">Create Collab</button>
 	<input type="text" v-model="inputRoomId" placeholder="room id" />
 	<button v-on:click="joinCollabSession">Join Collab</button>
@@ -18,7 +19,7 @@
 		v-on:click="commitChanges"
 	>
 		commit
-	</button>
+	</button> -->
 	<span v-if="roomId"> room id: {{ roomId }} </span>
 	<br />
 	<br />
@@ -36,14 +37,16 @@
 			v-html="parsedHTML"
 		></div>
 	</div>
+	<p class="">Hi</p>
 </template>
 
 <script lang="ts">
-import EditorService from '../services/editor.service';
+import NavBar from './components/NavBar.vue';
+import EditorService from './services/editor.service';
 import type { EditorView } from '@codemirror/view';
-import GithubClientService from '../services/github-client.service';
+import GithubClientService from './services/github-client.service';
 import { defineComponent } from 'vue-demi';
-import type IGitClientService from '../Interfaces/IGitClientService';
+import type IGitClientService from './Interfaces/IGitClientService';
 import type { GitRepo } from '@/typings/GitService';
 import type { Update } from '@codemirror/collab';
 
@@ -51,7 +54,7 @@ export default defineComponent({
 	data(): {
 		editorService: EditorService | null;
 		view: EditorView | null;
-		gitService: IGitClientService | null;
+		gitService: GithubClientService | null;
 		repos: GitRepo[] | null;
 		repoSelect: string;
 		repo: string;
@@ -77,14 +80,13 @@ export default defineComponent({
 	},
 
 	async updated() {
-		if (this.repoSelect !== this.repo) {
+		if (this.repoSelect !== this.repo && this.gitService) {
 			this.repo = this.repoSelect;
-			// clone
-			window.ipcRenderer.invoke('clone-repo', this.repo);
-			const fileContents = await window.ipcRenderer.invoke(
-				'get-file-content',
-				this.repo,
-			);
+			this.gitService.repo = this.repo;
+
+			await this.gitService.cloneSelectedRepo();
+			const fileContents = await this.gitService.getReadMeContents();
+
 			if (this.view) this.view.destroy();
 			this.view = this.newEditorService(this, false, fileContents);
 		}
@@ -116,6 +118,7 @@ export default defineComponent({
 			if (this.view) {
 				this.view.destroy();
 			}
+
 			const doc = startDoc.split('\n');
 			this.editorService = new EditorService(
 				component,
@@ -135,7 +138,6 @@ export default defineComponent({
 				'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',
 			);
 			this.repos = await this.gitService.getRepoList();
-			console.log(this.repos);
 		},
 
 		async commitChanges() {
@@ -162,5 +164,7 @@ export default defineComponent({
 	unmounted() {
 		if (this.view) this.view.destroy();
 	},
+	components: { NavBar },
 });
 </script>
+<style></style>
