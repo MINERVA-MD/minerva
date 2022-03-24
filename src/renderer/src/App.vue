@@ -1,5 +1,6 @@
 <script lang="ts">
 import Editor from './Editor.vue';
+import './css/index.css';
 
 export default {
 	components: {
