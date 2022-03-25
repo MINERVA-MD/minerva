@@ -21,18 +21,16 @@
 		commit
 	</button> -->
 	<span v-if="roomId"> room id: {{ roomId }} </span>
-	<div class="view-container grid grid-cols-2 gap-2 mt-6">
+	<div class="view-container grid grid-cols-2 gap-2 p-3">
 		<div
-			style="height: 90vh"
-			class="overflow-scroll"
+			class="overflow-scroll editor-height border-r-2 outline-none border-gray-200 pr-2"
 			id="editor-container"
 		></div>
 		<div class="overflow-scroll">
 			<article
-				class="markdown-body light-scheme p-4"
+				class="markdown-body editor-height p-3"
 				id="parsed-html"
 				v-html="parsedHTML"
-				style="height: 90vh"
 			></article>
 		</div>
 	</div>

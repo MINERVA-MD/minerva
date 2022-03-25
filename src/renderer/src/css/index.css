@@ -1,3 +1,22 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.titlebar {
+	-webkit-user-select: none;
+	-webkit-app-region: drag;
+}
+
+.editor-height {
+	height: calc(100vh - 116px);
+}
+
+/* Additional Codemirror styling */
+.cm-activeLine,
+.cm-activeLineGutter {
+	background: none !important;
+}
+
+.cm-focused {
+	outline: none !important;
+}
