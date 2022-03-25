@@ -10,6 +10,7 @@
 		>
 			<li>
 				<button
+					@click="newFile"
 					class="text-left font-semibold w-full p-2 hover:bg-white/20 rounded transition-all duration-100"
 				>
 					New File
@@ -64,6 +65,12 @@ export default defineComponent({
 		return {
 			inputRoomId: '',
 		};
+	},
+
+	methods: {
+		newFile() {
+			this.$emit('newFile');
+		},
 	},
 });
 </script>
