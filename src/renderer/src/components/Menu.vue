@@ -22,7 +22,7 @@
 				<button
 					class="text-left font-semibold w-full p-2 hover:bg-white/20 rounded transition-all duration-100"
 				>
-					Connect Github
+					Connect to Github
 				</button>
 				<p class="text-white text-opacity-70 mt-4 text-right text-sm">
 					Collaboration
@@ -43,7 +43,7 @@
 						placeholder="ID"
 					/>
 					<button
-						class="px-3 font-semibold ml-3 bg-white text-minerva-purple rounded"
+						class="px-3 font-semibold ml-3 bg-white text-minerva-purple rounded hover:bg-opacity-90 transition-all duration-100"
 						@click="joinCollabSession"
 					>
 						Join
@@ -57,5 +57,13 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 
-export default defineComponent({});
+export default defineComponent({
+	data(): {
+		inputRoomId: string;
+	} {
+		return {
+			inputRoomId: '',
+		};
+	},
+});
 </script>
