@@ -1,5 +1,5 @@
 <template>
-	<NavBar />
+	<NavBar @newFile="newBlankEditor" />
 	<!-- <button v-on:click="newBlankEditor">New</button>
 	<button v-on:click="createCollabSession">Create Collab</button>
 	<input type="text" v-model="inputRoomId" placeholder="room id" />

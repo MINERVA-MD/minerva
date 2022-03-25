@@ -9,7 +9,7 @@
 				<img src="/icons/menu.svg" alt="menu" />
 			</button>
 			<div v-if="menuIsOpen === true">
-				<Menu />
+				<Menu @newFile="newFile" />
 			</div>
 		</div>
 	</header>
@@ -35,6 +35,9 @@ export default defineComponent({
 			} else {
 				this.menuIsOpen = false;
 			}
+		},
+		newFile() {
+			this.$emit('newFile');
 		},
 	},
 	components: {
