@@ -4,7 +4,7 @@
 			<button
 				@click="toggleMenu"
 				type="button"
-				class="cursor-pointer mr-6"
+				class="cursor-pointer mr-6 hover:opacity-70"
 			>
 				<img src="/icons/menu.svg" alt="menu" />
 			</button>

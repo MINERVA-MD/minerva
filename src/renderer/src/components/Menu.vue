@@ -1,15 +1,56 @@
 <template>
 	<div>
-		<div class="absolute w-12 overflow-hidden inline-block">
+		<div class="absolute w-12 overflow-hidden inline-block right-3.5">
 			<div
 				class="h-7 w-9 bg-minerva-purple rotate-45 transform origin-bottom-left"
 			></div>
 		</div>
-		<div
-			class="absolute bg-minerva-purple w-72 right-4 mt-5 rounded-md p-4 shadow-lg text-white"
+		<ul
+			class="absolute bg-minerva-purple w-72 right-4 mt-5 rounded-xl p-4 shadow-lg text-white"
 		>
-			<p>menu</p>
-		</div>
+			<li>
+				<button
+					class="text-left font-semibold w-full p-2 hover:bg-white/20 rounded transition-all duration-100"
+				>
+					New File
+				</button>
+				<button
+					class="text-left font-semibold w-full p-2 hover:bg-white/20 rounded transition-all duration-100"
+				>
+					Save
+				</button>
+				<button
+					class="text-left font-semibold w-full p-2 hover:bg-white/20 rounded transition-all duration-100"
+				>
+					Connect Github
+				</button>
+				<p class="text-white text-opacity-70 mt-4 text-right text-sm">
+					Collaboration
+				</p>
+				<hr class="mb-4 opacity-70" />
+				<button
+					@click="createCollabSession"
+					class="text-left font-semibold w-full p-2 hover:bg-white/20 rounded transition-all duration-100"
+				>
+					Create Session
+				</button>
+				<div class="w-full p-2 flex font-semibold">
+					Join Session:
+					<input
+						class="w-16 px-1 h-7 rounded text-black ml-1"
+						type="text"
+						v-model="inputRoomId"
+						placeholder="ID"
+					/>
+					<button
+						class="px-3 font-semibold ml-3 bg-white text-minerva-purple rounded"
+						@click="joinCollabSession"
+					>
+						Join
+					</button>
+				</div>
+			</li>
+		</ul>
 	</div>
 </template>
 
