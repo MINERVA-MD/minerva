@@ -1,5 +1,8 @@
 <template>
-	<NavBar @newFile="newBlankEditor" />
+	<NavBar
+		@newFile="newBlankEditor"
+		@createCollabSession="createCollabSession"
+	/>
 	<!-- <button v-on:click="newBlankEditor">New</button>
 	<button v-on:click="createCollabSession">Create Collab</button>
 	<input type="text" v-model="inputRoomId" placeholder="room id" />
@@ -73,6 +76,7 @@ export default defineComponent({
 
 	mounted() {
 		this.view = this.newEditorService(this);
+		// instantiate listener method that listens for main events from menu options
 	},
 
 	async updated() {
@@ -89,6 +93,10 @@ export default defineComponent({
 	},
 
 	methods: {
+		listen() {
+			// listen for menu events here
+		},
+
 		createCollabSession() {
 			const docJSON = this.view?.state.doc.toJSON();
 			this.view?.destroy();

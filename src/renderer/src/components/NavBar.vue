@@ -9,7 +9,11 @@
 				<img src="/icons/menu.svg" alt="menu" />
 			</button>
 			<div v-if="menuIsOpen === true">
-				<Menu @newFile="newFile" />
+				<Menu
+					@newFile="newFile"
+					@createCollabSession="createCollabSession"
+					@joinSession="joinSession"
+				/>
 			</div>
 		</div>
 	</header>
@@ -38,6 +42,13 @@ export default defineComponent({
 		},
 		newFile() {
 			this.$emit('newFile');
+		},
+		createCollabSession() {
+			this.$emit('createCollabSession');
+		},
+		joinSession(roomId: string) {
+			console.log(roomId);
+			//this.$emit('createCollabSession');
 		},
 	},
 	components: {

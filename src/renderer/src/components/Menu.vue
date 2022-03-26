@@ -15,11 +15,11 @@
 				>
 					New File
 				</button>
-				<button
+				<!-- <button
 					class="text-left font-semibold w-full p-2 hover:bg-white/20 rounded transition-all duration-100"
 				>
 					Save
-				</button>
+				</button> -->
 				<button
 					class="text-left font-semibold w-full p-2 hover:bg-white/20 rounded transition-all duration-100"
 				>
@@ -45,7 +45,7 @@
 					/>
 					<button
 						class="px-3 font-semibold ml-3 bg-white text-minerva-purple rounded hover:bg-opacity-90 transition-all duration-100"
-						@click="joinCollabSession"
+						@click="joinSession(inputRoomId)"
 					>
 						Join
 					</button>
@@ -70,6 +70,13 @@ export default defineComponent({
 	methods: {
 		newFile() {
 			this.$emit('newFile');
+		},
+		createCollabSession() {
+			this.$emit('createCollabSession');
+		},
+		joinSession(roomId: string) {
+			console.log(roomId);
+			this.$emit('joinSession', roomId);
 		},
 	},
 });
