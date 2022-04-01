@@ -96,7 +96,8 @@ export default defineComponent({
 			// listen for menu events here
 		},
 
-		createCollabSession() {
+		async createCollabSession() {
+			await this.connectGit();
 			const docJSON = this.view?.state.doc.toJSON();
 			this.view?.destroy();
 			this.view = this.newEditorService(this, true, docJSON?.join('\n'));
@@ -138,7 +139,7 @@ export default defineComponent({
 		async connectGit() {
 			this.gitService = new GithubClientService(
 				'testminerva',
-				'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',
+				'ghp_test',
 			);
 			this.repos = await this.gitService.getRepoList();
 		},
