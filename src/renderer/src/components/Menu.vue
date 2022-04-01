@@ -20,11 +20,13 @@
 				>
 					Save
 				</button> -->
-				<button
-					class="text-left font-semibold w-full p-2 hover:bg-white/20 rounded transition-all duration-100"
-				>
-					Connect to Github
-				</button>
+				<RouterLink to="/gitservice">
+					<button
+						class="text-left font-semibold w-full p-2 hover:bg-white/20 rounded transition-all duration-100"
+					>
+						Connect to Github
+					</button>
+				</RouterLink>
 				<p class="text-white text-opacity-70 mt-4 text-right text-sm">
 					Collaboration
 				</p>
@@ -57,6 +59,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
+import { RouterLink } from 'vue-router';
 
 export default defineComponent({
 	data(): {
@@ -75,7 +78,6 @@ export default defineComponent({
 			this.$emit('createCollabSession');
 		},
 		joinSession(roomId: string) {
-			console.log(roomId);
 			this.$emit('joinSession', roomId);
 		},
 	},

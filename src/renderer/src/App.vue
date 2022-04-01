@@ -1,5 +1,6 @@
 <script lang="ts">
 import Editor from './views/Editor.vue';
+import { RouterView, RouterLink } from 'vue-router';
 import './css/index.css';
 
 export default {
@@ -10,7 +11,7 @@ export default {
 </script>
 
 <template>
-	<Editor />
+	<RouterView />
 </template>
 
 <style>
