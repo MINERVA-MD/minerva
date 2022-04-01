@@ -59,7 +59,6 @@ export default defineComponent({
 		repoSelect: string;
 		repo: string;
 		parsedHTML: string;
-		inputRoomId: string;
 		roomId: string | null;
 	} {
 		return {
@@ -70,7 +69,6 @@ export default defineComponent({
 			repoSelect: '',
 			repo: '',
 			parsedHTML: '',
-			inputRoomId: '',
 			roomId: '',
 		};
 	},
@@ -111,7 +109,6 @@ export default defineComponent({
 			this.view?.destroy();
 			this.view = this.newEditorService(this, true);
 			this.editorService?.socketsJoinRoom(this.roomId);
-			this.inputRoomId = '';
 		},
 
 		newEditorService(
