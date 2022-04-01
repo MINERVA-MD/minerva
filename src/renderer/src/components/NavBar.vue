@@ -1,6 +1,26 @@
 <template>
-	<header class="flex justify-end w-full mt-4">
-		<div>
+	<header class="flex justify-between w-full mt-4 items-center">
+		<div class="ml-6 flex items-center">
+			<span v-if="roomId" class="font-semibold text-minerva-gray">
+				Room ID:</span
+			>
+			<button
+				v-if="roomId"
+				class="bg-minerva-purple text-white py-0.5 px-2 rounded ml-2 flex hover:opacity-90 duration-100 transition-all items-center"
+				@click="copyRoomIdToClipboard"
+			>
+				{{ roomId }}
+				<img
+					class="ml-2 opacity-50 h-5"
+					src="/icons/copy.svg"
+					alt="copy icon"
+				/>
+			</button>
+			<span v-if="copied" class="font-semibold ml-2 text-gray-500">{{
+				copied ? 'copied!' : ''
+			}}</span>
+		</div>
+		<div class="menu">
 			<button
 				@click="toggleMenu"
 				type="button"
@@ -25,11 +45,16 @@ import Menu from './Menu.vue';
 
 export default defineComponent({
 	name: 'NavBar',
+	props: {
+		roomId: String,
+	},
 	data(): {
 		menuIsOpen: boolean;
+		copied: boolean;
 	} {
 		return {
 			menuIsOpen: false,
+			copied: false,
 		};
 	},
 	methods: {
@@ -49,6 +74,13 @@ export default defineComponent({
 		joinSession(roomId: string) {
 			console.log(roomId);
 			//this.$emit('createCollabSession');
+		},
+		copyRoomIdToClipboard() {
+			navigator.clipboard.writeText(this.roomId ? this.roomId : '');
+			setTimeout(() => {
+				this.copied = false;
+			}, 2000);
+			this.copied = true;
 		},
 	},
 	components: {
