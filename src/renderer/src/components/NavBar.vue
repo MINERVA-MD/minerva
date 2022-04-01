@@ -85,5 +85,6 @@ export default defineComponent({
 	components: {
 		Menu,
 	},
+	emits: ['joinCollabSession', 'createCollabSession', 'newFile'],
 });
 </script>
