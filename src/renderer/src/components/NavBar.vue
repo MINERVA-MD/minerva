@@ -73,7 +73,7 @@ export default defineComponent({
 		},
 		joinSession(roomId: string) {
 			console.log(roomId);
-			//this.$emit('createCollabSession');
+			this.$emit('joinCollabSession', roomId);
 		},
 		copyRoomIdToClipboard() {
 			navigator.clipboard.writeText(this.roomId ? this.roomId : '');

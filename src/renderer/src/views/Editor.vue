@@ -3,6 +3,7 @@
 		:roomId="roomId"
 		@newFile="newBlankEditor"
 		@createCollabSession="createCollabSession"
+		@joinCollabSession="joinCollabSession"
 	/>
 	<!-- <button v-on:click="newBlankEditor">New</button>
 	<button v-on:click="createCollabSession">Create Collab</button>
@@ -40,12 +41,12 @@
 </template>
 
 <script lang="ts">
-import NavBar from './components/NavBar.vue';
-import EditorService from './services/editor.service';
+import NavBar from '../components/NavBar.vue';
+import EditorService from '../services/editor.service';
 import type { EditorView } from '@codemirror/view';
-import GithubClientService from './services/github-client.service';
+import GithubClientService from '../services/github-client.service';
 import { defineComponent } from 'vue-demi';
-import type IGitClientService from './Interfaces/IGitClientService';
+import type IGitClientService from '../Interfaces/IGitClientService';
 import type { GitRepo } from '@/typings/GitService';
 import type { Update } from '@codemirror/collab';
 
@@ -105,10 +106,10 @@ export default defineComponent({
 			this.editorService?.socketsCreateNewRoom(this.roomId);
 		},
 
-		joinCollabSession() {
+		joinCollabSession(roomId: string) {
+			this.roomId = roomId;
 			this.view?.destroy();
 			this.view = this.newEditorService(this, true);
-			this.roomId = this.inputRoomId;
 			this.editorService?.socketsJoinRoom(this.roomId);
 			this.inputRoomId = '';
 		},

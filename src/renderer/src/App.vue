@@ -1,5 +1,5 @@
 <script lang="ts">
-import Editor from './Editor.vue';
+import Editor from './views/Editor.vue';
 import './css/index.css';
 
 export default {
