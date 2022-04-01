@@ -1,6 +1,6 @@
 <template>
 	<Navbar
-		:roomId="roomId"
+		:roomId="roomId ? roomId : ''"
 		@newFile="newBlankEditor"
 		@createCollabSession="createCollabSession"
 		@joinCollabSession="joinCollabSession"
@@ -12,12 +12,13 @@
 
 <script lang="ts">
 import { RouterView, RouterLink } from 'vue-router';
+import { defineComponent } from 'vue-demi';
 import './css/index.css';
 import Editor from './views/Editor.vue';
 import Navbar from './components/NavBar.vue';
 import { VueElement } from 'vue-demi';
 
-export default {
+export default defineComponent({
 	components: {
 		Navbar,
 		Editor,
@@ -31,23 +32,20 @@ export default {
 	},
 	methods: {
 		newBlankEditor() {
-			if ((this.$refs.view as any).newBlankEditor) {
-				this.roomId = '';
-				(this.$refs.view as any).newBlankEditor();
-			}
+			this.roomId = '';
+			//(this.$refs.view as any)?.newBlankEditor();
+			const child: any = this.$refs.view;
+			child.newBlankEditor();
 		},
 		createCollabSession() {
-			if ((this.$refs.view as any).createCollabSession)
-				this.roomId = (this.$refs.view as any).createCollabSession();
+			this.roomId = (this.$refs.view as any)?.createCollabSession();
 		},
 		joinCollabSession(roomId: string) {
-			if ((this.$refs.view as any).joinCollabSession) {
-				this.roomId = roomId;
-				(this.$refs.view as any).joinCollabSession(roomId);
-			}
+			this.roomId = roomId;
+			(this.$refs.view as any)?.joinCollabSession(roomId);
 		},
 	},
-};
+});
 </script>
 
 <style>
