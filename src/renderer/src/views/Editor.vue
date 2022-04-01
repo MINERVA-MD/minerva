@@ -1,5 +1,10 @@
 <template>
-	<NavBar/>
+	<!-- <NavBar
+		:roomId="roomId"
+		@newFile="newBlankEditor"
+		@createCollabSession="createCollabSession"
+		@joinCollabSession="joinCollabSession"
+	/> -->
 	<!-- <button v-on:click="newBlankEditor">New</button>
 	<button v-on:click="createCollabSession">Create Collab</button>
 	<input type="text" v-model="inputRoomId" placeholder="room id" />
@@ -20,33 +25,28 @@
 	>
 		commit
 	</button> -->
-	<span v-if="roomId"> room id: {{ roomId }} </span>
-	<br />
-	<br />
-	<div
-		class="view-container"
-		style="display: grid; grid-template-columns: 1fr 1fr"
-	>
+	<div class="view-container grid grid-cols-2 gap-2 p-3">
 		<div
+			class="overflow-auto editor-height border-r-2 outline-none border-gray-200 pr-2"
 			id="editor-container"
-			style="border-right: 1px lightgray solid; height: 90vh"
 		></div>
-		<div
-			class="markdown-body light-scheme"
-			id="parsed-html"
-			v-html="parsedHTML"
-		></div>
+		<div class="overflow-auto">
+			<article
+				class="markdown-body editor-height p-3"
+				id="parsed-html"
+				v-html="parsedHTML"
+			></article>
+		</div>
 	</div>
-	<p class="">Hi</p>
 </template>
 
 <script lang="ts">
-import NavBar from './components/NavBar.vue';
-import EditorService from './services/editor.service';
+import NavBar from '../components/NavBar.vue';
+import EditorService from '../services/editor.service';
 import type { EditorView } from '@codemirror/view';
-import GithubClientService from './services/github-client.service';
+import GithubClientService from '../services/github-client.service';
 import { defineComponent } from 'vue-demi';
-import type IGitClientService from './Interfaces/IGitClientService';
+import type IGitClientService from '../Interfaces/IGitClientService';
 import type { GitRepo } from '@/typings/GitService';
 import type { Update } from '@codemirror/collab';
 
@@ -59,7 +59,6 @@ export default defineComponent({
 		repoSelect: string;
 		repo: string;
 		parsedHTML: string;
-		inputRoomId: string;
 		roomId: string | null;
 	} {
 		return {
@@ -70,13 +69,13 @@ export default defineComponent({
 			repoSelect: '',
 			repo: '',
 			parsedHTML: '',
-			inputRoomId: '',
 			roomId: '',
 		};
 	},
 
 	mounted() {
 		this.view = this.newEditorService(this);
+		// instantiate listener method that listens for main events from menu options
 	},
 
 	async updated() {
@@ -93,20 +92,24 @@ export default defineComponent({
 	},
 
 	methods: {
+		listen() {
+			// listen for menu events here
+		},
+
 		createCollabSession() {
 			const docJSON = this.view?.state.doc.toJSON();
 			this.view?.destroy();
 			this.view = this.newEditorService(this, true, docJSON?.join('\n'));
 			this.roomId = EditorService.generateRoomId();
 			this.editorService?.socketsCreateNewRoom(this.roomId);
+			return this.roomId;
 		},
 
-		joinCollabSession() {
+		joinCollabSession(roomId: string) {
+			this.roomId = roomId;
 			this.view?.destroy();
 			this.view = this.newEditorService(this, true);
-			this.roomId = this.inputRoomId;
 			this.editorService?.socketsJoinRoom(this.roomId);
-			this.inputRoomId = '';
 		},
 
 		newEditorService(
@@ -167,4 +170,3 @@ export default defineComponent({
 	components: { NavBar },
 });
 </script>
-<style></style>
