@@ -33,9 +33,7 @@ export default defineComponent({
 	methods: {
 		newBlankEditor() {
 			this.roomId = '';
-			//(this.$refs.view as any)?.newBlankEditor();
-			const child: any = this.$refs.view;
-			child.newBlankEditor();
+			(this.$refs.view as any)?.newBlankEditor();
 		},
 		createCollabSession() {
 			this.roomId = (this.$refs.view as any)?.createCollabSession();
