@@ -35,8 +35,8 @@ export default defineComponent({
 			this.roomId = '';
 			(this.$refs.view as any)?.newBlankEditor();
 		},
-		createCollabSession() {
-			this.roomId = (this.$refs.view as any)?.createCollabSession();
+		async createCollabSession() {
+			this.roomId = await (this.$refs.view as any)?.createCollabSession();
 		},
 		joinCollabSession(roomId: string) {
 			this.roomId = roomId;
