@@ -26,10 +26,10 @@
 	<span v-if="roomId"> room id: {{ roomId }} </span>
 	<div class="view-container grid grid-cols-2 gap-2 p-3">
 		<div
-			class="overflow-scroll editor-height border-r-2 outline-none border-gray-200 pr-2"
+			class="overflow-auto editor-height border-r-2 outline-none border-gray-200 pr-2"
 			id="editor-container"
 		></div>
-		<div class="overflow-scroll">
+		<div class="overflow-auto">
 			<article
 				class="markdown-body editor-height p-3"
 				id="parsed-html"
@@ -171,4 +171,3 @@ export default defineComponent({
 	components: { NavBar },
 });
 </script>
-<style></style>
