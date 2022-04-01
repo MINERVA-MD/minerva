@@ -1,27 +1,50 @@
 /* eslint-disable class-methods-use-this */
-import dotenv from 'dotenv';
-import { ipcMain, app } from 'electron';
-import axios from 'axios';
-import type { GitRepo } from '@/typings/GitService';
-import simpleGit from 'simple-git';
 import fs from 'fs';
+import axios from 'axios';
+import assert from 'assert';
+import dotenv from 'dotenv';
+import simpleGit from 'simple-git';
+import { ipcMain, app } from 'electron';
+
+import type { GitRepo } from '@/typings/GitService';
 
 dotenv.config();
 export default class GitService {
-	token = '';
+	private token = '';
 
-	username = '';
+	private username = '';
 
-	localRepoPath = '';
+	private localRepoPath = '';
 
-	remote = '';
+	private remote = '';
 
 	constructor(username: string, token: string) {
+		console.log('Instantiating new Github Service');
 		this.localRepoPath = `${app.getPath('documents')}/minerva_repos`;
 		this.username = username;
 		this.token = token;
+		this.saveTokenAsEnv(token);
 		this.listen();
 	}
+
+	// TODO: Refactor into utility static class
+	private saveTokenAsEnv = (token: string): void => {
+		const envPath = './.env';
+		if (!this.isProcessEnvSet('GH_PAT')) {
+			console.log('Attempting to save token');
+			if (!fs.existsSync(envPath)) {
+				// Create gh.pat.env in curr folder if it does not exist
+				fs.closeSync(fs.openSync(envPath, 'w'));
+			}
+			fs.appendFileSync(envPath, 'GH_PAT=token');
+			dotenv.config();
+		}
+		assert(this.isProcessEnvSet('GH_PAT'), 'GitHub PAT should be set.');
+	};
+
+	private isProcessEnvSet = (key: string): boolean => {
+		return key in process.env;
+	};
 
 	// listen for git service on connect and modify api endpoints accordingly
 	listen() {
@@ -32,7 +55,7 @@ export default class GitService {
 
 		ipcMain.handle('clone-repo', async (event, repoName: string) => {
 			// await this.checkPathExists();
-			const remote = `https://${this.token}@github.com/${this.username}/${repoName}.git`;
+			const remote = `https://${process.env.GH_PAT}@github.com/${this.username}/${repoName}.git`;
 			this.remote = remote;
 			await simpleGit()
 				.clone(remote, `${this.localRepoPath}/${repoName}`)
