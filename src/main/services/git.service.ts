@@ -29,7 +29,7 @@ export default class GitService {
 
 	// TODO: Refactor into utility static class
 	private saveTokenAsEnv = (token: string): void => {
-		const envPath = './gh.pat.env';
+		const envPath = './.env';
 		if (!this.isProcessEnvSet('GH_PAT')) {
 			console.log('Attempting to save token');
 			if (!fs.existsSync(envPath)) {

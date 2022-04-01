@@ -142,6 +142,7 @@ export default defineComponent({
 				'ghp_test',
 			);
 			this.repos = await this.gitService.getRepoList();
+			console.log(JSON.stringify(this.repos, null, 4));
 		},
 
 		async commitChanges() {
