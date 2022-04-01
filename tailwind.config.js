@@ -4,6 +4,7 @@ module.exports = {
 		extend: {
 			colors: {
 				'minerva-purple': '#5452C1',
+				'minerva-gray': '#222222',
 			},
 		},
 	},

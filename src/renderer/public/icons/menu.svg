@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="36"
+   height="36"
+   viewBox="0 0 24 24"
+   fill="none"
+   stroke="currentColor"
+   stroke-width="2"
+   stroke-linecap="round"
+   stroke-linejoin="round"
+   class="feather feather-menu"
+   version="1.1"
+   id="svg830"
+   sodipodi:docname="menu.svg"
+   inkscape:version="1.1.2 (b8e25be8, 2022-02-05)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs834" />
+  <sodipodi:namedview
+     id="namedview832"
+     pagecolor="#505050"
+     bordercolor="#eeeeee"
+     borderopacity="1"
+     inkscape:pageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="0"
+     showgrid="false"
+     inkscape:zoom="18.055556"
+     inkscape:cx="18.027692"
+     inkscape:cy="18"
+     inkscape:window-width="1312"
+     inkscape:window-height="872"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg830" />
+  <line
+     x1="3"
+     y1="12"
+     x2="21"
+     y2="12"
+     id="line824"
+     style="fill:#000000;fill-opacity:1;stroke:#222222;stroke-opacity:1" />
+  <line
+     x1="3"
+     y1="6"
+     x2="21"
+     y2="6"
+     id="line826"
+     style="fill:#000000;fill-opacity:1;stroke:#222222;stroke-opacity:1" />
+  <line
+     x1="3"
+     y1="18"
+     x2="21"
+     y2="18"
+     id="line828"
+     style="fill:#000000;fill-opacity:1;stroke:#222222;stroke-opacity:1" />
+</svg>
