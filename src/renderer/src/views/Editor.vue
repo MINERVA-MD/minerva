@@ -102,6 +102,7 @@ export default defineComponent({
 			this.view = this.newEditorService(this, true, docJSON?.join('\n'));
 			this.roomId = EditorService.generateRoomId();
 			this.editorService?.socketsCreateNewRoom(this.roomId);
+			return this.roomId;
 		},
 
 		joinCollabSession(roomId: string) {
