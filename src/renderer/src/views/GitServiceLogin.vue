@@ -1,25 +1,38 @@
 <template>
 	<RouterLink class="text-minerva-purple" to="/">Back to editor</RouterLink>
-	<div>
+	<div class="flex flex-col w-96 space-y-4 mx-auto">
 		<button
-			class="bg-minerva-purple px-2 py-1 text-white rounded hover:opacity-90 transition-all duration-100"
+			class="bg-minerva-purple p-2 text-white rounded hover:opacity-90 transition-all duration-100"
 			v-on:click="connectGit"
 		>
 			Connect Git
 		</button>
-		<select
-			name="repos"
-			id="repos"
-			v-model="repoSelect"
-			class="border rounded py-1"
-		>
-			<option default disabled value="">
-				{{ gitService ? 'Repositories' : 'No Git Service' }}
-			</option>
-			<option v-for="repo in repos" :value="repo.name" :key="repo.name">
-				{{ repo.name }}
-			</option>
-		</select>
+		<div class="flex flex-col space-y-4">
+			<select
+				name="repos"
+				id="repos"
+				v-model="repoSelect"
+				class="border border-gray-300 rounded py-2"
+			>
+				<option default disabled value="">
+					{{ gitService ? 'Repositories' : 'No Git Service' }}
+				</option>
+				<option
+					v-for="repo in repos"
+					:value="repo.name"
+					:key="repo.name"
+				>
+					{{ repo.name }}
+				</option>
+			</select>
+			<button
+				type="button"
+				class="bg-slate-800 text-white p-2 rounded"
+				@click="useRepo"
+			>
+				Clone Repo
+			</button>
+		</div>
 		{{ this.gitService }}
 	</div>
 </template>
@@ -33,21 +46,23 @@ export default defineComponent({
 	props: ['gitService'],
 	data(): {
 		repos: GitRepo[] | null;
+		repo: string;
 		repoSelect: string;
 	} {
 		return {
 			repos: null,
+			repo: '',
 			repoSelect: '',
 		};
 	},
 	mounted() {},
 	async updated() {
-		if (this.gitService !== null && this.repos?.length === 0) {
-			try {
-				await this.getRepos();
-			} catch (error) {
-				console.log(error);
-			}
+		if (this.repoSelect !== this.repo && this.gitService) {
+			this.repo = this.repoSelect;
+			this.gitService.repo = this.repo;
+			await this.gitService.cloneSelectedRepo();
+			//
+			this.$emit('selectRepo', this.repo);
 		}
 	},
 	methods: {
@@ -57,6 +72,7 @@ export default defineComponent({
 				username: 'testminerva',
 				token: 'ghp_test',
 			});
+			this.$nextTick(() => this.getRepos());
 		},
 		async getRepos() {
 			try {
@@ -66,7 +82,10 @@ export default defineComponent({
 			}
 			return this.gitService;
 		},
+		useRepo() {
+			this.$emit('useRepo');
+		},
 	},
-	emits: ['connectGit'],
+	emits: ['connectGit', 'selectRepo', 'useRepo'],
 });
 </script>

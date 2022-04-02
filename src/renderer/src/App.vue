@@ -6,12 +6,16 @@
 		@joinCollabSession="joinCollabSession"
 	/>
 	<RouterView v-slot="{ Component }">
-		<component
-			:is="Component"
-			@connectGit="connectGit"
-			:gitService="gitService"
-			ref="view"
-		/>
+		<keep-alive>
+			<component
+				:is="Component"
+				@connectGit="connectGit"
+				:gitService="gitService"
+				ref="view"
+				@selectRepo="selectRepo"
+				@useRepo="useRepo"
+			/>
+		</keep-alive>
 	</RouterView>
 	<Footer />
 </template>
@@ -24,7 +28,6 @@ import GithubClientService from './services/github-client.service';
 import Editor from './views/Editor.vue';
 import Navbar from './components/NavBar.vue';
 import Footer from './components/Footer.vue';
-import type { GitRepo } from '@/typings/GitService';
 
 export default defineComponent({
 	components: {
@@ -35,17 +38,15 @@ export default defineComponent({
 	data(): {
 		roomId: string | null;
 		gitService: GithubClientService | null;
-		repo: GitRepo | null;
+		repo: string;
 	} {
 		return {
 			roomId: '',
 			gitService: null,
-			repo: null,
+			repo: '',
 		};
 	},
-	mounted() {
-		console.log('hi');
-	},
+	mounted() {},
 	methods: {
 		newBlankEditor() {
 			this.roomId = '';
@@ -64,6 +65,14 @@ export default defineComponent({
 				userInformation.username,
 				userInformation.token,
 			);
+		},
+		selectRepo(repo: string) {
+			this.repo = repo;
+		},
+		async useRepo() {
+			await this.$router.push('/');
+			const fileContents = await this.gitService?.getReadMeContents();
+			(this.$refs.view as any).newEditorService(null, fileContents);
 		},
 	},
 });
