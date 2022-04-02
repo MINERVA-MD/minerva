@@ -44,13 +44,14 @@
 import NavBar from '../components/NavBar.vue';
 import EditorService from '../services/editor.service';
 import type { EditorView } from '@codemirror/view';
-import GithubClientService from '../services/github-client.service';
+import type GithubClientService from '../services/github-client.service';
 import { defineComponent } from 'vue-demi';
 import type IGitClientService from '../Interfaces/IGitClientService';
 import type { GitRepo } from '@/typings/GitService';
 import type { Update } from '@codemirror/collab';
 
 export default defineComponent({
+	props: ['gitService'],
 	data(): {
 		editorService: EditorService | null;
 		view: EditorView | null;
@@ -74,21 +75,9 @@ export default defineComponent({
 	},
 
 	mounted() {
-		this.view = this.newEditorService(this);
+		this.view = this.newEditorService();
+		this.listen();
 		// instantiate listener method that listens for main events from menu options
-	},
-
-	async updated() {
-		if (this.repoSelect !== this.repo && this.gitService) {
-			this.repo = this.repoSelect;
-			this.gitService.repo = this.repo;
-
-			await this.gitService.cloneSelectedRepo();
-			const fileContents = await this.gitService.getReadMeContents();
-
-			if (this.view) this.view.destroy();
-			this.view = this.newEditorService(this, false, fileContents);
-		}
 	},
 
 	methods: {
@@ -97,10 +86,9 @@ export default defineComponent({
 		},
 
 		async createCollabSession() {
-			await this.connectGit();
 			const docJSON = this.view?.state.doc.toJSON();
 			this.view?.destroy();
-			this.view = this.newEditorService(this, true, docJSON?.join('\n'));
+			this.view = this.newEditorService(true, docJSON?.join('\n'));
 			this.roomId = EditorService.generateRoomId();
 			this.editorService?.socketsCreateNewRoom(this.roomId);
 			return this.roomId;
@@ -109,12 +97,11 @@ export default defineComponent({
 		joinCollabSession(roomId: string) {
 			this.roomId = roomId;
 			this.view?.destroy();
-			this.view = this.newEditorService(this, true);
+			this.view = this.newEditorService(true);
 			this.editorService?.socketsJoinRoom(this.roomId);
 		},
 
 		newEditorService(
-			component: any,
 			socket = false,
 			startDoc: string = '',
 			startUpdates: Update[] = [],
@@ -125,7 +112,7 @@ export default defineComponent({
 
 			const doc = startDoc.split('\n');
 			this.editorService = new EditorService(
-				component,
+				this,
 				{
 					doc: doc,
 					updates: startUpdates,
@@ -136,13 +123,9 @@ export default defineComponent({
 			return this.editorService.generateEditor();
 		},
 
-		async connectGit() {
-			this.gitService = new GithubClientService(
-				'testminerva',
-				'ghp_test',
-			);
-			this.repos = await this.gitService.getRepoList();
-			console.log(JSON.stringify(this.repos, null, 4));
+		async newEditorFromGit(fileContents: string) {
+			if (this.view) this.view.destroy();
+			this.view = this.newEditorService(false, fileContents);
 		},
 
 		async commitChanges() {
@@ -162,7 +145,7 @@ export default defineComponent({
 			if (this.editorService?.socket)
 				this.editorService.disconnectSocket();
 			this.view?.destroy();
-			this.view = this.newEditorService(this);
+			this.view = this.newEditorService();
 		},
 	},
 

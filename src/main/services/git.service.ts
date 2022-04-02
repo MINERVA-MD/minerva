@@ -23,34 +23,18 @@ export default class GitService {
 		this.localRepoPath = `${app.getPath('documents')}/minerva_repos`;
 		this.username = username;
 		this.token = token;
-		this.saveTokenAsEnv(token);
 		this.listen();
 	}
-
-	// TODO: Refactor into utility static class
-	private saveTokenAsEnv = (token: string): void => {
-		const envPath = './.env';
-		if (!this.isProcessEnvSet('GH_PAT')) {
-			console.log('Attempting to save token');
-			if (!fs.existsSync(envPath)) {
-				// Create gh.pat.env in curr folder if it does not exist
-				fs.closeSync(fs.openSync(envPath, 'w'));
-			}
-			fs.appendFileSync(envPath, 'GH_PAT=token');
-			dotenv.config();
-		}
-		assert(this.isProcessEnvSet('GH_PAT'), 'GitHub PAT should be set.');
-	};
-
-	private isProcessEnvSet = (key: string): boolean => {
-		return key in process.env;
-	};
 
 	// listen for git service on connect and modify api endpoints accordingly
 	listen() {
 		ipcMain.handle('get-repo-list', async (event, username: string) => {
-			const repos: GitRepo[] = await this.getAllUserRepos();
-			return repos;
+			try {
+				const repos: GitRepo[] = await this.getAllUserRepos();
+				return repos;
+			} catch (error) {
+				console.log(error);
+			}
 		});
 
 		ipcMain.handle('clone-repo', async (event, repoName: string) => {
@@ -98,14 +82,17 @@ export default class GitService {
 
 	async getAllUserRepos(): Promise<GitRepo[]> {
 		const repos: GitRepo[] = [];
-
 		const url = `https://api.github.com/users/${this.username}/repos`;
 
-		const response = await axios.get(url);
-		const data = await response.data;
-		await data.forEach((item: any) => {
-			repos.push({ name: item.name, cloneUrl: item.clone_url });
-		});
+		try {
+			const response = await axios.get(url);
+			const data = await response.data;
+			await data.forEach((item: any) => {
+				repos.push({ name: item.name, cloneUrl: item.clone_url });
+			});
+		} catch (error) {
+			console.log(error);
+		}
 		return repos;
 	}
 
@@ -121,5 +108,12 @@ export default class GitService {
 		} catch (error) {
 			console.log(error);
 		}
+	}
+
+	destroy() {
+		ipcMain.removeHandler('clone-repo');
+		ipcMain.removeHandler('commit-changes');
+		ipcMain.removeHandler('get-repo-list');
+		ipcMain.removeHandler('get-file-content');
 	}
 }
