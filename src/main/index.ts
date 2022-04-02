@@ -81,7 +81,7 @@ app.on('activate', () => {
 let gitService: GitService | null = null;
 ipcMain.on('github-connect', (event, username, token) => {
 	// eslint-disable-next-line no-new
-	if (gitService !== null) {
+	if (gitService) {
 		gitService.destroy();
 		gitService = null;
 		gitService = new GitService(username, token);

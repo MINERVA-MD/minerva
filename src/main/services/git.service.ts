@@ -29,9 +29,12 @@ export default class GitService {
 	// listen for git service on connect and modify api endpoints accordingly
 	listen() {
 		ipcMain.handle('get-repo-list', async (event, username: string) => {
-			console.log('called');
-			const repos: GitRepo[] = await this.getAllUserRepos();
-			return repos;
+			try {
+				const repos: GitRepo[] = await this.getAllUserRepos();
+				return repos;
+			} catch (error) {
+				console.log(error);
+			}
 		});
 
 		ipcMain.handle('clone-repo', async (event, repoName: string) => {
@@ -88,7 +91,7 @@ export default class GitService {
 				repos.push({ name: item.name, cloneUrl: item.clone_url });
 			});
 		} catch (error) {
-			console.log(error);
+			console.log(error.response.status);
 		}
 		return repos;
 	}
