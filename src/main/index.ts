@@ -78,7 +78,14 @@ app.on('activate', () => {
 	}
 });
 
-ipcMain.on('github-connect', async (event, username, token) => {
+let gitService: GitService | null = null;
+ipcMain.on('github-connect', (event, username, token) => {
 	// eslint-disable-next-line no-new
-	new GitService(username, token);
+	if (gitService !== null) {
+		gitService.destroy();
+		gitService = null;
+		gitService = new GitService(username, token);
+	} else {
+		gitService = new GitService(username, token);
+	}
 });

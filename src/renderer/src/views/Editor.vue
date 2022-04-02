@@ -51,6 +51,7 @@ import type { GitRepo } from '@/typings/GitService';
 import type { Update } from '@codemirror/collab';
 
 export default defineComponent({
+	props: ['gitService'],
 	data(): {
 		editorService: EditorService | null;
 		view: EditorView | null;
@@ -79,16 +80,14 @@ export default defineComponent({
 	},
 
 	async updated() {
-		if (this.repoSelect !== this.repo && this.gitService) {
-			this.repo = this.repoSelect;
-			this.gitService.repo = this.repo;
-
-			await this.gitService.cloneSelectedRepo();
-			const fileContents = await this.gitService.getReadMeContents();
-
-			if (this.view) this.view.destroy();
-			this.view = this.newEditorService(this, false, fileContents);
-		}
+		// if (this.repoSelect !== this.repo && this.gitService) {
+		// 	this.repo = this.repoSelect;
+		// 	this.gitService.repo = this.repo;
+		// 	await this.gitService.cloneSelectedRepo();
+		// 	const fileContents = await this.gitService.getReadMeContents();
+		// 	if (this.view) this.view.destroy();
+		// 	this.view = this.newEditorService(this, false, fileContents);
+		// }
 	},
 
 	methods: {
@@ -137,12 +136,11 @@ export default defineComponent({
 		},
 
 		async connectGit() {
-			this.gitService = new GithubClientService(
-				'testminerva',
-				'ghp_test',
-			);
-			this.repos = await this.gitService.getRepoList();
-			console.log(JSON.stringify(this.repos, null, 4));
+			// this.gitService = new GithubClientService(
+			// 	'testminerva',
+			// 	'ghp_test',
+			// );
+			// this.repos = await this.gitService.getRepoList();
 		},
 
 		async commitChanges() {
