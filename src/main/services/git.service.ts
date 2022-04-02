@@ -91,7 +91,7 @@ export default class GitService {
 				repos.push({ name: item.name, cloneUrl: item.clone_url });
 			});
 		} catch (error) {
-			console.log(error.response.status);
+			console.log(error);
 		}
 		return repos;
 	}
