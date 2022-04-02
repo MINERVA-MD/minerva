@@ -72,7 +72,7 @@ export default defineComponent({
 		async useRepo() {
 			await this.$router.push('/');
 			const fileContents = await this.gitService?.getReadMeContents();
-			(this.$refs.view as any).newEditorService(null, fileContents);
+			(this.$refs.view as any).newEditorFromGit(fileContents);
 		},
 	},
 });
