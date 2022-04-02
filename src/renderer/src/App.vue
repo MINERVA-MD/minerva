@@ -6,7 +6,12 @@
 		@joinCollabSession="joinCollabSession"
 	/>
 	<RouterView v-slot="{ Component }">
-		<component :is="Component" ref="view" />
+		<component
+			:is="Component"
+			@connectGit="connectGit"
+			:gitService="gitService"
+			ref="view"
+		/>
 	</RouterView>
 	<Footer />
 </template>
@@ -15,10 +20,11 @@
 import { RouterView, RouterLink } from 'vue-router';
 import { defineComponent } from 'vue-demi';
 import './css/index.css';
-import type GithubClientService from './services/github-client.service';
+import GithubClientService from './services/github-client.service';
 import Editor from './views/Editor.vue';
 import Navbar from './components/NavBar.vue';
 import Footer from './components/Footer.vue';
+import type { GitRepo } from '@/typings/GitService';
 
 export default defineComponent({
 	components: {
@@ -29,11 +35,16 @@ export default defineComponent({
 	data(): {
 		roomId: string | null;
 		gitService: GithubClientService | null;
+		repo: GitRepo | null;
 	} {
 		return {
 			roomId: '',
 			gitService: null,
+			repo: null,
 		};
+	},
+	mounted() {
+		console.log('hi');
 	},
 	methods: {
 		newBlankEditor() {
@@ -46,6 +57,13 @@ export default defineComponent({
 		joinCollabSession(roomId: string) {
 			this.roomId = roomId;
 			(this.$refs.view as any)?.joinCollabSession(roomId);
+		},
+		connectGit(userInformation: { username: string; token: string }) {
+			this.gitService = null;
+			this.gitService = new GithubClientService(
+				userInformation.username,
+				userInformation.token,
+			);
 		},
 	},
 });

@@ -20,21 +20,53 @@
 				{{ repo.name }}
 			</option>
 		</select>
+		{{ this.gitService }}
 	</div>
 </template>
 <script lang="ts">
+import type { GitRepo } from '@/typings/GitService';
 import { defineComponent } from 'vue';
 import { RouterLink } from 'vue-router';
-import type GithubClientService from '../services/github-client.service';
 
 export default defineComponent({
 	setup() {},
+	props: ['gitService'],
 	data(): {
-		gitService: GithubClientService | null;
+		repos: GitRepo[] | null;
+		repoSelect: string;
 	} {
 		return {
-			gitService: null,
+			repos: null,
+			repoSelect: '',
 		};
 	},
+	mounted() {},
+	async updated() {
+		if (this.gitService !== null && this.repos?.length === 0) {
+			try {
+				await this.getRepos();
+			} catch (error) {
+				console.log(error);
+			}
+		}
+	},
+	methods: {
+		connectGit() {
+			this.repos = null;
+			this.$emit('connectGit', {
+				username: 'testminerva',
+				token: 'ghp_test',
+			});
+		},
+		async getRepos() {
+			try {
+				this.repos = await this.gitService.getRepoList();
+			} catch (error) {
+				console.log(error);
+			}
+			return this.gitService;
+		},
+	},
+	emits: ['connectGit'],
 });
 </script>
