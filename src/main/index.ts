@@ -33,6 +33,8 @@ function createWindow() {
 		win.loadFile(join(__dirname, '../renderer/index.html'));
 	} else {
 		// 🚧 Use ['ENV_NAME'] avoid vite:define plugin
+
+		// eslint-disable-next-line
 		const url = `http://${process.env['VITE_DEV_SERVER_HOST']}:${process.env['VITE_DEV_SERVER_PORT']}`;
 
 		win.loadURL(url);
