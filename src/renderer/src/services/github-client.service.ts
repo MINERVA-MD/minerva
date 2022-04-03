@@ -26,6 +26,11 @@ export default class GithubClientService implements IGitClientService {
 		return this.userRepositories;
 	}
 
+	// eslint-disable-next-line class-methods-use-this
+	async authorize() {
+		await window.ipcRenderer.invoke('github-oauth', 'getToken');
+	}
+
 	async cloneSelectedRepo() {
 		await window.ipcRenderer.invoke('clone-repo', this.repo);
 	}
