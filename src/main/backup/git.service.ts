@@ -1,5 +1,6 @@
 /* eslint-disable class-methods-use-this */
 import fs from 'fs';
+import path from 'path';
 import simpleGit from 'simple-git';
 import { Octokit } from '@octokit/core';
 import { app, ipcMain } from 'electron';
@@ -19,9 +20,13 @@ export default class GitService {
 
 	constructor(username: string, token: string) {
 		console.log('Instantiating new Github Service');
-		this.localRepoPath = `${app.getPath('documents')}/minerva_repos`;
+		this.localRepoPath = path.join(
+			app.getPath('documents'),
+			'minerva_repos',
+		);
+
 		this.username = username;
-		this.token = token;
+<<<<<<< HEAD
 		this.saveSecret('Username', username);
 		this.listen();
 	}
@@ -69,6 +74,12 @@ export default class GitService {
 		return key in secretsJSON;
 	};
 
+=======
+		this.token = token;
+		this.listen();
+	}
+
+>>>>>>> origin/main
 	// listen for git service on connect and modify api endpoints accordingly
 	listen() {
 		ipcMain.handle('get-repo-list', async (event, username: string) => {
@@ -78,12 +89,13 @@ export default class GitService {
 			} catch (error) {
 				console.log(error);
 			}
-			return [];
 		});
 
 		ipcMain.handle('clone-repo', async (event, repoName: string) => {
-			// prettier-ignore
-			const remote = `https://${this.getSecret('GH_OAUTH_TOKEN')}@github.com/${this.username}/${repoName}.git`;
+			// await this.checkPathExists();
+			const remote = `https://${this.getSecret(
+				'GH_OAUTH_TOKEN',
+			)}@github.com/${this.username}/${repoName}.git`;
 			this.remote = remote;
 			await simpleGit()
 				.clone(remote, `${this.localRepoPath}/${repoName}`)
@@ -144,28 +156,39 @@ export default class GitService {
 	}
 
 	async getAllUserRepos(): Promise<GitRepo[]> {
-		const ghRepos: GitRepo[] = [];
-		try {
-			await this.generateOAuthToken();
+		const repos: GitRepo[] = [];
+<<<<<<< HEAD
 
-			const octokit = new Octokit({
-				auth: this.getSecret('GH_OAUTH_TOKEN'),
+		await this.generateOAuthToken();
+
+		const octokit = new Octokit({
+			auth: this.getSecret('GH_OAUTH_TOKEN'),
+		});
+
+		const { data } = await octokit.request(`GET /user/repos`);
+
+		// eslint-disable-next-line no-restricted-syntax
+		for (const repo of data) {
+			repos.push({
+				id: repo.id,
+				name: repo.name,
+				cloneUrl: repo.clone_url,
+				isPrivate: repo.private,
 			});
+=======
+		const url = `https://api.github.com/users/${this.username}/repos`;
 
-			const { data: repos } = await octokit.request(`GET /user/repos`);
-			// eslint-disable-next-line no-restricted-syntax
-			for (const repo of repos) {
-				ghRepos.push({
-					id: repo.id,
-					name: repo.name,
-					cloneUrl: repo.clone_url,
-					isPrivate: repo.private,
-				});
-			}
+		try {
+			const response = await axios.get(url);
+			const data = await response.data;
+			await data.forEach((item: any) => {
+				repos.push({ name: item.name, cloneUrl: item.clone_url });
+			});
 		} catch (error) {
 			console.log(error);
+>>>>>>> origin/main
 		}
-		return ghRepos;
+		return repos;
 	}
 
 	async commitAndPush(repoName: string) {
