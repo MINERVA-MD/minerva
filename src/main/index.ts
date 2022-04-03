@@ -1,6 +1,6 @@
 import { release } from 'os';
 import { join } from 'path';
-import { app, ipcMain, BrowserWindow, shell } from 'electron';
+import { app, BrowserWindow, ipcMain, shell } from 'electron';
 
 import GitService from './services/git.service';
 
@@ -17,7 +17,7 @@ if (!app.requestSingleInstanceLock()) {
 
 let win: BrowserWindow | null = null;
 
-async function createWindow() {
+function createWindow() {
 	win = new BrowserWindow({
 		width: 1400,
 		height: 900,

@@ -37,6 +37,7 @@
 				v-html="parsedHTML"
 			></article>
 		</div>
+	  <button v-on:click="getGitHubOAuthToken">Login</button>
 	</div>
 </template>
 
@@ -156,6 +157,13 @@ export default defineComponent({
 				editorText,
 			);
 		},
+
+	  async getGitHubOAuthToken() {
+			if(this.gitService == null) {
+				await this.connectGit();
+			}
+			await this.gitService?.authorize();
+	  },
 
 		newBlankEditor() {
 			this.roomId = '';

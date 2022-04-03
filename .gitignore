@@ -4,6 +4,7 @@
 /coverage
 /node_modules
 .DS_Store
-.env*
+env.json
+env-variables.json
 logs
 !.gitkeep

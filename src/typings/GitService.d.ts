@@ -1,1 +1,6 @@
-export type GitRepo = { name: string; cloneUrl: string }
+export type GitRepo = {
+	id: number;
+	name: string;
+	cloneUrl: string,
+	isPrivate: boolean
+}
