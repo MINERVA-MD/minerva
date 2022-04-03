@@ -27,10 +27,10 @@
 						Connect to Github
 					</button>
 				</RouterLink>
-				<p class="text-white text-opacity-70 mt-4 text-right text-sm">
+				<p class="text-white text-opacity-70 mt-1 text-right text-sm">
 					Collaboration
 				</p>
-				<hr class="mb-4 opacity-70" />
+				<hr class="mb-3 opacity-70" />
 				<button
 					@click="createCollabSession"
 					class="text-left font-semibold w-full p-2 hover:bg-white/20 rounded transition-all duration-100"

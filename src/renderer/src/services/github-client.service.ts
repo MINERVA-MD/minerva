@@ -18,10 +18,14 @@ export default class GithubClientService implements IGitClientService {
 	}
 
 	async getRepoList(): Promise<GitRepo[]> {
-		this.userRepositories = await window.ipcRenderer.invoke(
-			'get-repo-list',
-			this.username,
-		);
+		try {
+			this.userRepositories = await window.ipcRenderer.invoke(
+				'get-repo-list',
+				this.username,
+			);
+		} catch (error) {
+			console.log(error);
+		}
 
 		return this.userRepositories;
 	}
