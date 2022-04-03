@@ -6,6 +6,7 @@
 		@joinCollabSession="joinCollabSession"
 	/>
 	<RouterView v-slot="{ Component }">
+	  <button v-on:click="getGitHubOAuthToken">Login</button>
 		<keep-alive>
 			<component
 				:is="Component"
@@ -66,6 +67,12 @@ export default defineComponent({
 				userInformation.token,
 			);
 		},
+
+	  async getGitHubOAuthToken() {
+			this.connectGit({username: 'testminerva', token: '--'})
+		  await this.gitService?.authorize();
+	  },
+
 		selectRepo(repo: string) {
 			this.repo = repo;
 		},
