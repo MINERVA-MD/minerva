@@ -133,7 +133,7 @@ export default class GitService {
 				const token = await GitHubOAuth.getAccessToken({
 					scope: 'repo',
 				});
-
+				console.log(token);
 				this.saveSecret('GH_OAUTH_TOKEN_SCOPE', token.scope);
 				this.saveSecret('GH_OAUTH_TOKEN', token.access_token);
 				this.saveSecret('GH_OAUTH_TOKEN_TYPE', token.token_type);
@@ -187,5 +187,6 @@ export default class GitService {
 		ipcMain.removeHandler('commit-changes');
 		ipcMain.removeHandler('get-repo-list');
 		ipcMain.removeHandler('get-file-content');
+		ipcMain.removeHandler('github-oauth');
 	}
 }
