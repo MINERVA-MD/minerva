@@ -3,11 +3,11 @@
 		<RouterLink class="text-minerva-purple" to="/"
 			>Back to editor</RouterLink
 		>
-		{{ gitService.username }}
+		{{ gitService && gitService.username ? gitService.username : '' }}
 		<div class="flex flex-col w-96 space-y-4 mx-auto mt-32">
 			<button
 				class="bg-minerva-purple p-2 text-white rounded hover:opacity-90 transition-all duration-100 text-lg"
-				v-on:click="connectGit"
+				v-on:click="login"
 			>
 				Login
 			</button>
@@ -87,14 +87,11 @@ export default defineComponent({
 		}
 	},
 	methods: {
-		connectGit() {
-			//if (this.username.length !== 0 || this.token.length !== 0) {
+		login() {
 			this.repos = null;
 			this.$emit('login');
 			this.$nextTick(() => this.getRepos());
-			//} else {
 			this.error = 'No fields can be empty';
-			//	}
 		},
 		async getRepos() {
 			try {

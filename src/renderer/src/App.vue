@@ -7,14 +7,16 @@
 	/>
 	<RouterView v-slot="{ Component }">
 		<transition name="fade">
-			<component
-				:is="Component"
-				@login="login"
-				:gitService="gitService"
-				ref="view"
-				@selectRepo="selectRepo"
-				@useRepo="useRepo"
-			/>
+			<keep-alive>
+				<component
+					:is="Component"
+					@login="login"
+					:gitService="gitService"
+					ref="view"
+					@selectRepo="selectRepo"
+					@useRepo="useRepo"
+				/>
+			</keep-alive>
 		</transition>
 	</RouterView>
 	<Footer />
