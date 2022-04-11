@@ -10,8 +10,13 @@
 				@click="toggleMenu"
 				type="button"
 				class="cursor-pointer mr-6 hover:opacity-70"
+				id="menu-button"
 			>
-				<img src="/icons/menu.svg" alt="menu" />
+				<img
+					src="/icons/menu.svg"
+					class="pointer-events-none"
+					alt="menu"
+				/>
 			</button>
 			<div v-if="menuIsOpen === true">
 				<Menu
@@ -34,6 +39,9 @@ export default defineComponent({
 	name: 'NavBar',
 	props: {
 		roomId: String,
+	},
+	mounted() {
+		this.listenForClicksOutsideMenu();
 	},
 	data(): {
 		menuIsOpen: boolean;
@@ -58,6 +66,19 @@ export default defineComponent({
 		},
 		joinSession(roomId: string) {
 			this.$emit('joinCollabSession', roomId);
+		},
+		listenForClicksOutsideMenu() {
+			document.addEventListener('click', e => {
+				if (
+					this.menuIsOpen &&
+					e.target !== document.getElementById('menu-button') &&
+					!document
+						.getElementById('menu')
+						?.contains(e.target as HTMLElement)
+				) {
+					this.menuIsOpen = false;
+				}
+			});
 		},
 	},
 	components: {
