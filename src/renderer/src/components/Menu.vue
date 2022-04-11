@@ -23,7 +23,13 @@
 				<button
 					class="text-left font-semibold w-full p-2 hover:bg-white/20 rounded transition-all duration-100"
 				>
-					Connect to Github
+					{{
+						gitService
+							? gitService.username
+								? 'Sign out of Github'
+								: 'Connect to Github'
+							: 'Connect to Github'
+					}}
 				</button>
 			</RouterLink>
 			<p class="text-white text-opacity-70 mt-1 text-right text-sm">
@@ -60,6 +66,7 @@ import { defineComponent } from 'vue';
 import { RouterLink } from 'vue-router';
 
 export default defineComponent({
+	props: ['gitService'],
 	data(): {
 		inputRoomId: string;
 	} {
