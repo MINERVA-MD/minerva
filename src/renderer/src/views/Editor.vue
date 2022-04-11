@@ -55,7 +55,6 @@ export default defineComponent({
 	data(): {
 		editorService: EditorService | null;
 		view: EditorView | null;
-		gitService: GithubClientService | null;
 		repos: GitRepo[] | null;
 		repoSelect: string;
 		repo: string;
@@ -65,7 +64,6 @@ export default defineComponent({
 		return {
 			editorService: null,
 			view: null,
-			gitService: null,
 			repos: null,
 			repoSelect: '',
 			repo: '',

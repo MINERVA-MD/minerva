@@ -132,7 +132,6 @@ export default class GitService {
 	async generateOAuthToken() {
 		try {
 			if (!this.isSecretStored('GH_OAUTH_TOKEN')) {
-				console.log('secret doesnt exist');
 				const token = await GitHubOAuth.getAccessToken({
 					scope: 'repo',
 				});

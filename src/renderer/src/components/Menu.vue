@@ -1,12 +1,12 @@
 <template>
 	<div>
-		<div class="absolute w-12 overflow-hidden inline-block right-3.5">
+		<div class="absolute w-12 overflow-hidden inline-block right-3.5 mt-7">
 			<div
 				class="h-7 w-9 bg-minerva-purple rotate-45 transform origin-bottom-left"
 			></div>
 		</div>
 		<ul
-			class="absolute bg-minerva-purple w-72 right-4 mt-5 rounded-xl p-4 shadow-lg text-white"
+			class="absolute bg-minerva-purple w-72 right-4 mt-12 rounded-xl p-4 shadow-lg text-white"
 		>
 			<li>
 				<button
