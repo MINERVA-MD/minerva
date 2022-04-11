@@ -7,10 +7,6 @@
 	/>
 	<button v-on:click="getGitHubOAuthToken">Login</button>
 	<RouterView v-slot="{ Component }">
-<<<<<<< HEAD
-=======
-		<button v-on:click="getGitHubOAuthToken">Login</button>
->>>>>>> 3ac343903683bf0f0f9545c9c67c86a4c90547e1
 		<keep-alive>
 			<component
 				:is="Component"
@@ -55,9 +51,6 @@ export default defineComponent({
 		this.$router.push('/');
 	},
 	mounted() {},
-	created() {
-		this.$router.push('/');
-	},
 	methods: {
 		newBlankEditor() {
 			this.roomId = '';
@@ -76,11 +69,7 @@ export default defineComponent({
 		},
 
 		async getGitHubOAuthToken() {
-<<<<<<< HEAD
 			this.connectGit();
-=======
-			this.connectGit({ username: '', token: '--' });
->>>>>>> 3ac343903683bf0f0f9545c9c67c86a4c90547e1
 			await this.gitService?.authorize();
 		},
 
