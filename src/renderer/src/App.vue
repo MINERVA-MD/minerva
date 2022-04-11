@@ -6,7 +6,7 @@
 		@joinCollabSession="joinCollabSession"
 	/>
 	<RouterView v-slot="{ Component }">
-	  <button v-on:click="getGitHubOAuthToken">Login</button>
+		<button v-on:click="getGitHubOAuthToken">Login</button>
 		<keep-alive>
 			<component
 				:is="Component"
@@ -48,6 +48,9 @@ export default defineComponent({
 		};
 	},
 	mounted() {},
+	created() {
+		this.$router.push('/');
+	},
 	methods: {
 		newBlankEditor() {
 			this.roomId = '';
@@ -68,10 +71,10 @@ export default defineComponent({
 			);
 		},
 
-	  async getGitHubOAuthToken() {
-			this.connectGit({username: 'testminerva', token: '--'})
-		  await this.gitService?.authorize();
-	  },
+		async getGitHubOAuthToken() {
+			this.connectGit({ username: 'testminerva', token: '--' });
+			await this.gitService?.authorize();
+		},
 
 		selectRepo(repo: string) {
 			this.repo = repo;
