@@ -10,10 +10,10 @@ export default class GithubClientService implements IGitClientService {
 
 	userRepositories: GitRepo[] = [];
 
-	constructor(username: string, token: string) {
-		this.username = username;
+	constructor() {
+		this.username = '';
 		this.repo = '';
-		this.token = token;
+		this.token = '';
 		window.ipcRenderer.send('github-connect', this.username, this.token);
 	}
 
