@@ -2,6 +2,7 @@ import type { GitRepo } from '@/typings/GitService';
 
 export default interface IGitClientService {
 	username: string;
+	avatarUrl: string;
 	repo: string;
 	token: string;
 	userRepositories: GitRepo[];
