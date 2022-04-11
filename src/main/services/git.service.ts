@@ -141,7 +141,6 @@ export default class GitService {
 				this.saveSecret('GH_OAUTH_TOKEN', token.access_token);
 				this.saveSecret('GH_OAUTH_TOKEN_TYPE', token.token_type);
 			}
-			console.log('secret exists');
 		} catch (err) {
 			console.log('Error while getting token', err);
 		}
