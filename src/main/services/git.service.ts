@@ -187,5 +187,6 @@ export default class GitService {
 		ipcMain.removeHandler('commit-changes');
 		ipcMain.removeHandler('get-repo-list');
 		ipcMain.removeHandler('get-file-content');
+		ipcMain.removeHandler('github-oauth');
 	}
 }
