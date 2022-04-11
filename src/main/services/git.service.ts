@@ -17,9 +17,11 @@ export default class GitService {
 
 	private remote = '';
 
+	private octokit: Octokit | null = null;
+
 	constructor(username: string, token: string) {
 		console.log('Instantiating new Github Service');
-		this.localRepoPath = `${app.getPath('documents')}/minerva_repos`;
+		this.localRepoPath = `${app.getPath('documents')}/Minerva/repos`;
 		this.username = username;
 		this.token = token;
 		this.saveSecret('Username', username);
@@ -33,6 +35,7 @@ export default class GitService {
 			// Create Dir if it does not exist
 			if (!fs.existsSync(MINERVA_DIR)) {
 				fs.mkdirSync(MINERVA_DIR);
+				fs.openSync(SECRETS_PATH, 'w');
 				fs.writeFileSync(SECRETS_PATH, JSON.stringify({}));
 			}
 
@@ -124,6 +127,7 @@ export default class GitService {
 
 		ipcMain.handle('github-oauth', async (event, arg) => {
 			await this.generateOAuthToken();
+			await this.signUserFromToken();
 		});
 	}
 
@@ -133,7 +137,6 @@ export default class GitService {
 				const token = await GitHubOAuth.getAccessToken({
 					scope: 'repo',
 				});
-				console.log(token);
 				this.saveSecret('GH_OAUTH_TOKEN_SCOPE', token.scope);
 				this.saveSecret('GH_OAUTH_TOKEN', token.access_token);
 				this.saveSecret('GH_OAUTH_TOKEN_TYPE', token.token_type);
@@ -143,24 +146,31 @@ export default class GitService {
 		}
 	}
 
+	private async signUserFromToken() {
+		this.octokit = new Octokit({
+			auth: this.getSecret('GH_OAUTH_TOKEN'),
+		});
+		const { data } = await this.octokit.request('/user');
+		this.username = data.login;
+		console.log(data.login);
+	}
+
 	async getAllUserRepos(): Promise<GitRepo[]> {
 		const ghRepos: GitRepo[] = [];
 		try {
-			await this.generateOAuthToken();
-
-			const octokit = new Octokit({
-				auth: this.getSecret('GH_OAUTH_TOKEN'),
-			});
-
-			const { data: repos } = await octokit.request(`GET /user/repos`);
-			// eslint-disable-next-line no-restricted-syntax
-			for (const repo of repos) {
-				ghRepos.push({
-					id: repo.id,
-					name: repo.name,
-					cloneUrl: repo.clone_url,
-					isPrivate: repo.private,
-				});
+			if (this.octokit) {
+				const { data: repos } = await this.octokit.request(
+					`GET /user/repos`,
+				);
+				// eslint-disable-next-line no-restricted-syntax
+				for (const repo of repos) {
+					ghRepos.push({
+						id: repo.id,
+						name: repo.name,
+						cloneUrl: repo.clone_url,
+						isPrivate: repo.private,
+					});
+				}
 			}
 		} catch (error) {
 			console.log(error);
