@@ -5,18 +5,17 @@
 		@createCollabSession="createCollabSession"
 		@joinCollabSession="joinCollabSession"
 	/>
-	<button v-on:click="getGitHubOAuthToken">Login</button>
 	<RouterView v-slot="{ Component }">
-		<keep-alive>
+		<transition name="fade">
 			<component
 				:is="Component"
-				@connectGit="connectGit"
+				@login="login"
 				:gitService="gitService"
 				ref="view"
 				@selectRepo="selectRepo"
 				@useRepo="useRepo"
 			/>
-		</keep-alive>
+		</transition>
 	</RouterView>
 	<Footer />
 </template>
@@ -68,7 +67,7 @@ export default defineComponent({
 			this.gitService = new GithubClientService();
 		},
 
-		async getGitHubOAuthToken() {
+		async login() {
 			this.connectGit();
 			await this.gitService?.authorize();
 		},
@@ -87,4 +86,14 @@ export default defineComponent({
 
 <style>
 @import './css/github-markdown.css';
+
+.fade-enter-from {
+	opacity: 0%;
+}
+.fade-leave-to {
+	opacity: 0%;
+}
+.fade-enter-active {
+	transition: all 0.2s ease-in;
+}
 </style>

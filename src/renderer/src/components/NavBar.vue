@@ -20,7 +20,11 @@
 				copied ? 'copied!' : ''
 			}}</span>
 		</div>
-		<div class="menu">
+		<div class="flex">
+			<div class="mr-6 flex">
+				<p></p>
+				<Login />
+			</div>
 			<button
 				@click="toggleMenu"
 				type="button"
@@ -42,6 +46,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import Menu from './Menu.vue';
+import Login from './Login.vue';
 
 export default defineComponent({
 	name: 'NavBar',
@@ -84,6 +89,7 @@ export default defineComponent({
 	},
 	components: {
 		Menu,
+		Login,
 	},
 	emits: ['joinCollabSession', 'createCollabSession', 'newFile'],
 });

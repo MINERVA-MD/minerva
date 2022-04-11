@@ -1,63 +1,52 @@
 <template>
-	<RouterLink class="text-minerva-purple" to="/">Back to editor</RouterLink>
-	<div class="flex flex-col w-96 space-y-4 mx-auto">
-		<input
-			type="text"
-			placeholder="Username"
-			name="username"
-			id="username"
-			class="border border-gray-300 rounded p-2"
-			v-model="username"
-		/>
-		<input
-			type="text"
-			name="token"
-			placeholder="Token"
-			id="token"
-			class="border border-gray-300 rounded p-2"
-			v-model="token"
-		/>
-		<p class="text-red-500">{{ error }}</p>
-		<button
-			class="bg-minerva-purple p-2 text-white rounded hover:opacity-90 transition-all duration-100"
-			v-on:click="connectGit"
+	<div>
+		<RouterLink class="text-minerva-purple" to="/"
+			>Back to editor</RouterLink
 		>
-			Connect Git
-		</button>
-		<div
-			v-if="gitService && repos?.length !== 0"
-			class="flex flex-col space-y-4"
-		>
-			<select
-				name="repos"
-				id="repos"
-				v-model="repoSelect"
-				class="border border-gray-300 rounded p-2"
-			>
-				<option default disabled value="">
-					{{
-						gitService
-							? repos?.length === 0
-								? 'Error Fetching Repos'
-								: 'Repositories'
-							: 'No Git Service'
-					}}
-				</option>
-				<option
-					v-for="repo in repos"
-					:value="repo.name"
-					:key="repo.name"
-				>
-					{{ repo.name }}
-				</option>
-			</select>
+		{{ gitService.username }}
+		<div class="flex flex-col w-96 space-y-4 mx-auto mt-32">
 			<button
-				type="button"
-				class="bg-slate-800 text-white p-2 rounded"
-				@click="useRepo"
+				class="bg-minerva-purple p-2 text-white rounded hover:opacity-90 transition-all duration-100 text-lg"
+				v-on:click="connectGit"
 			>
-				Clone Repo
+				Login
 			</button>
+			<p class="text-red-500">{{ error }}</p>
+			<div
+				v-if="gitService && repos?.length !== 0"
+				class="flex flex-col space-y-4"
+			>
+				<select
+					name="repos"
+					id="repos"
+					v-model="repoSelect"
+					class="border border-gray-300 rounded p-2"
+				>
+					<option default disabled value="">
+						{{
+							gitService
+								? repos?.length === 0
+									? 'Error Fetching Repos'
+									: 'Repositories'
+								: 'No Git Service'
+						}}
+					</option>
+					<option
+						v-for="repo in repos"
+						:value="repo.name"
+						:key="repo.name"
+					>
+						{{ repo.name }}
+					</option>
+				</select>
+				<button
+					type="button"
+					class="bg-slate-800 text-white p-2 rounded"
+					@click="useRepo"
+				>
+					Clone Repo
+				</button>
+			</div>
 		</div>
 	</div>
 </template>
@@ -101,10 +90,7 @@ export default defineComponent({
 		connectGit() {
 			//if (this.username.length !== 0 || this.token.length !== 0) {
 			this.repos = null;
-			this.$emit('connectGit', {
-				username: this.username,
-				token: this.token,
-			});
+			this.$emit('login');
 			this.$nextTick(() => this.getRepos());
 			//} else {
 			this.error = 'No fields can be empty';
@@ -126,6 +112,6 @@ export default defineComponent({
 			this.$emit('useRepo');
 		},
 	},
-	emits: ['connectGit', 'selectRepo', 'useRepo'],
+	emits: ['login', 'selectRepo', 'useRepo'],
 });
 </script>
