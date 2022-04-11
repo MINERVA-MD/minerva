@@ -31,14 +31,8 @@ export default class GitService {
 	// TODO: Refactor into utility static class
 	// TODO: Refactor so that file paths are saved as constants
 	private saveSecret = (key: string, value: string): void => {
+		this.createSecretsFileIfNotExists();
 		try {
-			// Create Dir if it does not exist
-			if (!fs.existsSync(MINERVA_DIR)) {
-				fs.mkdirSync(MINERVA_DIR);
-				fs.openSync(SECRETS_PATH, 'w');
-				fs.writeFileSync(SECRETS_PATH, JSON.stringify({}));
-			}
-
 			// Read current contents from file
 			const secretsJSON = JSON.parse(
 				fs.readFileSync(SECRETS_PATH, { encoding: 'utf8' }),
@@ -131,11 +125,7 @@ export default class GitService {
 
 		ipcMain.handle('github-oauth', async (event, arg) => {
 			await this.generateOAuthToken();
-<<<<<<< HEAD
-			return this.signUserFromToken();
-=======
 			return this.authenticateUser();
->>>>>>> 3ac343903683bf0f0f9545c9c67c86a4c90547e1
 		});
 	}
 
@@ -157,17 +147,6 @@ export default class GitService {
 		}
 	}
 
-<<<<<<< HEAD
-	private async signUserFromToken() {
-		this.octokit = new Octokit({
-			auth: this.getSecret('GH_OAUTH_TOKEN'),
-		});
-		const { data } = await this.octokit.request('/user');
-		this.username = data.login;
-		this.saveSecret('Username', data.login);
-
-		return data.login;
-=======
 	async authenticateUser() {
 		this.octokit = new Octokit({
 			auth: this.getSecret('GH_OAUTH_TOKEN'),
@@ -178,17 +157,11 @@ export default class GitService {
 		this.saveSecret('Username', data.login);
 
 		return { username: data.login, avatarUrl: data.avatar_url };
->>>>>>> 3ac343903683bf0f0f9545c9c67c86a4c90547e1
 	}
 
 	async getAllUserRepos(): Promise<GitRepo[]> {
 		const ghRepos: GitRepo[] = [];
 		try {
-<<<<<<< HEAD
-=======
-			await this.generateOAuthToken();
-
->>>>>>> 3ac343903683bf0f0f9545c9c67c86a4c90547e1
 			if (this.octokit) {
 				const { data: repos } = await this.octokit.request(
 					`GET /user/repos`,
@@ -207,6 +180,17 @@ export default class GitService {
 			console.log(error);
 		}
 		return ghRepos;
+	}
+
+	createSecretsFileIfNotExists() {
+		// Create Dir if it does not exist
+		if (!fs.existsSync(MINERVA_DIR)) {
+			fs.mkdirSync(MINERVA_DIR);
+		}
+		if (!fs.existsSync(SECRETS_PATH)) {
+			fs.openSync(SECRETS_PATH, 'w');
+			fs.writeFileSync(SECRETS_PATH, JSON.stringify({}));
+		}
 	}
 
 	async commitAndPush(repoName: string) {
