@@ -99,6 +99,31 @@ export default defineComponent({
 			this.editorService?.socketsJoinRoom(this.roomId);
 		},
 
+		async newEditorFromGit(fileContents: string) {
+			if (this.view) this.view.destroy();
+			this.view = this.newEditorService(false, fileContents);
+		},
+
+		newBlankEditor() {
+			this.roomId = '';
+			if (this.editorService?.socket)
+				this.editorService.disconnectSocket();
+			this.view?.destroy();
+			this.view = this.newEditorService();
+		},
+
+		async commitChanges() {
+			const editorJSON = this.view?.state.doc.toJSON();
+			const editorText = editorJSON?.join('\n');
+
+			await window.ipcRenderer.invoke(
+				'commit-changes',
+				this.repo,
+				'README.md',
+				editorText,
+			);
+		},
+
 		newEditorService(
 			socket = false,
 			startDoc: string = '',
@@ -119,31 +144,6 @@ export default defineComponent({
 			);
 
 			return this.editorService.generateEditor();
-		},
-
-		async newEditorFromGit(fileContents: string) {
-			if (this.view) this.view.destroy();
-			this.view = this.newEditorService(false, fileContents);
-		},
-
-		async commitChanges() {
-			const editorJSON = this.view?.state.doc.toJSON();
-			const editorText = editorJSON?.join('\n');
-
-			await window.ipcRenderer.invoke(
-				'commit-changes',
-				this.repo,
-				'README.md',
-				editorText,
-			);
-		},
-
-		newBlankEditor() {
-			this.roomId = '';
-			if (this.editorService?.socket)
-				this.editorService.disconnectSocket();
-			this.view?.destroy();
-			this.view = this.newEditorService();
 		},
 	},
 

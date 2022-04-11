@@ -3,7 +3,7 @@
 		<RouterLink class="text-minerva-purple" to="/"
 			>Back to editor</RouterLink
 		>
-		{{ gitService && gitService.username ? gitService.username : '' }}
+
 		<div class="flex flex-col w-96 space-y-4 mx-auto mt-32">
 			<button
 				class="bg-minerva-purple p-2 text-white rounded hover:opacity-90 transition-all duration-100 text-lg"
@@ -13,7 +13,7 @@
 			</button>
 			<p class="text-red-500">{{ error }}</p>
 			<div
-				v-if="gitService && repos?.length !== 0"
+				v-if="gitService && repos?.length > 0"
 				class="flex flex-col space-y-4"
 			>
 				<select
@@ -90,20 +90,6 @@ export default defineComponent({
 		login() {
 			this.repos = null;
 			this.$emit('login');
-			this.$nextTick(() => this.getRepos());
-			this.error = 'No fields can be empty';
-		},
-		async getRepos() {
-			try {
-				this.error = '';
-				this.repos = await this.gitService.getRepoList();
-				if (this.repos?.length === 0) {
-					this.error =
-						'There was a problem pulling user repositories. Check that you are using a valid username and token.';
-				}
-			} catch (error) {
-				console.log(error);
-			}
 		},
 		useRepo() {
 			this.$emit('useRepo');

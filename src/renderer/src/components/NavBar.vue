@@ -3,7 +3,12 @@
 		<RoomId :roomId="roomId" />
 		<div class="flex">
 			<div class="mr-6 flex">
-				<p></p>
+				<p
+					class="flex items-end text-minerva-gray mr-2"
+					v-if="gitService"
+				>
+					{{ gitService.username }}
+				</p>
 				<Login />
 			</div>
 			<button
@@ -20,6 +25,7 @@
 			</button>
 			<div v-if="menuIsOpen === true">
 				<Menu
+					:gitService="gitService"
 					@newFile="newFile"
 					@createCollabSession="createCollabSession"
 					@joinSession="joinSession"
@@ -34,12 +40,11 @@ import { defineComponent } from 'vue';
 import Menu from './Menu.vue';
 import Login from './Login.vue';
 import RoomId from './RoomId.vue';
+import GithubClientService from '../services/github-client.service';
 
 export default defineComponent({
 	name: 'NavBar',
-	props: {
-		roomId: String,
-	},
+	props: ['roomId', 'gitService'],
 	mounted() {
 		this.listenForClicksOutsideMenu();
 	},

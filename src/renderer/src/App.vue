@@ -4,6 +4,7 @@
 		@newFile="newBlankEditor"
 		@createCollabSession="createCollabSession"
 		@joinCollabSession="joinCollabSession"
+		:gitService="gitService"
 	/>
 	<RouterView v-slot="{ Component }">
 		<transition name="fade">
@@ -54,8 +55,11 @@ export default defineComponent({
 	mounted() {},
 	methods: {
 		newBlankEditor() {
-			this.roomId = '';
-			(this.$refs.view as any)?.newBlankEditor();
+			this.$router.push('/');
+			setTimeout(() => {
+				this.roomId = '';
+				(this.$refs.view as any)?.newBlankEditor();
+			}, 1);
 		},
 		async createCollabSession() {
 			this.roomId = await (this.$refs.view as any)?.createCollabSession();
