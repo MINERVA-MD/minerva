@@ -131,7 +131,11 @@ export default class GitService {
 
 		ipcMain.handle('github-oauth', async (event, arg) => {
 			await this.generateOAuthToken();
+<<<<<<< HEAD
 			return this.signUserFromToken();
+=======
+			return this.authenticateUser();
+>>>>>>> 3ac343903683bf0f0f9545c9c67c86a4c90547e1
 		});
 	}
 
@@ -153,6 +157,7 @@ export default class GitService {
 		}
 	}
 
+<<<<<<< HEAD
 	private async signUserFromToken() {
 		this.octokit = new Octokit({
 			auth: this.getSecret('GH_OAUTH_TOKEN'),
@@ -162,11 +167,28 @@ export default class GitService {
 		this.saveSecret('Username', data.login);
 
 		return data.login;
+=======
+	async authenticateUser() {
+		this.octokit = new Octokit({
+			auth: this.getSecret('GH_OAUTH_TOKEN'),
+		});
+
+		const { data } = await this.octokit.request('GET /user');
+		this.username = data.login;
+		this.saveSecret('Username', data.login);
+
+		return { username: data.login, avatarUrl: data.avatar_url };
+>>>>>>> 3ac343903683bf0f0f9545c9c67c86a4c90547e1
 	}
 
 	async getAllUserRepos(): Promise<GitRepo[]> {
 		const ghRepos: GitRepo[] = [];
 		try {
+<<<<<<< HEAD
+=======
+			await this.generateOAuthToken();
+
+>>>>>>> 3ac343903683bf0f0f9545c9c67c86a4c90547e1
 			if (this.octokit) {
 				const { data: repos } = await this.octokit.request(
 					`GET /user/repos`,
