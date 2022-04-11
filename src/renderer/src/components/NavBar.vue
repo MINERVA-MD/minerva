@@ -3,13 +3,7 @@
 		<RoomId :roomId="roomId" />
 		<div class="flex">
 			<div class="mr-6 flex">
-				<p
-					class="flex items-end text-minerva-gray mr-2"
-					v-if="gitService"
-				>
-					{{ gitService.username }}
-				</p>
-				<Login />
+				<Login :gitService="gitService" />
 			</div>
 			<button
 				@click="toggleMenu"
