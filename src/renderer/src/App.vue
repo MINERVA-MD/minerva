@@ -65,14 +65,11 @@ export default defineComponent({
 		},
 		connectGit(userInformation: { username: string; token: string }) {
 			this.gitService = null;
-			this.gitService = new GithubClientService(
-				userInformation.username,
-				userInformation.token,
-			);
+			this.gitService = new GithubClientService();
 		},
 
 		async getGitHubOAuthToken() {
-			this.connectGit({ username: 'testminerva', token: '--' });
+			this.connectGit({ username: '', token: '--' });
 			await this.gitService?.authorize();
 		},
 
