@@ -1,6 +1,20 @@
 <template>
-	<button v-on:click="toLoginPage">
-		<img src="/icons/user.svg" alt="user icon" class="h-8" />
+	<button v-on:click="toLoginPage" class="flex items-end">
+		<p class="flex items-end text-minerva-gray mr-2" v-if="gitService">
+			{{ gitService.username }}
+		</p>
+		<img
+			v-if="!gitService"
+			src="/icons/user.svg"
+			alt="user icon"
+			class="h-8"
+		/>
+		<img
+			v-else
+			class="w-8 rounded-full"
+			:src="gitService.avatarUrl"
+			alt="user avatar"
+		/>
 	</button>
 </template>
 
