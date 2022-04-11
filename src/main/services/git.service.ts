@@ -69,6 +69,10 @@ export default class GitService {
 		const secretsJSON = JSON.parse(
 			fs.readFileSync(SECRETS_PATH, { encoding: 'utf8' }),
 		);
+		if (secretsJSON[key] === '') {
+			return false;
+		}
+
 		return key in secretsJSON;
 	};
 
@@ -127,20 +131,23 @@ export default class GitService {
 
 		ipcMain.handle('github-oauth', async (event, arg) => {
 			await this.generateOAuthToken();
-			await this.signUserFromToken();
+			return this.signUserFromToken();
 		});
 	}
 
 	async generateOAuthToken() {
 		try {
 			if (!this.isSecretStored('GH_OAUTH_TOKEN')) {
+				console.log('secret doesnt exist');
 				const token = await GitHubOAuth.getAccessToken({
 					scope: 'repo',
 				});
+				console.log(token);
 				this.saveSecret('GH_OAUTH_TOKEN_SCOPE', token.scope);
 				this.saveSecret('GH_OAUTH_TOKEN', token.access_token);
 				this.saveSecret('GH_OAUTH_TOKEN_TYPE', token.token_type);
 			}
+			console.log('secret exists');
 		} catch (err) {
 			console.log('Error while getting token', err);
 		}
@@ -152,7 +159,9 @@ export default class GitService {
 		});
 		const { data } = await this.octokit.request('/user');
 		this.username = data.login;
-		console.log(data.login);
+		this.saveSecret('Username', data.login);
+
+		return data.login;
 	}
 
 	async getAllUserRepos(): Promise<GitRepo[]> {
