@@ -37,7 +37,7 @@
 					<option default disabled value="">
 						{{
 							gitService
-								? repos?.length === 0
+								? gitService.userRepositories?.length === 0
 									? 'Error Fetching Repos'
 									: 'Repositories'
 								: 'No Git Service'
@@ -73,16 +73,16 @@ export default defineComponent({
 	props: ['gitService'],
 	data(): {
 		repos: GitRepo[] | null;
-		repo: string;
-		repoSelect: string;
-		username: string;
+		repo: GitRepo | null;
+		repoSelect: GitRepo | null;
+		username: String;
 		token: string;
 		error: string;
 	} {
 		return {
 			repos: null,
-			repo: '',
-			repoSelect: '',
+			repo: null,
+			repoSelect: null,
 			username: '',
 			token: '',
 			error: '',
@@ -93,8 +93,6 @@ export default defineComponent({
 		if (this.repoSelect !== this.repo && this.gitService) {
 			this.repo = this.repoSelect;
 			this.gitService.repo = this.repo;
-			await this.gitService.cloneSelectedRepo();
-			//
 			this.$emit('selectRepo', this.repo);
 		}
 	},
