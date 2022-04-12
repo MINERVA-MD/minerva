@@ -20,7 +20,6 @@ export default class GithubClientService implements IGitClientService {
 		try {
 			this.userRepositories = await window.ipcRenderer.invoke(
 				'get-repo-list',
-				this.username,
 			);
 		} catch (error) {
 			console.log(error);

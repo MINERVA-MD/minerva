@@ -21,7 +21,11 @@
 			</button>
 			<p class="text-red-500">{{ error }}</p>
 			<div
-				v-if="gitService && repos && repos?.length > 0"
+				v-if="
+					gitService &&
+					gitService.userRepositories &&
+					gitService?.userRepositories.length > 0
+				"
 				class="flex flex-col space-y-4"
 			>
 				<select
@@ -40,7 +44,7 @@
 						}}
 					</option>
 					<option
-						v-for="repo in repos"
+						v-for="repo in gitService.userRepositories"
 						:value="repo.name"
 						:key="repo.name"
 					>
