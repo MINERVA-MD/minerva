@@ -6,7 +6,6 @@
 		@joinCollabSession="joinCollabSession"
 		:gitService="gitService"
 	/>
-	<button @click="logout">logout</button>
 	<RouterView v-slot="{ Component }">
 		<transition name="fade">
 			<keep-alive>
@@ -33,6 +32,7 @@ import GithubClientService from './services/github-client.service';
 import Editor from './views/Editor.vue';
 import Navbar from './components/NavBar.vue';
 import Footer from './components/Footer.vue';
+import type { GitRepo } from '@/typings/GitService';
 
 export default defineComponent({
 	components: {
@@ -43,12 +43,12 @@ export default defineComponent({
 	data(): {
 		roomId: string | null;
 		gitService: GithubClientService | null;
-		repo: string;
+		repo: GitRepo | null;
 	} {
 		return {
 			roomId: '',
 			gitService: null,
-			repo: '',
+			repo: null,
 		};
 	},
 	created() {
@@ -85,7 +85,7 @@ export default defineComponent({
 			this.gitService = null;
 		},
 
-		selectRepo(repo: string) {
+		selectRepo(repo: GitRepo) {
 			this.repo = repo;
 		},
 		async useRepo() {

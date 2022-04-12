@@ -45,7 +45,7 @@
 					</option>
 					<option
 						v-for="repo in gitService.userRepositories"
-						:value="repo.name"
+						:value="repo"
 						:key="repo.name"
 					>
 						{{ repo.name }}
@@ -91,6 +91,7 @@ export default defineComponent({
 	mounted() {},
 	async updated() {
 		if (this.repoSelect !== this.repo && this.gitService) {
+			console.log(this.repoSelect);
 			this.repo = this.repoSelect;
 			this.gitService.repo = this.repo;
 			this.$emit('selectRepo', this.repo);

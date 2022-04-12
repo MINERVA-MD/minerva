@@ -100,21 +100,21 @@ export default class GitService {
 			return [];
 		});
 
-		ipcMain.handle('clone-repo', async (event, repoName: string) => {
+		ipcMain.handle('clone-repo', async (event, repo: GitRepo) => {
 			// prettier-ignore
-			const remote = `https://${this.getSecret('GH_OAUTH_TOKEN')}@github.com/${this.username}/${repoName}.git`;
+			const remote = `https://${this.getSecret('GH_OAUTH_TOKEN')}@github.com/${this.username}/${repo.name}.git`;
 			this.remote = remote;
 			await simpleGit()
-				.clone(remote, `${this.localRepoPath}/${repoName}`)
+				.clone(remote, `${this.localRepoPath}/${repo.name}`)
 				.catch(e => console.log(e));
 		});
 
 		ipcMain.handle(
 			'get-file-content',
-			async (event, repoName: string, fileName = 'README.md') => {
+			async (event, repo: GitRepo, fileName = 'README.md') => {
 				try {
 					const fileData = await fs.promises.readFile(
-						`${this.localRepoPath}/${repoName}/${fileName}`,
+						`${this.localRepoPath}/${repo.name}/${fileName}`,
 						'utf8',
 					);
 					return fileData;
