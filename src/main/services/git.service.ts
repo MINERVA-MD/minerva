@@ -1,5 +1,5 @@
 /* eslint-disable class-methods-use-this */
-import fs from 'fs';
+import fs, { chownSync } from 'fs';
 import simpleGit from 'simple-git';
 import { Octokit } from '@octokit/core';
 import { app, ipcMain, BrowserWindow } from 'electron';
@@ -100,21 +100,37 @@ export default class GitService {
 			return [];
 		});
 
-		ipcMain.handle('clone-repo', async (event, repo: GitRepo) => {
+		ipcMain.handle('clone-repo', async (event, repoName: string) => {
 			// prettier-ignore
-			const remote = `https://${this.getSecret('GH_OAUTH_TOKEN')}@github.com/${this.username}/${repo.name}.git`;
+			const remote = `https://${this.getSecret('GH_OAUTH_TOKEN')}@github.com/${this.username}/${repoName}.git`;
 			this.remote = remote;
 			await simpleGit()
-				.clone(remote, `${this.localRepoPath}/${repo.name}`)
+				.clone(remote, `${this.localRepoPath}/${repoName}`)
 				.catch(e => console.log(e));
 		});
 
 		ipcMain.handle(
 			'get-file-content',
-			async (event, repo: GitRepo, fileName = 'README.md') => {
+			async (event, repoName: string, fileName = 'README.md') => {
 				try {
+					if (
+						fs.existsSync(
+							`${this.localRepoPath}/${repoName}/${fileName}`,
+						)
+					) {
+						const fileData = await fs.promises.readFile(
+							`${this.localRepoPath}/${repoName}/${fileName}`,
+							'utf8',
+						);
+						return fileData;
+					}
+					fs.writeFileSync(
+						`${this.localRepoPath}/${repoName}/${fileName}`,
+						'## No ReadMe Found in Repo \n *Readme created by minerva*',
+					);
+
 					const fileData = await fs.promises.readFile(
-						`${this.localRepoPath}/${repo.name}/${fileName}`,
+						`${this.localRepoPath}/${repoName}/${fileName}`,
 						'utf8',
 					);
 					return fileData;
