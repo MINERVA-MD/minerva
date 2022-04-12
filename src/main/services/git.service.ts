@@ -2,7 +2,7 @@
 import fs from 'fs';
 import simpleGit from 'simple-git';
 import { Octokit } from '@octokit/core';
-import { app, ipcMain } from 'electron';
+import { app, ipcMain, session } from 'electron';
 
 import type { GitRepo } from '@/typings/GitService';
 import { GitHubOAuth } from '../../common/config/auth.config';
@@ -70,6 +70,14 @@ export default class GitService {
 		return key in secretsJSON;
 	};
 
+	private clearSecrets() {
+		fs.writeFileSync(SECRETS_PATH, '{}');
+	}
+
+	private async clearSessionData() {
+		await session.;
+	}
+
 	// listen for git service on connect and modify api endpoints accordingly
 	listen() {
 		ipcMain.handle('get-repo-list', async (event, username: string) => {
@@ -126,6 +134,12 @@ export default class GitService {
 		ipcMain.handle('github-oauth', async (event, arg) => {
 			await this.generateOAuthToken();
 			return this.authenticateUser();
+		});
+
+		ipcMain.handle('logout', async () => {
+			this.destroy();
+			this.clearSecrets();
+			await this.clearSessionData();
 		});
 	}
 
@@ -211,5 +225,6 @@ export default class GitService {
 		ipcMain.removeHandler('get-repo-list');
 		ipcMain.removeHandler('get-file-content');
 		ipcMain.removeHandler('github-oauth');
+		ipcMain.removeHandler('logout');
 	}
 }

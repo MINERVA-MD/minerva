@@ -10,7 +10,7 @@
 			class="h-8"
 		/>
 		<img
-			v-else
+			v-else-if="gitService && gitService.avatarUrl"
 			class="w-8 rounded-full"
 			:src="gitService.avatarUrl"
 			alt="user avatar"

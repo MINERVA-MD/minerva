@@ -12,6 +12,7 @@
 				<component
 					:is="Component"
 					@login="login"
+					@logout="logout"
 					:gitService="gitService"
 					ref="view"
 					@selectRepo="selectRepo"
@@ -76,6 +77,11 @@ export default defineComponent({
 		async login() {
 			this.connectGit();
 			await this.gitService?.authorize();
+		},
+
+		async logout() {
+			await this.gitService?.logout();
+			this.gitService = null;
 		},
 
 		selectRepo(repo: string) {

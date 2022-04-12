@@ -6,14 +6,22 @@
 
 		<div class="flex flex-col w-96 space-y-4 mx-auto mt-32">
 			<button
+				v-if="!gitService?.username"
 				class="bg-minerva-purple p-2 text-white rounded hover:opacity-90 transition-all duration-100 text-lg"
 				v-on:click="login"
 			>
 				Login
 			</button>
+			<button
+				v-else
+				class="bg-minerva-purple p-2 text-white rounded hover:opacity-90 transition-all duration-100 text-lg"
+				v-on:click="logout"
+			>
+				logout
+			</button>
 			<p class="text-red-500">{{ error }}</p>
 			<div
-				v-if="gitService && repos?.length > 0"
+				v-if="gitService && repos && repos?.length > 0"
 				class="flex flex-col space-y-4"
 			>
 				<select
@@ -91,10 +99,13 @@ export default defineComponent({
 			this.repos = null;
 			this.$emit('login');
 		},
+		logout() {
+			this.$emit('logout');
+		},
 		useRepo() {
 			this.$emit('useRepo');
 		},
 	},
-	emits: ['login', 'selectRepo', 'useRepo'],
+	emits: ['login', 'logout', 'selectRepo', 'useRepo'],
 });
 </script>
