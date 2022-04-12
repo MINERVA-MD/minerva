@@ -2,7 +2,7 @@
 import fs from 'fs';
 import simpleGit from 'simple-git';
 import { Octokit } from '@octokit/core';
-import { app, ipcMain, session } from 'electron';
+import { app, ipcMain, BrowserWindow } from 'electron';
 
 import type { GitRepo } from '@/typings/GitService';
 import { GitHubOAuth } from '../../common/config/auth.config';
@@ -75,7 +75,9 @@ export default class GitService {
 	}
 
 	private async clearSessionData() {
-		// await session.;
+		const win = BrowserWindow.getAllWindows()[0];
+		const { session } = win.webContents;
+		await session.clearCache();
 	}
 
 	// listen for git service on connect and modify api endpoints accordingly
