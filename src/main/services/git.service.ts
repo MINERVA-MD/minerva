@@ -75,14 +75,22 @@ export default class GitService {
 
 	private async clearSessionData() {
 		console.log('session clear');
-		const win = BrowserWindow.getAllWindows()[0];
-		const { session } = win.webContents;
-		await session.clearAuthCache();
+		const win = BrowserWindow.getAllWindows();
+
+		const { session } = win[0].webContents;
+		try {
+			await session.clearAuthCache();
+			await session.clearStorageData();
+			await session.clearCache();
+			await session.clearHostResolverCache();
+		} catch (error) {
+			console.log(error);
+		}
 	}
 
 	// listen for git service on connect and modify api endpoints accordingly
 	listen() {
-		ipcMain.handle('get-repo-list', async (event, username: string) => {
+		ipcMain.handle('get-repo-list', async () => {
 			try {
 				const repos: GitRepo[] = await this.getAllUserRepos();
 				return repos;
@@ -133,19 +141,20 @@ export default class GitService {
 			},
 		);
 
-		ipcMain.handle('github-oauth', async (event, arg) => {
+		ipcMain.handle('github-oauth', async () => {
 			try {
 				await this.generateOAuthToken();
 				return this.authenticateUser();
 			} catch (error) {
 				console.log(error);
+				return error;
 			}
 		});
 
 		ipcMain.handle('logout', async () => {
 			this.destroy();
 			await this.clearSessionData();
-			this.clearSecrets();
+			// this.clearSecrets();
 		});
 	}
 
