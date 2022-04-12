@@ -54,7 +54,6 @@ export default class GithubClientService implements IGitClientService {
 			'get-file-content',
 			this.repo?.name,
 		);
-		console.log(fileContents);
 		return fileContents;
 	}
 }
