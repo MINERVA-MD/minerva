@@ -90,6 +90,7 @@ export default defineComponent({
 		},
 		async useRepo() {
 			await this.$router.push('/');
+			await this.gitService?.cloneSelectedRepo();
 			const fileContents = await this.gitService?.getReadMeContents();
 			(this.$refs.view as any).newEditorFromGit(fileContents);
 		},

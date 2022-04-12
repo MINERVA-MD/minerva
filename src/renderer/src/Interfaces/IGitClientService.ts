@@ -3,7 +3,7 @@ import type { GitRepo } from '@/typings/GitService';
 export default interface IGitClientService {
 	username: string;
 	avatarUrl: string;
-	repo: string;
+	repo: GitRepo | null;
 	token: string;
 	userRepositories: GitRepo[];
 	getRepoList: () => Promise<GitRepo[]>;

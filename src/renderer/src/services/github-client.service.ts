@@ -6,7 +6,7 @@ export default class GithubClientService implements IGitClientService {
 
 	avatarUrl = '';
 
-	repo = '';
+	repo: GitRepo | null = null;
 
 	token = '';
 
@@ -30,12 +30,10 @@ export default class GithubClientService implements IGitClientService {
 
 	async authorize() {
 		const userData = await window.ipcRenderer.invoke('github-oauth');
-		console.log(userData);
 		this.username = userData.username;
 		this.avatarUrl = userData.avatarUrl;
 
-		const repos = await this.getRepoList();
-		console.log(JSON.stringify(repos, null, 4));
+		await this.getRepoList();
 	}
 
 	// eslint-disable-next-line class-methods-use-this
