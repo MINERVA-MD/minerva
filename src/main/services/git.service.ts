@@ -55,7 +55,6 @@ export default class GitService {
 		const secretsJSON = JSON.parse(
 			fs.readFileSync(SECRETS_PATH, { encoding: 'utf8' }),
 		);
-
 		return secretsJSON[key] || '';
 	};
 
@@ -75,9 +74,10 @@ export default class GitService {
 	}
 
 	private async clearSessionData() {
+		console.log('session clear');
 		const win = BrowserWindow.getAllWindows()[0];
 		const { session } = win.webContents;
-		await session.clearCache();
+		await session.clearAuthCache();
 	}
 
 	// listen for git service on connect and modify api endpoints accordingly
@@ -134,14 +134,18 @@ export default class GitService {
 		);
 
 		ipcMain.handle('github-oauth', async (event, arg) => {
-			await this.generateOAuthToken();
-			return this.authenticateUser();
+			try {
+				await this.generateOAuthToken();
+				return this.authenticateUser();
+			} catch (error) {
+				console.log(error);
+			}
 		});
 
 		ipcMain.handle('logout', async () => {
 			this.destroy();
-			this.clearSecrets();
 			await this.clearSessionData();
+			this.clearSecrets();
 		});
 	}
 
@@ -151,7 +155,6 @@ export default class GitService {
 				const token = await GitHubOAuth.getAccessToken({
 					scope: 'repo',
 				});
-				console.log(token);
 				this.saveSecret('GH_OAUTH_TOKEN_SCOPE', token.scope);
 				this.saveSecret('GH_OAUTH_TOKEN', token.access_token);
 				this.saveSecret('GH_OAUTH_TOKEN_TYPE', token.token_type);
