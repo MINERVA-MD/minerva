@@ -6,6 +6,7 @@
 		@joinCollabSession="joinCollabSession"
 		:gitService="gitService"
 	/>
+	<button @click="logout">logout</button>
 	<RouterView v-slot="{ Component }">
 		<transition name="fade">
 			<keep-alive>
