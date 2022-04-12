@@ -75,7 +75,7 @@ export default class GitService {
 	}
 
 	private async clearSessionData() {
-		await session.;
+		// await session.;
 	}
 
 	// listen for git service on connect and modify api endpoints accordingly
