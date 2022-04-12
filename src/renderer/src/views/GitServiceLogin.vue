@@ -91,7 +91,6 @@ export default defineComponent({
 	mounted() {},
 	async updated() {
 		if (this.repoSelect !== this.repo && this.gitService) {
-			console.log(this.repoSelect);
 			this.repo = this.repoSelect;
 			this.gitService.repo = this.repo;
 			this.$emit('selectRepo', this.repo);

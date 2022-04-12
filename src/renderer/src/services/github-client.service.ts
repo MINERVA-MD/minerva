@@ -42,14 +42,19 @@ export default class GithubClientService implements IGitClientService {
 	}
 
 	async cloneSelectedRepo() {
-		await window.ipcRenderer.invoke('clone-repo', this.repo);
+		try {
+			await window.ipcRenderer.invoke('clone-repo', this.repo?.name);
+		} catch (error) {
+			console.log(error);
+		}
 	}
 
 	async getReadMeContents() {
 		const fileContents = await window.ipcRenderer.invoke(
 			'get-file-content',
-			this.repo,
+			this.repo?.name,
 		);
+		console.log(fileContents);
 		return fileContents;
 	}
 }
