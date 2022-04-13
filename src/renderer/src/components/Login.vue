@@ -1,6 +1,9 @@
 <template>
-	<button v-on:click="toLoginPage" class="flex items-end">
-		<p class="flex items-end text-minerva-gray mr-2" v-if="gitService">
+	<button
+		v-on:click="toLoginPage"
+		class="flex items-end opacity-80 hover:opacity-100 text-minerva-gray text-lg font-semi-bold transition-colors duration-100"
+	>
+		<p class="flex items-end mr-2" v-if="gitService">
 			{{ gitService.username }}
 		</p>
 		<img

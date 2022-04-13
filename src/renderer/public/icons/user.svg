@@ -29,7 +29,7 @@
      inkscape:pagecheckerboard="0"
      showgrid="false"
      inkscape:zoom="27.083333"
-     inkscape:cx="12.018462"
+     inkscape:cx="12.055385"
      inkscape:cy="12"
      inkscape:window-width="1312"
      inkscape:window-height="872"
@@ -40,11 +40,11 @@
   <path
      d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"
      id="path824"
-     style="stroke:#222222;stroke-opacity:1" />
+     style="stroke:#404040;stroke-opacity:1" />
   <circle
      cx="12"
      cy="7"
      r="4"
      id="circle826"
-     style="stroke:#222222;stroke-opacity:1" />
+     style="stroke:#404040;stroke-opacity:1" />
 </svg>
