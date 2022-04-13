@@ -28,6 +28,7 @@
 				"
 				class="flex flex-col space-y-4"
 			>
+				<label for="repos">Select a Repo:</label>
 				<select
 					name="repos"
 					id="repos"
@@ -105,7 +106,11 @@ export default defineComponent({
 			this.$emit('logout');
 		},
 		useRepo() {
-			this.$emit('useRepo');
+			if (this.repo !== null) {
+				this.$emit('useRepo');
+			} else {
+				this.error = 'must select a repo';
+			}
 		},
 	},
 	emits: ['login', 'logout', 'selectRepo', 'useRepo'],

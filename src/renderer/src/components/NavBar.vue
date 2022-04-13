@@ -8,7 +8,7 @@
 			<button
 				@click="toggleMenu"
 				type="button"
-				class="cursor-pointer mr-6 hover:opacity-70"
+				class="cursor-pointer mr-6 opacity-80 hover:opacity-100"
 				id="menu-button"
 			>
 				<img
