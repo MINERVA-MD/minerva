@@ -1,7 +1,7 @@
 <template>
 	<div id="menu">
 		<div
-			class="absolute border border-gray-300 w-56 right-4 mt-10 rounded-xl p-4 shadow-lg text-minerva-gray text-sm"
+			class="absolute border bg-white border-gray-300 w-64 right-4 mt-10 rounded-xl p-4 shadow-lg text-minerva-gray text-sm"
 		>
 			<button
 				@click="newFile"
