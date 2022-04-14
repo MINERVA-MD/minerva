@@ -20,11 +20,11 @@
 	</select>
 	<button
 		type="button"
-		style="background-color: green; color: white"
 		v-on:click="commitChanges"
 	>
 		commit
-	</button> -->
+	</button> 
+	-->
 	<div class="view-container grid grid-cols-2 gap-2 p-3">
 		<div
 			class="overflow-auto editor-height border-r-2 outline-none border-gray-200 pr-2"

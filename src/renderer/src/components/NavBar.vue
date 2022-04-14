@@ -2,6 +2,14 @@
 	<header class="flex justify-between w-full mt-4 items-center">
 		<RoomId :roomId="roomId" />
 		<div class="flex">
+			<button
+				v-if="gitService?.repo"
+				class="bg-green-600 rounded px-2 py-1 text-white mr-6 hover:opacity-80"
+				type="button"
+				v-on:click="commitChanges"
+			>
+				commit
+			</button>
 			<div class="mr-6 flex">
 				<Login :gitService="gitService" />
 			</div>
