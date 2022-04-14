@@ -1,5 +1,5 @@
 <template>
-	<div class="ml-6 flex items-center">
+	<div class="ml-6 flex items-center text-sm">
 		<span v-if="roomId" class="font-semibold text-minerva-gray">
 			Room ID:</span
 		>
@@ -10,7 +10,7 @@
 		>
 			{{ roomId }}
 			<img
-				class="ml-2 opacity-50 h-5"
+				class="ml-2 opacity-50 h-4"
 				src="/icons/copy.svg"
 				alt="copy icon"
 			/>
