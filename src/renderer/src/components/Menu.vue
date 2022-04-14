@@ -1,16 +1,11 @@
 <template>
 	<div id="menu">
-		<div class="absolute w-12 overflow-hidden inline-block right-3.5 mt-7">
-			<div
-				class="h-7 w-9 bg-minerva-purple rotate-45 transform origin-bottom-left"
-			></div>
-		</div>
 		<div
-			class="absolute bg-minerva-purple w-72 right-4 mt-12 rounded-xl p-4 shadow-lg text-white"
+			class="absolute border border-gray-300 w-56 right-4 mt-10 rounded-xl p-4 shadow-lg text-minerva-gray text-sm"
 		>
 			<button
 				@click="newFile"
-				class="text-left font-semibold w-full p-2 hover:bg-white/20 rounded transition-all duration-100"
+				class="text-left font-semibold w-full p-2 hover:bg-gray-400/20 rounded transition-all duration-100"
 			>
 				New File
 			</button>
@@ -21,7 +16,7 @@
 				</button> -->
 			<RouterLink to="/gitservice">
 				<button
-					class="text-left font-semibold w-full p-2 hover:bg-white/20 rounded transition-all duration-100"
+					class="text-left font-semibold w-full p-2 hover:bg-gray-400/20 rounded transition-all duration-100"
 				>
 					{{
 						gitService
@@ -32,26 +27,26 @@
 					}}
 				</button>
 			</RouterLink>
-			<p class="text-white text-opacity-70 mt-1 text-right text-sm">
+			<p class="text-gray-500 text-opacity-70 mt-1 text-right text-sm">
 				Collaboration
 			</p>
 			<hr class="mb-3 opacity-70" />
 			<button
 				@click="createCollabSession"
-				class="text-left font-semibold w-full p-2 hover:bg-white/20 rounded transition-all duration-100"
+				class="text-left font-semibold w-full p-2 hover:bg-gray-400/20 rounded transition-all duration-100"
 			>
 				Create Session
 			</button>
-			<div class="w-full p-2 flex font-semibold">
-				Join Session:
+			<div class="w-full p-2 flex font-semibold items-center">
+				Join:
 				<input
-					class="w-16 px-1 h-7 rounded text-black ml-1"
+					class="w-16 px-2 h-7 rounded text-minerva-gray ml-1 border border-gray-300 text-sm"
 					type="text"
 					v-model="inputRoomId"
 					placeholder="ID"
 				/>
 				<button
-					class="px-3 font-semibold ml-3 bg-white text-minerva-purple rounded hover:bg-opacity-90 transition-all duration-100"
+					class="px-3 py-1 font-semibold ml-3 bg-minerva-purple text-white rounded hover:bg-opacity-90 transition-all duration-100"
 					@click="joinSession(inputRoomId)"
 				>
 					Join
