@@ -57,12 +57,12 @@ export default defineComponent({
 	mounted() {},
 	methods: {
 		newBlankEditor() {
-			this.gitService?.clearRepo();
 			this.$router.push('/');
 			setTimeout(() => {
 				this.roomId = '';
 				(this.$refs.view as any)?.newBlankEditor();
 			}, 1);
+			this.gitService?.clearRepo();
 		},
 		async createCollabSession() {
 			this.roomId = await (this.$refs.view as any)?.createCollabSession();
@@ -89,11 +89,16 @@ export default defineComponent({
 		selectRepo(repo: GitRepo) {
 			this.repo = repo;
 		},
+
 		async useRepo() {
 			await this.$router.push('/');
 			await this.gitService?.cloneSelectedRepo();
 			const fileContents = await this.gitService?.getReadMeContents();
 			(this.$refs.view as any).newEditorFromGit(fileContents);
+		},
+
+		commitChanges() {
+			(this.$refs.view as any)?.commitChanges();
 		},
 	},
 });
