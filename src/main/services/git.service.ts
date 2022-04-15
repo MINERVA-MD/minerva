@@ -1,8 +1,8 @@
 /* eslint-disable class-methods-use-this */
-import fs from 'fs';
+import fs, { chownSync } from 'fs';
 import simpleGit from 'simple-git';
 import { Octokit } from '@octokit/core';
-import { app, ipcMain } from 'electron';
+import { app, ipcMain, BrowserWindow } from 'electron';
 
 import type { GitRepo } from '@/typings/GitService';
 import { GitHubOAuth } from '../../common/config/auth.config';
@@ -17,9 +17,11 @@ export default class GitService {
 
 	private remote = '';
 
+	private octokit: Octokit | null = null;
+
 	constructor(username: string, token: string) {
 		console.log('Instantiating new Github Service');
-		this.localRepoPath = `${app.getPath('documents')}/minerva_repos`;
+		this.localRepoPath = `${app.getPath('documents')}/Minerva/repos`;
 		this.username = username;
 		this.token = token;
 		this.saveSecret('Username', username);
@@ -29,13 +31,8 @@ export default class GitService {
 	// TODO: Refactor into utility static class
 	// TODO: Refactor so that file paths are saved as constants
 	private saveSecret = (key: string, value: string): void => {
+		this.createSecretsFileIfNotExists();
 		try {
-			// Create Dir if it does not exist
-			if (!fs.existsSync(MINERVA_DIR)) {
-				fs.mkdirSync(MINERVA_DIR);
-				fs.writeFileSync(SECRETS_PATH, JSON.stringify({}));
-			}
-
 			// Read current contents from file
 			const secretsJSON = JSON.parse(
 				fs.readFileSync(SECRETS_PATH, { encoding: 'utf8' }),
@@ -58,7 +55,6 @@ export default class GitService {
 		const secretsJSON = JSON.parse(
 			fs.readFileSync(SECRETS_PATH, { encoding: 'utf8' }),
 		);
-
 		return secretsJSON[key] || '';
 	};
 
@@ -66,12 +62,35 @@ export default class GitService {
 		const secretsJSON = JSON.parse(
 			fs.readFileSync(SECRETS_PATH, { encoding: 'utf8' }),
 		);
+		if (secretsJSON[key] === '') {
+			return false;
+		}
+
 		return key in secretsJSON;
 	};
 
+	private clearSecrets() {
+		fs.writeFileSync(SECRETS_PATH, '{}');
+	}
+
+	private async clearSessionData() {
+		console.log('session clear');
+		const win = BrowserWindow.getAllWindows();
+
+		const { session } = win[0].webContents;
+		try {
+			await session.clearAuthCache();
+			await session.clearStorageData();
+			await session.clearCache();
+			await session.clearHostResolverCache();
+		} catch (error) {
+			console.log(error);
+		}
+	}
+
 	// listen for git service on connect and modify api endpoints accordingly
 	listen() {
-		ipcMain.handle('get-repo-list', async (event, username: string) => {
+		ipcMain.handle('get-repo-list', async () => {
 			try {
 				const repos: GitRepo[] = await this.getAllUserRepos();
 				return repos;
@@ -81,12 +100,13 @@ export default class GitService {
 			return [];
 		});
 
-		ipcMain.handle('clone-repo', async (event, repoName: string) => {
+		ipcMain.handle('clone-repo', async (event, repo: string) => {
+			const repoObj: GitRepo = JSON.parse(repo);
 			// prettier-ignore
-			const remote = `https://${this.getSecret('GH_OAUTH_TOKEN')}@github.com/${this.username}/${repoName}.git`;
+			const remote = `https://${this.getSecret('GH_OAUTH_TOKEN')}@github.com/${repoObj.ownerLogin}/${repoObj.name}.git`;
 			this.remote = remote;
 			await simpleGit()
-				.clone(remote, `${this.localRepoPath}/${repoName}`)
+				.clone(remote, `${this.localRepoPath}/${repoObj.name}`)
 				.catch(e => console.log(e));
 		});
 
@@ -94,6 +114,22 @@ export default class GitService {
 			'get-file-content',
 			async (event, repoName: string, fileName = 'README.md') => {
 				try {
+					if (
+						fs.existsSync(
+							`${this.localRepoPath}/${repoName}/${fileName}`,
+						)
+					) {
+						const fileData = await fs.promises.readFile(
+							`${this.localRepoPath}/${repoName}/${fileName}`,
+							'utf8',
+						);
+						return fileData;
+					}
+					fs.writeFileSync(
+						`${this.localRepoPath}/${repoName}/${fileName}`,
+						'## No ReadMe Found in Repo \n *Readme created by minerva*',
+					);
+
 					const fileData = await fs.promises.readFile(
 						`${this.localRepoPath}/${repoName}/${fileName}`,
 						'utf8',
@@ -122,8 +158,20 @@ export default class GitService {
 			},
 		);
 
-		ipcMain.handle('github-oauth', async (event, arg) => {
-			await this.generateOAuthToken();
+		ipcMain.handle('github-oauth', async () => {
+			try {
+				await this.generateOAuthToken();
+				return this.authenticateUser();
+			} catch (error) {
+				console.log(error);
+				return error;
+			}
+		});
+
+		ipcMain.handle('logout', async () => {
+			this.destroy();
+			await this.clearSessionData();
+			// this.clearSecrets();
 		});
 	}
 
@@ -133,7 +181,6 @@ export default class GitService {
 				const token = await GitHubOAuth.getAccessToken({
 					scope: 'repo',
 				});
-
 				this.saveSecret('GH_OAUTH_TOKEN_SCOPE', token.scope);
 				this.saveSecret('GH_OAUTH_TOKEN', token.access_token);
 				this.saveSecret('GH_OAUTH_TOKEN_TYPE', token.token_type);
@@ -143,29 +190,52 @@ export default class GitService {
 		}
 	}
 
+	async authenticateUser() {
+		this.octokit = new Octokit({
+			auth: this.getSecret('GH_OAUTH_TOKEN'),
+		});
+
+		const { data } = await this.octokit.request('GET /user');
+		this.username = data.login;
+		this.saveSecret('Username', data.login);
+
+		return { username: data.login, avatarUrl: data.avatar_url };
+	}
+
 	async getAllUserRepos(): Promise<GitRepo[]> {
 		const ghRepos: GitRepo[] = [];
 		try {
-			await this.generateOAuthToken();
-
-			const octokit = new Octokit({
-				auth: this.getSecret('GH_OAUTH_TOKEN'),
-			});
-
-			const { data: repos } = await octokit.request(`GET /user/repos`);
-			// eslint-disable-next-line no-restricted-syntax
-			for (const repo of repos) {
-				ghRepos.push({
-					id: repo.id,
-					name: repo.name,
-					cloneUrl: repo.clone_url,
-					isPrivate: repo.private,
-				});
+			if (this.octokit) {
+				const { data: repos } = await this.octokit.request(
+					`GET /user/repos`,
+					{ per_page: 100 },
+				);
+				// eslint-disable-next-line no-restricted-syntax
+				for (const repo of repos) {
+					ghRepos.push({
+						id: repo.id,
+						ownerLogin: repo.owner.login,
+						name: repo.name,
+						cloneUrl: repo.clone_url,
+						isPrivate: repo.private,
+					});
+				}
 			}
 		} catch (error) {
 			console.log(error);
 		}
 		return ghRepos;
+	}
+
+	createSecretsFileIfNotExists() {
+		// Create Dir if it does not exist
+		if (!fs.existsSync(MINERVA_DIR)) {
+			fs.mkdirSync(MINERVA_DIR);
+		}
+		if (!fs.existsSync(SECRETS_PATH)) {
+			fs.openSync(SECRETS_PATH, 'w');
+			fs.writeFileSync(SECRETS_PATH, JSON.stringify({}));
+		}
 	}
 
 	async commitAndPush(repoName: string) {
@@ -187,5 +257,7 @@ export default class GitService {
 		ipcMain.removeHandler('commit-changes');
 		ipcMain.removeHandler('get-repo-list');
 		ipcMain.removeHandler('get-file-content');
+		ipcMain.removeHandler('github-oauth');
+		ipcMain.removeHandler('logout');
 	}
 }

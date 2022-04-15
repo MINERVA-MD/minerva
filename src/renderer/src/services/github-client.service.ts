@@ -2,18 +2,17 @@ import type { GitRepo } from '../../../typings/GitService';
 import type IGitClientService from '../Interfaces/IGitClientService';
 
 export default class GithubClientService implements IGitClientService {
-	username: string;
+	username = '';
 
-	repo: string;
+	avatarUrl = '';
 
-	token: string;
+	repo: GitRepo | null = null;
+
+	token = '';
 
 	userRepositories: GitRepo[] = [];
 
-	constructor(username: string, token: string) {
-		this.username = username;
-		this.repo = '';
-		this.token = token;
+	constructor() {
 		window.ipcRenderer.send('github-connect', this.username, this.token);
 	}
 
@@ -21,7 +20,6 @@ export default class GithubClientService implements IGitClientService {
 		try {
 			this.userRepositories = await window.ipcRenderer.invoke(
 				'get-repo-list',
-				this.username,
 			);
 		} catch (error) {
 			console.log(error);
@@ -30,22 +28,39 @@ export default class GithubClientService implements IGitClientService {
 		return this.userRepositories;
 	}
 
-	// eslint-disable-next-line class-methods-use-this
 	async authorize() {
-		await window.ipcRenderer.invoke('github-oauth', 'getToken');
-		const repos = await this.getRepoList();
-		console.log(JSON.stringify(repos, null, 4));
+		const userData = await window.ipcRenderer.invoke('github-oauth');
+		this.username = userData.username;
+		this.avatarUrl = userData.avatarUrl;
+
+		await this.getRepoList();
+	}
+
+	// eslint-disable-next-line class-methods-use-this
+	async logout() {
+		await window.ipcRenderer.invoke('logout');
 	}
 
 	async cloneSelectedRepo() {
-		await window.ipcRenderer.invoke('clone-repo', this.repo);
+		try {
+			await window.ipcRenderer.invoke(
+				'clone-repo',
+				JSON.stringify(this.repo),
+			);
+		} catch (error) {
+			console.log(error);
+		}
 	}
 
 	async getReadMeContents() {
 		const fileContents = await window.ipcRenderer.invoke(
 			'get-file-content',
-			this.repo,
+			this.repo?.name,
 		);
 		return fileContents;
+	}
+
+	clearRepo() {
+		this.repo = null;
 	}
 }
