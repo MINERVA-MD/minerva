@@ -22,7 +22,7 @@ function createWindow() {
 		width: 1400,
 		height: 900,
 		title: 'Main window',
-		// titleBarStyle: 'hidden',
+		// titleBarStyle: 'hidden'
 		webPreferences: {
 			preload: join(__dirname, '../preload/index.cjs'),
 		},
