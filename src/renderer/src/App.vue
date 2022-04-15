@@ -4,19 +4,22 @@
 		@newFile="newBlankEditor"
 		@createCollabSession="createCollabSession"
 		@joinCollabSession="joinCollabSession"
+		:gitService="gitService"
 	/>
 	<RouterView v-slot="{ Component }">
-		<button v-on:click="getGitHubOAuthToken">Login</button>
-		<keep-alive>
-			<component
-				:is="Component"
-				@connectGit="connectGit"
-				:gitService="gitService"
-				ref="view"
-				@selectRepo="selectRepo"
-				@useRepo="useRepo"
-			/>
-		</keep-alive>
+		<transition name="fade">
+			<keep-alive>
+				<component
+					:is="Component"
+					@login="login"
+					@logout="logout"
+					:gitService="gitService"
+					ref="view"
+					@selectRepo="selectRepo"
+					@useRepo="useRepo"
+				/>
+			</keep-alive>
+		</transition>
 	</RouterView>
 	<Footer />
 </template>
@@ -29,6 +32,7 @@ import GithubClientService from './services/github-client.service';
 import Editor from './views/Editor.vue';
 import Navbar from './components/NavBar.vue';
 import Footer from './components/Footer.vue';
+import type { GitRepo } from '@/typings/GitService';
 
 export default defineComponent({
 	components: {
@@ -39,22 +43,26 @@ export default defineComponent({
 	data(): {
 		roomId: string | null;
 		gitService: GithubClientService | null;
-		repo: string;
+		repo: GitRepo | null;
 	} {
 		return {
 			roomId: '',
 			gitService: null,
-			repo: '',
+			repo: null,
 		};
 	},
-	mounted() {},
 	created() {
 		this.$router.push('/');
 	},
+	mounted() {},
 	methods: {
 		newBlankEditor() {
-			this.roomId = '';
-			(this.$refs.view as any)?.newBlankEditor();
+			this.$router.push('/');
+			setTimeout(() => {
+				this.roomId = '';
+				(this.$refs.view as any)?.newBlankEditor();
+			}, 1);
+			this.gitService?.clearRepo();
 		},
 		async createCollabSession() {
 			this.roomId = await (this.$refs.view as any)?.createCollabSession();
@@ -63,26 +71,34 @@ export default defineComponent({
 			this.roomId = roomId;
 			(this.$refs.view as any)?.joinCollabSession(roomId);
 		},
-		connectGit(userInformation: { username: string; token: string }) {
+		connectGit() {
 			this.gitService = null;
-			this.gitService = new GithubClientService(
-				userInformation.username,
-				userInformation.token,
-			);
+			this.gitService = new GithubClientService();
 		},
 
-		async getGitHubOAuthToken() {
-			this.connectGit({ username: 'testminerva', token: '--' });
+		async login() {
+			this.connectGit();
 			await this.gitService?.authorize();
 		},
 
-		selectRepo(repo: string) {
+		async logout() {
+			await this.gitService?.logout();
+			this.gitService = null;
+		},
+
+		selectRepo(repo: GitRepo) {
 			this.repo = repo;
 		},
+
 		async useRepo() {
 			await this.$router.push('/');
+			await this.gitService?.cloneSelectedRepo();
 			const fileContents = await this.gitService?.getReadMeContents();
 			(this.$refs.view as any).newEditorFromGit(fileContents);
+		},
+
+		commitChanges() {
+			(this.$refs.view as any)?.commitChanges();
 		},
 	},
 });
@@ -90,4 +106,14 @@ export default defineComponent({
 
 <style>
 @import './css/github-markdown.css';
+
+.fade-enter-from {
+	opacity: 0%;
+}
+.fade-leave-to {
+	opacity: 0%;
+}
+.fade-enter-active {
+	transition: all 0.2s ease-in;
+}
 </style>

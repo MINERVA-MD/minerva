@@ -1,35 +1,33 @@
 <template>
 	<header class="flex justify-between w-full mt-4 items-center">
-		<div class="ml-6 flex items-center">
-			<span v-if="roomId" class="font-semibold text-minerva-gray">
-				Room ID:</span
-			>
+		<RoomId :roomId="roomId" />
+		<div class="flex">
 			<button
-				v-if="roomId"
-				class="bg-minerva-purple text-white py-0.5 px-2 rounded ml-2 flex hover:opacity-90 duration-100 transition-all items-center"
-				@click="copyRoomIdToClipboard"
+				v-if="gitService?.repo"
+				class="bg-green-600 rounded px-2 py-1 text-white mr-6 hover:opacity-80"
+				type="button"
+				v-on:click="commitChanges"
 			>
-				{{ roomId }}
-				<img
-					class="ml-2 opacity-50 h-5"
-					src="/icons/copy.svg"
-					alt="copy icon"
-				/>
+				commit
 			</button>
-			<span v-if="copied" class="font-semibold ml-2 text-gray-500">{{
-				copied ? 'copied!' : ''
-			}}</span>
-		</div>
-		<div class="menu">
+			<div class="mr-6 flex">
+				<Login :gitService="gitService" />
+			</div>
 			<button
 				@click="toggleMenu"
 				type="button"
-				class="cursor-pointer mr-6 hover:opacity-70"
+				class="cursor-pointer mr-6 opacity-80 hover:opacity-100"
+				id="menu-button"
 			>
-				<img src="/icons/menu.svg" alt="menu" />
+				<img
+					src="/icons/menu.svg"
+					class="pointer-events-none"
+					alt="menu"
+				/>
 			</button>
 			<div v-if="menuIsOpen === true">
 				<Menu
+					:gitService="gitService"
 					@newFile="newFile"
 					@createCollabSession="createCollabSession"
 					@joinSession="joinSession"
@@ -42,19 +40,21 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import Menu from './Menu.vue';
+import Login from './Login.vue';
+import RoomId from './RoomId.vue';
+import GithubClientService from '../services/github-client.service';
 
 export default defineComponent({
 	name: 'NavBar',
-	props: {
-		roomId: String,
+	props: ['roomId', 'gitService'],
+	mounted() {
+		this.listenForClicksOutsideMenu();
 	},
 	data(): {
 		menuIsOpen: boolean;
-		copied: boolean;
 	} {
 		return {
 			menuIsOpen: false,
-			copied: false,
 		};
 	},
 	methods: {
@@ -74,16 +74,27 @@ export default defineComponent({
 		joinSession(roomId: string) {
 			this.$emit('joinCollabSession', roomId);
 		},
-		copyRoomIdToClipboard() {
-			navigator.clipboard.writeText(this.roomId ? this.roomId : '');
-			setTimeout(() => {
-				this.copied = false;
-			}, 2000);
-			this.copied = true;
+		listenForClicksOutsideMenu() {
+			document.addEventListener('click', e => {
+				if (
+					this.menuIsOpen &&
+					e.target !== document.getElementById('menu-button') &&
+					!document
+						.getElementById('menu')
+						?.contains(e.target as HTMLElement)
+				) {
+					this.menuIsOpen = false;
+				}
+			});
+		},
+		commitChanges() {
+			//
 		},
 	},
 	components: {
 		Menu,
+		Login,
+		RoomId,
 	},
 	emits: ['joinCollabSession', 'createCollabSession', 'newFile'],
 });

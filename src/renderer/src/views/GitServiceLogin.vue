@@ -1,63 +1,65 @@
 <template>
-	<RouterLink class="text-minerva-purple" to="/">Back to editor</RouterLink>
-	<div class="flex flex-col w-96 space-y-4 mx-auto">
-		<input
-			type="text"
-			placeholder="Username"
-			name="username"
-			id="username"
-			class="border border-gray-300 rounded p-2"
-			v-model="username"
-		/>
-		<input
-			type="text"
-			name="token"
-			placeholder="Token"
-			id="token"
-			class="border border-gray-300 rounded p-2"
-			v-model="token"
-		/>
-		<p class="text-red-500">{{ error }}</p>
-		<button
-			class="bg-minerva-purple p-2 text-white rounded hover:opacity-90 transition-all duration-100"
-			v-on:click="connectGit"
+	<div>
+		<RouterLink class="text-minerva-purple" to="/"
+			>Back to editor</RouterLink
 		>
-			Connect Git
-		</button>
-		<div
-			v-if="gitService && repos?.length !== 0"
-			class="flex flex-col space-y-4"
-		>
-			<select
-				name="repos"
-				id="repos"
-				v-model="repoSelect"
-				class="border border-gray-300 rounded p-2"
-			>
-				<option default disabled value="">
-					{{
-						gitService
-							? repos?.length === 0
-								? 'Error Fetching Repos'
-								: 'Repositories'
-							: 'No Git Service'
-					}}
-				</option>
-				<option
-					v-for="repo in repos"
-					:value="repo.name"
-					:key="repo.name"
-				>
-					{{ repo.name }}
-				</option>
-			</select>
+
+		<div class="flex flex-col w-96 space-y-4 mx-auto mt-32">
 			<button
-				type="button"
-				class="bg-slate-800 text-white p-2 rounded"
-				@click="useRepo"
+				v-if="!gitService?.username"
+				class="bg-minerva-purple p-2 text-white rounded hover:opacity-90 transition-all duration-100 text-lg"
+				v-on:click="login"
 			>
-				Clone Repo
+				Login
 			</button>
+			<button
+				v-else
+				class="bg-minerva-purple p-2 text-white rounded hover:opacity-90 transition-all duration-100 text-lg"
+				v-on:click="logout"
+			>
+				logout
+			</button>
+			<p class="text-red-500">{{ error }}</p>
+			<div
+				v-if="
+					gitService &&
+					gitService.userRepositories &&
+					gitService?.userRepositories.length > 0
+				"
+				class="flex flex-col space-y-4"
+			>
+				<label for="repos">Select a Repo:</label>
+				<select
+					name="repos"
+					id="repos"
+					v-model="repoSelect"
+					class="border border-gray-300 rounded p-2"
+				>
+					<option default disabled value="">
+						{{
+							gitService
+								? gitService.userRepositories?.length === 0
+									? 'Error Fetching Repos'
+									: 'Repositories'
+								: 'No Git Service'
+						}}
+					</option>
+					<option
+						v-for="repo in gitService.userRepositories"
+						:value="repo"
+						:key="repo.name"
+					>
+						{{ repo.name }}
+					</option>
+				</select>
+				<button
+					type="button"
+					class="bg-slate-800 text-white p-2 rounded"
+					@click="useRepo"
+				>
+					Clone Repo
+				</button>
+			</div>
 		</div>
 	</div>
 </template>
@@ -72,16 +74,16 @@ export default defineComponent({
 	props: ['gitService'],
 	data(): {
 		repos: GitRepo[] | null;
-		repo: string;
-		repoSelect: string;
-		username: string;
+		repo: GitRepo | null;
+		repoSelect: GitRepo | null;
+		username: String;
 		token: string;
 		error: string;
 	} {
 		return {
 			repos: null,
-			repo: '',
-			repoSelect: '',
+			repo: null,
+			repoSelect: null,
 			username: '',
 			token: '',
 			error: '',
@@ -92,40 +94,25 @@ export default defineComponent({
 		if (this.repoSelect !== this.repo && this.gitService) {
 			this.repo = this.repoSelect;
 			this.gitService.repo = this.repo;
-			await this.gitService.cloneSelectedRepo();
-			//
 			this.$emit('selectRepo', this.repo);
 		}
 	},
 	methods: {
-		connectGit() {
-			//if (this.username.length !== 0 || this.token.length !== 0) {
+		login() {
 			this.repos = null;
-			this.$emit('connectGit', {
-				username: this.username,
-				token: this.token,
-			});
-			this.$nextTick(() => this.getRepos());
-			//} else {
-			this.error = 'No fields can be empty';
-			//	}
+			this.$emit('login');
 		},
-		async getRepos() {
-			try {
-				this.error = '';
-				this.repos = await this.gitService.getRepoList();
-				if (this.repos?.length === 0) {
-					this.error =
-						'There was a problem pulling user repositories. Check that you are using a valid username and token.';
-				}
-			} catch (error) {
-				console.log(error);
-			}
+		logout() {
+			this.$emit('logout');
 		},
 		useRepo() {
-			this.$emit('useRepo');
+			if (this.repo !== null) {
+				this.$emit('useRepo');
+			} else {
+				this.error = 'must select a repo';
+			}
 		},
 	},
-	emits: ['connectGit', 'selectRepo', 'useRepo'],
+	emits: ['login', 'logout', 'selectRepo', 'useRepo'],
 });
 </script>
