@@ -6,7 +6,7 @@
 	ul,
 	ol {
 		list-style: revert;
-		list-style-position: outside;
+		list-style-position: revert;
 	}
 }
 
