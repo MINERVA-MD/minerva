@@ -87,6 +87,9 @@ export default defineComponent({
 				}
 			});
 		},
+		commitChanges() {
+			//
+		},
 	},
 	components: {
 		Menu,
