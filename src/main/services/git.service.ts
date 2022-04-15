@@ -207,6 +207,7 @@ export default class GitService {
 			if (this.octokit) {
 				const { data: repos } = await this.octokit.request(
 					`GET /user/repos`,
+					{ per_page: 100 },
 				);
 				// eslint-disable-next-line no-restricted-syntax
 				for (const repo of repos) {
