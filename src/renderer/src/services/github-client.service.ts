@@ -56,4 +56,8 @@ export default class GithubClientService implements IGitClientService {
 		);
 		return fileContents;
 	}
+
+	clearRepo() {
+		this.repo = null;
+	}
 }
