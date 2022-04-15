@@ -100,12 +100,14 @@ export default class GitService {
 			return [];
 		});
 
-		ipcMain.handle('clone-repo', async (event, repoName: string) => {
+		ipcMain.handle('clone-repo', async (event, repo: string) => {
+			const repoObj: GitRepo = JSON.parse(repo);
+			console.log(repoObj);
 			// prettier-ignore
-			const remote = `https://${this.getSecret('GH_OAUTH_TOKEN')}@github.com/${this.username}/${repoName}.git`;
+			const remote = `https://${this.getSecret('GH_OAUTH_TOKEN')}@github.com/${repoObj.ownerLogin}/${repoObj.name}.git`;
 			this.remote = remote;
 			await simpleGit()
-				.clone(remote, `${this.localRepoPath}/${repoName}`)
+				.clone(remote, `${this.localRepoPath}/${repoObj.name}`)
 				.catch(e => console.log(e));
 		});
 
@@ -213,6 +215,7 @@ export default class GitService {
 				for (const repo of repos) {
 					ghRepos.push({
 						id: repo.id,
+						ownerLogin: repo.owner.login,
 						name: repo.name,
 						cloneUrl: repo.clone_url,
 						isPrivate: repo.private,
