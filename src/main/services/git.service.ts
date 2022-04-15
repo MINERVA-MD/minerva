@@ -102,7 +102,6 @@ export default class GitService {
 
 		ipcMain.handle('clone-repo', async (event, repo: string) => {
 			const repoObj: GitRepo = JSON.parse(repo);
-			console.log(repoObj);
 			// prettier-ignore
 			const remote = `https://${this.getSecret('GH_OAUTH_TOKEN')}@github.com/${repoObj.ownerLogin}/${repoObj.name}.git`;
 			this.remote = remote;
