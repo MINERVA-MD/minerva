@@ -57,6 +57,7 @@ export default defineComponent({
 	mounted() {},
 	methods: {
 		newBlankEditor() {
+			this.gitService?.clearRepo();
 			this.$router.push('/');
 			setTimeout(() => {
 				this.roomId = '';

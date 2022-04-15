@@ -9,4 +9,5 @@ export default interface IGitClientService {
 	getRepoList: () => Promise<GitRepo[]>;
 	cloneSelectedRepo: () => void;
 	getReadMeContents: () => Promise<string>;
+	clearRepo: () => void;
 }
