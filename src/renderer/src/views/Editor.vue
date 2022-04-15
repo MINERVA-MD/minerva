@@ -1,30 +1,4 @@
 <template>
-	<!-- <NavBar
-		:roomId="roomId"
-		@newFile="newBlankEditor"
-		@createCollabSession="createCollabSession"
-		@joinCollabSession="joinCollabSession"
-	/> -->
-	<!-- <button v-on:click="newBlankEditor">New</button>
-	<button v-on:click="createCollabSession">Create Collab</button>
-	<input type="text" v-model="inputRoomId" placeholder="room id" />
-	<button v-on:click="joinCollabSession">Join Collab</button>
-	<button v-on:click="connectGit">Connect Git</button>
-	<select name="repos" id="repos" v-model="repoSelect">
-		<option default disabled value="">
-			{{ gitService ? 'Repositories' : 'No Git Service' }}
-		</option>
-		<option v-for="repo in repos" :value="repo.name" :key="repo.name">
-			{{ repo.name }}
-		</option>
-	</select>
-	<button
-		type="button"
-		v-on:click="commitChanges"
-	>
-		commit
-	</button> 
-	-->
 	<div class="view-container grid grid-cols-2 gap-2 p-3">
 		<div
 			class="overflow-auto editor-height border-r-2 outline-none border-gray-200 pr-2"
