@@ -92,7 +92,7 @@ export default defineComponent({
 
 			await window.ipcRenderer.invoke(
 				'commit-changes',
-				this.repo,
+				this.gitService?.repo.name,
 				'README.md',
 				editorText,
 			);

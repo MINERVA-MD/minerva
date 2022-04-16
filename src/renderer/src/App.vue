@@ -1,10 +1,11 @@
 <template>
 	<Navbar
 		:roomId="roomId ? roomId : ''"
+		:gitService="gitService"
 		@newFile="newBlankEditor"
 		@createCollabSession="createCollabSession"
 		@joinCollabSession="joinCollabSession"
-		:gitService="gitService"
+		@commitChanges="commitChanges"
 	/>
 	<RouterView v-slot="{ Component }">
 		<transition name="fade">
@@ -17,7 +18,6 @@
 					@logout="logout"
 					@selectRepo="selectRepo"
 					@useRepo="useRepo"
-					@commitChanges="commitChanges"
 				/>
 			</keep-alive>
 		</transition>
