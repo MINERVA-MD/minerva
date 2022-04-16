@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<RouterLink class="text-minerva-purple" to="/"
+		<RouterLink class="ml-6 text-minerva-purple" to="/"
 			>Back to editor</RouterLink
 		>
 

@@ -28,66 +28,6 @@ export default class GitService {
 		this.listen();
 	}
 
-	// TODO: Refactor into utility static class
-	// TODO: Refactor so that file paths are saved as constants
-	private saveSecret = (key: string, value: string): void => {
-		this.createSecretsFileIfNotExists();
-		try {
-			// Read current contents from file
-			const secretsJSON = JSON.parse(
-				fs.readFileSync(SECRETS_PATH, { encoding: 'utf8' }),
-			);
-
-			// (Over) write key with value
-			secretsJSON[key] = value;
-
-			fs.writeFileSync(
-				SECRETS_PATH,
-				JSON.stringify(secretsJSON, null, 4),
-				{ encoding: 'utf8' },
-			);
-		} catch (e) {
-			console.log(e);
-		}
-	};
-
-	private getSecret = (key: string): string => {
-		const secretsJSON = JSON.parse(
-			fs.readFileSync(SECRETS_PATH, { encoding: 'utf8' }),
-		);
-		return secretsJSON[key] || '';
-	};
-
-	private isSecretStored = (key: string): boolean => {
-		const secretsJSON = JSON.parse(
-			fs.readFileSync(SECRETS_PATH, { encoding: 'utf8' }),
-		);
-		if (secretsJSON[key] === '') {
-			return false;
-		}
-
-		return key in secretsJSON;
-	};
-
-	private clearSecrets() {
-		fs.writeFileSync(SECRETS_PATH, '{}');
-	}
-
-	private async clearSessionData() {
-		console.log('session clear');
-		const win = BrowserWindow.getAllWindows();
-
-		const { session } = win[0].webContents;
-		try {
-			await session.clearAuthCache();
-			await session.clearStorageData();
-			await session.clearCache();
-			await session.clearHostResolverCache();
-		} catch (error) {
-			console.log(error);
-		}
-	}
-
 	// listen for git service on connect and modify api endpoints accordingly
 	listen() {
 		ipcMain.handle('get-repo-list', async () => {
@@ -102,43 +42,13 @@ export default class GitService {
 
 		ipcMain.handle('clone-repo', async (event, repo: string) => {
 			const repoObj: GitRepo = JSON.parse(repo);
-			// prettier-ignore
-			const remote = `https://${this.getSecret('GH_OAUTH_TOKEN')}@github.com/${repoObj.ownerLogin}/${repoObj.name}.git`;
-			this.remote = remote;
-			await simpleGit()
-				.clone(remote, `${this.localRepoPath}/${repoObj.name}`)
-				.catch(e => console.log(e));
+			await this.cloneRepo(repoObj);
 		});
 
 		ipcMain.handle(
 			'get-file-content',
 			async (event, repoName: string, fileName = 'README.md') => {
-				try {
-					if (
-						fs.existsSync(
-							`${this.localRepoPath}/${repoName}/${fileName}`,
-						)
-					) {
-						const fileData = await fs.promises.readFile(
-							`${this.localRepoPath}/${repoName}/${fileName}`,
-							'utf8',
-						);
-						return fileData;
-					}
-					fs.writeFileSync(
-						`${this.localRepoPath}/${repoName}/${fileName}`,
-						'## No ReadMe Found in Repo \n *Readme created by minerva*',
-					);
-
-					const fileData = await fs.promises.readFile(
-						`${this.localRepoPath}/${repoName}/${fileName}`,
-						'utf8',
-					);
-					return fileData;
-				} catch (error) {
-					console.log(error);
-					return error;
-				}
+				return this.getFileContents(repoName, fileName);
 			},
 		);
 
@@ -202,6 +112,77 @@ export default class GitService {
 		return { username: data.login, avatarUrl: data.avatar_url };
 	}
 
+	// TODO: Refactor into utility static class
+	// TODO: Refactor so that file paths are saved as constants
+	private saveSecret = (key: string, value: string): void => {
+		this.createSecretsFileIfNotExists();
+		try {
+			// Read current contents from file
+			const secretsJSON = JSON.parse(
+				fs.readFileSync(SECRETS_PATH, { encoding: 'utf8' }),
+			);
+
+			// (Over) write key with value
+			secretsJSON[key] = value;
+
+			fs.writeFileSync(
+				SECRETS_PATH,
+				JSON.stringify(secretsJSON, null, 4),
+				{ encoding: 'utf8' },
+			);
+		} catch (e) {
+			console.log(e);
+		}
+	};
+
+	private getSecret = (key: string): string => {
+		const secretsJSON = JSON.parse(
+			fs.readFileSync(SECRETS_PATH, { encoding: 'utf8' }),
+		);
+		return secretsJSON[key] || '';
+	};
+
+	private isSecretStored = (key: string): boolean => {
+		const secretsJSON = JSON.parse(
+			fs.readFileSync(SECRETS_PATH, { encoding: 'utf8' }),
+		);
+		if (secretsJSON[key] === '') {
+			return false;
+		}
+
+		return key in secretsJSON;
+	};
+
+	createSecretsFileIfNotExists() {
+		// Create Dir if it does not exist
+		if (!fs.existsSync(MINERVA_DIR)) {
+			fs.mkdirSync(MINERVA_DIR);
+		}
+		if (!fs.existsSync(SECRETS_PATH)) {
+			fs.openSync(SECRETS_PATH, 'w');
+			fs.writeFileSync(SECRETS_PATH, JSON.stringify({}));
+		}
+	}
+
+	private clearSecrets() {
+		fs.writeFileSync(SECRETS_PATH, '{}');
+	}
+
+	private async clearSessionData() {
+		console.log('session clear');
+		const win = BrowserWindow.getAllWindows();
+
+		const { session } = win[0].webContents;
+		try {
+			await session.clearAuthCache();
+			await session.clearStorageData();
+			await session.clearCache();
+			await session.clearHostResolverCache();
+		} catch (error) {
+			console.log(error);
+		}
+	}
+
 	async getAllUserRepos(): Promise<GitRepo[]> {
 		const ghRepos: GitRepo[] = [];
 		try {
@@ -227,14 +208,47 @@ export default class GitService {
 		return ghRepos;
 	}
 
-	createSecretsFileIfNotExists() {
-		// Create Dir if it does not exist
-		if (!fs.existsSync(MINERVA_DIR)) {
-			fs.mkdirSync(MINERVA_DIR);
+	async cloneRepo(repoObj: GitRepo) {
+		const remote = `https://${this.getSecret(
+			'GH_OAUTH_TOKEN',
+		)}@github.com/${repoObj.ownerLogin}/${repoObj.name}.git`;
+		this.remote = remote;
+
+		if (fs.existsSync(`${this.localRepoPath}/${repoObj.name}`)) {
+			fs.rmSync(`${this.localRepoPath}/${repoObj.name}`, {
+				recursive: true,
+				force: true,
+			});
 		}
-		if (!fs.existsSync(SECRETS_PATH)) {
-			fs.openSync(SECRETS_PATH, 'w');
-			fs.writeFileSync(SECRETS_PATH, JSON.stringify({}));
+		await simpleGit()
+			.clone(remote, `${this.localRepoPath}/${repoObj.name}`)
+			.catch(e => console.log(e));
+	}
+
+	async getFileContents(repoName: string, fileName = 'README.md') {
+		try {
+			if (
+				fs.existsSync(`${this.localRepoPath}/${repoName}/${fileName}`)
+			) {
+				const fileData = await fs.promises.readFile(
+					`${this.localRepoPath}/${repoName}/${fileName}`,
+					'utf8',
+				);
+				return fileData;
+			}
+			fs.writeFileSync(
+				`${this.localRepoPath}/${repoName}/${fileName}`,
+				'## No ReadMe Found in Repo \n *Readme created by minerva*',
+			);
+
+			const fileData = await fs.promises.readFile(
+				`${this.localRepoPath}/${repoName}/${fileName}`,
+				'utf8',
+			);
+			return fileData;
+		} catch (error) {
+			console.log(error);
+			return error;
 		}
 	}
 
