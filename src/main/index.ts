@@ -3,6 +3,7 @@ import { join } from 'path';
 import { app, BrowserWindow, ipcMain, shell } from 'electron';
 
 import GitService from './services/git.service';
+import FileHandle from './services/fileHandle.service';
 
 // Disable GPU Acceleration for Windows 7
 if (release().startsWith('6.1')) app.disableHardwareAcceleration();
@@ -91,3 +92,5 @@ ipcMain.on('github-connect', (event, username, token) => {
 		gitService = new GitService(username, token);
 	}
 });
+
+FileHandle.listen();

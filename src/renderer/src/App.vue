@@ -3,6 +3,7 @@
 		:roomId="roomId ? roomId : ''"
 		:gitService="gitService"
 		@newFile="newBlankEditor"
+		@saveAsFile="saveAsFile"
 		@createCollabSession="createCollabSession"
 		@joinCollabSession="joinCollabSession"
 		@commitChanges="commitChanges"
@@ -13,6 +14,7 @@
 				<component
 					:is="Component"
 					:gitService="gitService"
+					:loadedFile="loadedFile"
 					ref="view"
 					@login="login"
 					@logout="logout"
@@ -45,11 +47,13 @@ export default defineComponent({
 		roomId: string | null;
 		gitService: GithubClientService | null;
 		repo: GitRepo | null;
+		loadedFile: string | null;
 	} {
 		return {
 			roomId: '',
 			gitService: null,
 			repo: null,
+			loadedFile: null,
 		};
 	},
 	created() {
@@ -65,13 +69,21 @@ export default defineComponent({
 			}, 1);
 			this.gitService?.clearRepo();
 		},
+
+		saveAsFile() {
+			const editorData = (this.$refs.view as any)?.getEditorContent();
+			window.ipcRenderer.invoke('saveAsFile', editorData);
+		},
+
 		async createCollabSession() {
 			this.roomId = await (this.$refs.view as any)?.createCollabSession();
 		},
+
 		joinCollabSession(roomId: string) {
 			this.roomId = roomId;
 			(this.$refs.view as any)?.joinCollabSession(roomId);
 		},
+
 		connectGit() {
 			this.gitService = null;
 			this.gitService = new GithubClientService();

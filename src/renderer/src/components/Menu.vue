@@ -7,13 +7,14 @@
 				@click="newFile"
 				class="text-left font-semibold w-full p-2 hover:bg-gray-400/20 rounded transition-all duration-100"
 			>
-				New File
+				New
 			</button>
-			<!-- <button
-					class="text-left font-semibold w-full p-2 hover:bg-white/20 rounded transition-all duration-100"
-				>
-					Save
-				</button> -->
+			<button
+				class="text-left font-semibold w-full p-2 hover:bg-gray-400/20 rounded transition-all duration-100"
+				@click="saveAsFile"
+			>
+				Save as
+			</button>
 			<RouterLink to="/gitservice">
 				<button
 					class="text-left font-semibold w-full p-2 hover:bg-gray-400/20 rounded transition-all duration-100"
@@ -73,6 +74,9 @@ export default defineComponent({
 	methods: {
 		newFile() {
 			this.$emit('newFile');
+		},
+		saveAsFile() {
+			this.$emit('saveAsFile');
 		},
 		createCollabSession() {
 			this.$emit('createCollabSession');

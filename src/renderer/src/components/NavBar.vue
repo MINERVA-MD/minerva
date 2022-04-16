@@ -29,6 +29,7 @@
 				<Menu
 					:gitService="gitService"
 					@newFile="newFile"
+					@saveAsFile="saveAsFile"
 					@createCollabSession="createCollabSession"
 					@joinSession="joinSession"
 				/>
@@ -68,6 +69,9 @@ export default defineComponent({
 		newFile() {
 			this.$emit('newFile');
 		},
+		saveAsFile() {
+			this.$emit('saveAsFile');
+		},
 		createCollabSession() {
 			this.$emit('createCollabSession');
 		},
@@ -101,6 +105,7 @@ export default defineComponent({
 		'createCollabSession',
 		'commitChanges',
 		'newFile',
+		'saveAsFile',
 	],
 });
 </script>

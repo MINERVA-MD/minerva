@@ -25,7 +25,7 @@ import type { GitRepo } from '@/typings/GitService';
 import type { Update } from '@codemirror/collab';
 
 export default defineComponent({
-	props: ['gitService'],
+	props: ['gitService', 'loadedFile'],
 	data(): {
 		editorService: EditorService | null;
 		view: EditorView | null;
@@ -96,6 +96,10 @@ export default defineComponent({
 				'README.md',
 				editorText,
 			);
+		},
+
+		getEditorContent() {
+			return this.editorService?.getEditorContent();
 		},
 
 		newEditorService(
