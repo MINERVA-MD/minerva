@@ -30,7 +30,9 @@
 					:gitService="gitService"
 					:loadedFile="loadedFile"
 					@newFile="newFile"
+					@saveFile="saveFile"
 					@saveAsFile="saveAsFile"
+					@loadFile="loadFile"
 					@createCollabSession="createCollabSession"
 					@joinSession="joinSession"
 				/>
@@ -69,8 +71,14 @@ export default defineComponent({
 		newFile() {
 			this.$emit('newFile');
 		},
+		saveFile() {
+			this.$emit('saveFile');
+		},
 		saveAsFile() {
 			this.$emit('saveAsFile');
+		},
+		loadFile() {
+			this.$emit('loadFile');
 		},
 		createCollabSession() {
 			this.$emit('createCollabSession');
@@ -105,7 +113,9 @@ export default defineComponent({
 		'createCollabSession',
 		'commitChanges',
 		'newFile',
+		'saveFile',
 		'saveAsFile',
+		'loadFile',
 	],
 });
 </script>

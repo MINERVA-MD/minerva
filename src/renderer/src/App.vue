@@ -4,7 +4,9 @@
 		:gitService="gitService"
 		:loadedFile="loadedFile"
 		@newFile="newBlankEditor"
+		@saveFile="saveFile"
 		@saveAsFile="saveAsFile"
+		@loadFile="loadFile"
 		@createCollabSession="createCollabSession"
 		@joinCollabSession="joinCollabSession"
 		@commitChanges="commitChanges"
@@ -68,7 +70,17 @@ export default defineComponent({
 				this.roomId = '';
 				(this.$refs.view as any)?.newBlankEditor();
 			}, 1);
+			this.loadedFile = null;
 			this.gitService?.clearRepo();
+		},
+
+		async saveFile() {
+			const editorData = (this.$refs.view as any)?.getEditorContent();
+			this.loadedFile = await window.ipcRenderer.invoke(
+				'saveFile',
+				this.loadedFile,
+				editorData,
+			);
 		},
 
 		async saveAsFile() {
@@ -77,6 +89,13 @@ export default defineComponent({
 				'saveAsFile',
 				editorData,
 			);
+		},
+
+		async loadFile() {
+			const file = await window.ipcRenderer.invoke('loadFile');
+			this.loadedFile = file.path;
+
+			(this.$refs.view as any)?.newEditorFromString(file.content);
 		},
 
 		async createCollabSession() {
@@ -111,7 +130,7 @@ export default defineComponent({
 			await this.$router.push('/');
 			await this.gitService?.cloneSelectedRepo();
 			const fileContents = await this.gitService?.getReadMeContents();
-			(this.$refs.view as any).newEditorFromGit(fileContents);
+			(this.$refs.view as any).newEditorFromString(fileContents);
 		},
 
 		commitChanges() {

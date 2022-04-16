@@ -10,6 +10,12 @@
 				New
 			</button>
 			<button
+				class="text-left font-semibold w-full p-2 hover:bg-gray-400/20 rounded transition-all duration-100"
+				@click="loadFile"
+			>
+				Open
+			</button>
+			<button
 				class="text-left font-semibold w-full p-2 hover:bg-gray-400/20 rounded transition-all duration-100 disabled:text-gray-400 disabled:hover:bg-white"
 				@click="saveFile"
 				:disabled="loadedFile === null"
@@ -35,7 +41,7 @@
 					}}
 				</button>
 			</RouterLink>
-			<p class="text-gray-500 text-opacity-70 mt-1 text-right text-sm">
+			<p class="text-gray-500 text-opacity-70 mt-3 text-right text-sm">
 				Collaboration
 			</p>
 			<hr class="mb-3 opacity-70" />
@@ -82,8 +88,14 @@ export default defineComponent({
 		newFile() {
 			this.$emit('newFile');
 		},
+		saveFile() {
+			this.$emit('saveFile');
+		},
 		saveAsFile() {
 			this.$emit('saveAsFile');
+		},
+		loadFile() {
+			this.$emit('loadFile');
 		},
 		createCollabSession() {
 			this.$emit('createCollabSession');

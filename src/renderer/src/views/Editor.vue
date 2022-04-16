@@ -73,7 +73,7 @@ export default defineComponent({
 			this.editorService?.socketsJoinRoom(this.roomId);
 		},
 
-		async newEditorFromGit(fileContents: string) {
+		newEditorFromString(fileContents: string) {
 			if (this.view) this.view.destroy();
 			this.view = this.newEditorService(false, fileContents);
 		},
