@@ -208,6 +208,10 @@ export default class EditorService {
 		return result;
 	}
 
+	getEditorContent() {
+		return this.view.state.doc.toJSON().join('\n');
+	}
+
 	disconnectSocket() {
 		this.socket?.close();
 	}

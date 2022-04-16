@@ -6,7 +6,7 @@
 				v-if="gitService?.repo"
 				class="bg-green-600 rounded px-2 py-1 text-white mr-6 hover:opacity-80"
 				type="button"
-				v-on:click="commitChanges"
+				@click="commitChanges"
 			>
 				commit
 			</button>
@@ -28,7 +28,11 @@
 			<div v-if="menuIsOpen === true">
 				<Menu
 					:gitService="gitService"
+					:loadedFile="loadedFile"
 					@newFile="newFile"
+					@saveFile="saveFile"
+					@saveAsFile="saveAsFile"
+					@loadFile="loadFile"
 					@createCollabSession="createCollabSession"
 					@joinSession="joinSession"
 				/>
@@ -42,11 +46,10 @@ import { defineComponent } from 'vue';
 import Menu from './Menu.vue';
 import Login from './Login.vue';
 import RoomId from './RoomId.vue';
-import GithubClientService from '../services/github-client.service';
 
 export default defineComponent({
 	name: 'NavBar',
-	props: ['roomId', 'gitService'],
+	props: ['roomId', 'gitService', 'loadedFile'],
 	mounted() {
 		this.listenForClicksOutsideMenu();
 	},
@@ -68,6 +71,15 @@ export default defineComponent({
 		newFile() {
 			this.$emit('newFile');
 		},
+		saveFile() {
+			this.$emit('saveFile');
+		},
+		saveAsFile() {
+			this.$emit('saveAsFile');
+		},
+		loadFile() {
+			this.$emit('loadFile');
+		},
 		createCollabSession() {
 			this.$emit('createCollabSession');
 		},
@@ -88,7 +100,7 @@ export default defineComponent({
 			});
 		},
 		commitChanges() {
-			//
+			this.$emit('commitChanges');
 		},
 	},
 	components: {
@@ -96,6 +108,14 @@ export default defineComponent({
 		Login,
 		RoomId,
 	},
-	emits: ['joinCollabSession', 'createCollabSession', 'newFile'],
+	emits: [
+		'joinCollabSession',
+		'createCollabSession',
+		'commitChanges',
+		'newFile',
+		'saveFile',
+		'saveAsFile',
+		'loadFile',
+	],
 });
 </script>

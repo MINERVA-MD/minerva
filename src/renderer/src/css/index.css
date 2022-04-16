@@ -2,6 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+	ul,
+	ol {
+		list-style: revert;
+		list-style-position: revert;
+	}
+}
+
 .titlebar {
 	-webkit-user-select: none;
 	-webkit-app-region: drag;

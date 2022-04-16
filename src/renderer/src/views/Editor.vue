@@ -25,7 +25,7 @@ import type { GitRepo } from '@/typings/GitService';
 import type { Update } from '@codemirror/collab';
 
 export default defineComponent({
-	props: ['gitService'],
+	props: ['gitService', 'loadedFile'],
 	data(): {
 		editorService: EditorService | null;
 		view: EditorView | null;
@@ -73,7 +73,7 @@ export default defineComponent({
 			this.editorService?.socketsJoinRoom(this.roomId);
 		},
 
-		async newEditorFromGit(fileContents: string) {
+		newEditorFromString(fileContents: string) {
 			if (this.view) this.view.destroy();
 			this.view = this.newEditorService(false, fileContents);
 		},
@@ -92,10 +92,14 @@ export default defineComponent({
 
 			await window.ipcRenderer.invoke(
 				'commit-changes',
-				this.repo,
+				this.gitService?.repo.name,
 				'README.md',
 				editorText,
 			);
+		},
+
+		getEditorContent() {
+			return this.editorService?.getEditorContent();
 		},
 
 		newEditorService(

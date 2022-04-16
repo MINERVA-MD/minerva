@@ -1,20 +1,26 @@
 <template>
 	<Navbar
 		:roomId="roomId ? roomId : ''"
+		:gitService="gitService"
+		:loadedFile="loadedFile"
 		@newFile="newBlankEditor"
+		@saveFile="saveFile"
+		@saveAsFile="saveAsFile"
+		@loadFile="loadFile"
 		@createCollabSession="createCollabSession"
 		@joinCollabSession="joinCollabSession"
-		:gitService="gitService"
+		@commitChanges="commitChanges"
 	/>
 	<RouterView v-slot="{ Component }">
 		<transition name="fade">
 			<keep-alive>
 				<component
 					:is="Component"
+					:gitService="gitService"
+					:loadedFile="loadedFile"
+					ref="view"
 					@login="login"
 					@logout="logout"
-					:gitService="gitService"
-					ref="view"
 					@selectRepo="selectRepo"
 					@useRepo="useRepo"
 				/>
@@ -44,11 +50,13 @@ export default defineComponent({
 		roomId: string | null;
 		gitService: GithubClientService | null;
 		repo: GitRepo | null;
+		loadedFile: string | null;
 	} {
 		return {
 			roomId: '',
 			gitService: null,
 			repo: null,
+			loadedFile: null,
 		};
 	},
 	created() {
@@ -62,15 +70,43 @@ export default defineComponent({
 				this.roomId = '';
 				(this.$refs.view as any)?.newBlankEditor();
 			}, 1);
+			this.loadedFile = null;
 			this.gitService?.clearRepo();
 		},
+
+		async saveFile() {
+			const editorData = (this.$refs.view as any)?.getEditorContent();
+			this.loadedFile = await window.ipcRenderer.invoke(
+				'saveFile',
+				this.loadedFile,
+				editorData,
+			);
+		},
+
+		async saveAsFile() {
+			const editorData = (this.$refs.view as any)?.getEditorContent();
+			this.loadedFile = await window.ipcRenderer.invoke(
+				'saveAsFile',
+				editorData,
+			);
+		},
+
+		async loadFile() {
+			const file = await window.ipcRenderer.invoke('loadFile');
+			this.loadedFile = file.path;
+
+			(this.$refs.view as any)?.newEditorFromString(file.content);
+		},
+
 		async createCollabSession() {
 			this.roomId = await (this.$refs.view as any)?.createCollabSession();
 		},
+
 		joinCollabSession(roomId: string) {
 			this.roomId = roomId;
 			(this.$refs.view as any)?.joinCollabSession(roomId);
 		},
+
 		connectGit() {
 			this.gitService = null;
 			this.gitService = new GithubClientService();
@@ -94,7 +130,7 @@ export default defineComponent({
 			await this.$router.push('/');
 			await this.gitService?.cloneSelectedRepo();
 			const fileContents = await this.gitService?.getReadMeContents();
-			(this.$refs.view as any).newEditorFromGit(fileContents);
+			(this.$refs.view as any).newEditorFromString(fileContents);
 		},
 
 		commitChanges() {
