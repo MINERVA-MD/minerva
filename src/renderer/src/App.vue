@@ -11,12 +11,13 @@
 			<keep-alive>
 				<component
 					:is="Component"
-					@login="login"
-					@logout="logout"
 					:gitService="gitService"
 					ref="view"
+					@login="login"
+					@logout="logout"
 					@selectRepo="selectRepo"
 					@useRepo="useRepo"
+					@commitChanges="commitChanges"
 				/>
 			</keep-alive>
 		</transition>
