@@ -6,7 +6,7 @@
 				v-if="gitService?.repo"
 				class="bg-green-600 rounded px-2 py-1 text-white mr-6 hover:opacity-80"
 				type="button"
-				v-on:click="commitChanges"
+				@click="commitChanges"
 			>
 				commit
 			</button>
