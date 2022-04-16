@@ -1,13 +1,20 @@
 <template>
 	<div id="menu">
 		<div
-			class="absolute border bg-white border-gray-300 w-64 right-4 mt-10 rounded-xl p-4 shadow-lg text-minerva-gray text-sm"
+			class="absolute border bg-white border-gray-300 w-56 right-4 mt-10 rounded-xl p-4 shadow-lg text-minerva-gray text-sm"
 		>
 			<button
 				@click="newFile"
 				class="text-left font-semibold w-full p-2 hover:bg-gray-400/20 rounded transition-all duration-100"
 			>
 				New
+			</button>
+			<button
+				class="text-left font-semibold w-full p-2 hover:bg-gray-400/20 rounded transition-all duration-100 disabled:text-gray-400 disabled:hover:bg-white"
+				@click="saveFile"
+				:disabled="loadedFile === null"
+			>
+				Save
 			</button>
 			<button
 				class="text-left font-semibold w-full p-2 hover:bg-gray-400/20 rounded transition-all duration-100"
@@ -62,7 +69,7 @@ import { defineComponent } from 'vue';
 import { RouterLink } from 'vue-router';
 
 export default defineComponent({
-	props: ['gitService'],
+	props: ['gitService', 'loadedFile'],
 	data(): {
 		inputRoomId: string;
 	} {

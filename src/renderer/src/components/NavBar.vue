@@ -28,6 +28,7 @@
 			<div v-if="menuIsOpen === true">
 				<Menu
 					:gitService="gitService"
+					:loadedFile="loadedFile"
 					@newFile="newFile"
 					@saveAsFile="saveAsFile"
 					@createCollabSession="createCollabSession"
@@ -43,11 +44,10 @@ import { defineComponent } from 'vue';
 import Menu from './Menu.vue';
 import Login from './Login.vue';
 import RoomId from './RoomId.vue';
-import GithubClientService from '../services/github-client.service';
 
 export default defineComponent({
 	name: 'NavBar',
-	props: ['roomId', 'gitService'],
+	props: ['roomId', 'gitService', 'loadedFile'],
 	mounted() {
 		this.listenForClicksOutsideMenu();
 	},

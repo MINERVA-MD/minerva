@@ -2,6 +2,7 @@
 	<Navbar
 		:roomId="roomId ? roomId : ''"
 		:gitService="gitService"
+		:loadedFile="loadedFile"
 		@newFile="newBlankEditor"
 		@saveAsFile="saveAsFile"
 		@createCollabSession="createCollabSession"
@@ -70,9 +71,12 @@ export default defineComponent({
 			this.gitService?.clearRepo();
 		},
 
-		saveAsFile() {
+		async saveAsFile() {
 			const editorData = (this.$refs.view as any)?.getEditorContent();
-			window.ipcRenderer.invoke('saveAsFile', editorData);
+			this.loadedFile = await window.ipcRenderer.invoke(
+				'saveAsFile',
+				editorData,
+			);
 		},
 
 		async createCollabSession() {
