@@ -1,7 +1,7 @@
 {
-    "name": "electron-vue-ts-starter",
-    "version": "1.0.0",
-    "description": "Production Ready Electron-TypeScript Starter, built with Vue3 and Vite.",
+    "name": "minerva",
+    "version": "0.0.12",
+    "description": "Markdown Editor for Professionals",
     "main": "dist/main/index.cjs",
     "engines": {
         "node": ">=14.17.0"
