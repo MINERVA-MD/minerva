@@ -27,7 +27,7 @@
 			</keep-alive>
 		</transition>
 	</RouterView>
-	<Footer />
+	<Footer :gitService="gitService" :loadedFile="loadedFile" />
 </template>
 
 <script lang="ts">
