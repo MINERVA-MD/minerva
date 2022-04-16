@@ -40,7 +40,7 @@
 			<div class="w-full p-2 flex font-semibold items-center">
 				Join:
 				<input
-					class="w-16 px-2 h-7 rounded text-minerva-gray ml-1 border border-gray-300 text-sm"
+					class="w-16 px-2 h-7 rounded text-minerva-gray ml-2 border border-gray-300 text-sm"
 					type="text"
 					v-model="inputRoomId"
 					placeholder="ID"

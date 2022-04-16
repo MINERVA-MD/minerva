@@ -88,7 +88,7 @@ export default defineComponent({
 			});
 		},
 		commitChanges() {
-			//
+			this.$emit('commitChanges');
 		},
 	},
 	components: {
@@ -96,6 +96,11 @@ export default defineComponent({
 		Login,
 		RoomId,
 	},
-	emits: ['joinCollabSession', 'createCollabSession', 'newFile'],
+	emits: [
+		'joinCollabSession',
+		'createCollabSession',
+		'commitChanges',
+		'newFile',
+	],
 });
 </script>
