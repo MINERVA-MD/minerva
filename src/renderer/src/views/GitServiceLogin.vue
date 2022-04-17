@@ -89,7 +89,6 @@ export default defineComponent({
 			error: '',
 		};
 	},
-	mounted() {},
 	async updated() {
 		if (this.repoSelect !== this.repo && this.gitService) {
 			this.repo = this.repoSelect;
