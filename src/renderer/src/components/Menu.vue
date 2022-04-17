@@ -53,9 +53,7 @@
 					}}
 				</button>
 			</RouterLink>
-			<p class="text-gray-500 text-opacity-70 mt-3 text-right text-sm">
-				Collaboration
-			</p>
+			<p class="text-gray-400 mt-3 text-right text-sm">Collaboration</p>
 			<hr class="mb-3 opacity-70" />
 			<button
 				@click="createCollabSession"
