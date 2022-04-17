@@ -24,7 +24,6 @@
 			<button
 				class="text-left font-semibold w-full p-2 hover:bg-gray-400/20 rounded transition-all duration-100 flex justify-between"
 				@click="saveFile"
-				:disabled="loadedFile === null"
 			>
 				Save
 				<span class="text-gray-400"
