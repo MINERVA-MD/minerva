@@ -27,7 +27,6 @@
 			</keep-alive>
 		</transition>
 	</RouterView>
-	{{ loadedFile }}
 	<Footer :gitService="gitService" :loadedFile="loadedFile" />
 </template>
 
@@ -63,7 +62,9 @@ export default defineComponent({
 	created() {
 		this.$router.push('/');
 	},
-	mounted() {},
+	mounted() {
+		this.menuListener();
+	},
 	methods: {
 		newBlankEditor() {
 			this.$router.push('/');
@@ -77,11 +78,15 @@ export default defineComponent({
 
 		async saveFile() {
 			const editorData = (this.$refs.view as any)?.getEditorContent();
-			await window.ipcRenderer.invoke(
-				'saveFile',
-				this.loadedFile,
-				editorData,
-			);
+			if (this.loadedFile) {
+				await window.ipcRenderer.invoke(
+					'saveFile',
+					this.loadedFile,
+					editorData,
+				);
+			} else {
+				this.saveAsFile();
+			}
 		},
 
 		async saveAsFile() {
@@ -136,6 +141,21 @@ export default defineComponent({
 
 		commitChanges() {
 			(this.$refs.view as any)?.commitChanges();
+		},
+
+		menuListener() {
+			window.ipcRenderer.on('menu-new', () => {
+				this.newBlankEditor();
+			});
+			window.ipcRenderer.on('menu-open', () => {
+				this.loadFile();
+			});
+			window.ipcRenderer.on('menu-save', () => {
+				this.saveFile();
+			});
+			window.ipcRenderer.on('menu-saveAs', () => {
+				this.saveAsFile();
+			});
 		},
 	},
 });
