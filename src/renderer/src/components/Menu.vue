@@ -5,28 +5,40 @@
 		>
 			<button
 				@click="newFile"
-				class="text-left font-semibold w-full p-2 hover:bg-gray-400/20 rounded transition-all duration-100"
+				class="text-left font-semibold w-full p-2 hover:bg-gray-400/20 rounded transition-all duration-100 flex justify-between"
 			>
 				New
+				<span class="text-gray-400"
+					>{{ isMacOs ? '⌘' : 'Ctrl + ' }}N</span
+				>
 			</button>
 			<button
-				class="text-left font-semibold w-full p-2 hover:bg-gray-400/20 rounded transition-all duration-100"
+				class="text-left font-semibold w-full p-2 hover:bg-gray-400/20 rounded transition-all duration-100 flex justify-between"
 				@click="loadFile"
 			>
 				Open
+				<span class="text-gray-400"
+					>{{ isMacOs ? '⌘' : 'Ctrl + ' }}O</span
+				>
 			</button>
 			<button
-				class="text-left font-semibold w-full p-2 hover:bg-gray-400/20 rounded transition-all duration-100 disabled:text-gray-400 disabled:hover:bg-white"
+				class="text-left font-semibold w-full p-2 hover:bg-gray-400/20 rounded transition-all duration-100 flex justify-between"
 				@click="saveFile"
 				:disabled="loadedFile === null"
 			>
 				Save
+				<span class="text-gray-400"
+					>{{ isMacOs ? '⌘' : 'Ctrl + ' }}S</span
+				>
 			</button>
 			<button
-				class="text-left font-semibold w-full p-2 hover:bg-gray-400/20 rounded transition-all duration-100"
+				class="text-left font-semibold w-full p-2 hover:bg-gray-400/20 rounded transition-all duration-100 flex justify-between"
 				@click="saveAsFile"
 			>
 				Save as
+				<span class="text-gray-400"
+					>{{ isMacOs ? '⇧ + ⌘' : '⇧ + Ctrl + ' }}S</span
+				>
 			</button>
 			<RouterLink to="/gitservice">
 				<button
@@ -78,9 +90,11 @@ export default defineComponent({
 	props: ['gitService', 'loadedFile'],
 	data(): {
 		inputRoomId: string;
+		isMacOs: boolean;
 	} {
 		return {
 			inputRoomId: '',
+			isMacOs: navigator?.userAgent.toLowerCase().includes('mac'),
 		};
 	},
 
