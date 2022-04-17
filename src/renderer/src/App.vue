@@ -27,6 +27,7 @@
 			</keep-alive>
 		</transition>
 	</RouterView>
+	{{ loadedFile }}
 	<Footer :gitService="gitService" :loadedFile="loadedFile" />
 </template>
 
@@ -76,7 +77,7 @@ export default defineComponent({
 
 		async saveFile() {
 			const editorData = (this.$refs.view as any)?.getEditorContent();
-			this.loadedFile = await window.ipcRenderer.invoke(
+			await window.ipcRenderer.invoke(
 				'saveFile',
 				this.loadedFile,
 				editorData,
