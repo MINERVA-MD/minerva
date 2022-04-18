@@ -69,21 +69,27 @@ export default defineComponent({
 			}
 		},
 		newFile() {
+		  this.menuIsOpen = false;
 			this.$emit('newFile');
 		},
 		saveFile() {
+			this.menuIsOpen = false;
 			this.$emit('saveFile');
 		},
 		saveAsFile() {
+		  this.menuIsOpen = false;
 			this.$emit('saveAsFile');
 		},
 		loadFile() {
+			this.menuIsOpen = false;
 			this.$emit('loadFile');
 		},
 		createCollabSession() {
+			this.menuIsOpen = false;
 			this.$emit('createCollabSession');
 		},
 		joinSession(roomId: string) {
+			this.menuIsOpen = false;
 			this.$emit('joinCollabSession', roomId);
 		},
 		listenForClicksOutsideMenu() {
@@ -100,6 +106,7 @@ export default defineComponent({
 			});
 		},
 		commitChanges() {
+			this.menuIsOpen = false;
 			this.$emit('commitChanges');
 		},
 	},

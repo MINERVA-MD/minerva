@@ -23,6 +23,7 @@ function createWindow() {
 	win = new BrowserWindow({
 		width: 1400,
 		height: 900,
+		icon: join(__dirname, '..', 'common', 'assets', 'minerva_logo.svg'),
 		title: 'Main window',
 		// titleBarStyle: 'hidden'
 		webPreferences: {
