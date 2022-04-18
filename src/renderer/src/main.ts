@@ -9,7 +9,6 @@ const app = createApp(App);
 
 app.use(createPinia());
 app.use(router);
-app.component('NotificationToast', Notification);
 app.mount('#app').$nextTick(window.removeLoading);
 
 // console.log('fs', window.fs)
