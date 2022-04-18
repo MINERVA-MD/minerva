@@ -1,5 +1,6 @@
 import { createApp } from 'vue';
 import { createPinia } from 'pinia';
+import Notification from './components/Notification.vue';
 
 import App from './App.vue';
 import router from './router';
@@ -8,6 +9,7 @@ const app = createApp(App);
 
 app.use(createPinia());
 app.use(router);
+app.component('NotificationToast', Notification);
 app.mount('#app').$nextTick(window.removeLoading);
 
 // console.log('fs', window.fs)

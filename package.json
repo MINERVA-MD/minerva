@@ -72,6 +72,7 @@
         "@codemirror/state": "^0.19.9",
         "@codemirror/text": "^0.19.6",
         "@codemirror/view": "^0.19.45",
+        "@heroicons/vue": "^1.0.6",
         "@octokit/core": "^3.6.0",
         "axios": "^0.26.1",
         "electron-oauth2": "^3.0.0",
