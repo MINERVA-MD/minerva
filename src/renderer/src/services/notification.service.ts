@@ -4,7 +4,7 @@ export default class NotificationService {
 	constructor() {
 		window.ipcRenderer.on(
 			'notify',
-			(_: Electron.IpcRendererEvent, level: NotificationLevel, title: string, message: string, timeout = 5000) => {
+			(_: Electron.IpcRendererEvent, level: NotificationLevel, title: string, message: string, timeout = 5) => {
 				NotificationService.notify(level, title, message, timeout);
 			},
 		);
@@ -14,11 +14,12 @@ export default class NotificationService {
 		document.getElementById('notification')?.classList.add('hidden');
 	}
 
+	// timeout in seconds
 	private static handleShowNotification(timeout: number) {
 		document.getElementById('notification')?.classList.remove('hidden');
 		setTimeout(() => {
 			this.handleHideNotification();
-		}, timeout);
+		}, timeout * 1000);
 	}
 
 	private static handleSetNotificationTitle(title: string) {
@@ -76,7 +77,7 @@ export default class NotificationService {
 		level: NotificationLevel,
 		title: string,
 		message: string,
-		timeout = 5000,
+		timeout = 5,
 	) {
 		this.handleHideNotification();
 

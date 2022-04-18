@@ -59,12 +59,18 @@ export default defineComponent({
 		},
 
 		async createCollabSession() {
-			NotificationService.notify(NotificationLevel.Error, 'This is a title', 'This is a message');
 			const docJSON = this.view?.state.doc.toJSON();
 			this.view?.destroy();
 			this.view = this.newEditorService(true, docJSON?.join('\n'));
 			this.roomId = EditorService.generateRoomId();
 			this.editorService?.socketsCreateNewRoom(this.roomId);
+			NotificationService.notify(
+				NotificationLevel.Error,
+					'Successfully Created Collaboration Session',
+					'Copy and share RoomID to collaborate with others.',
+					10
+
+			);
 			return this.roomId;
 		},
 
