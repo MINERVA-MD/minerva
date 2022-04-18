@@ -49,15 +49,9 @@ export default defineComponent({
 
 	mounted() {
 		this.view = this.newEditorService();
-		this.listen();
-		// instantiate listener method that listens for main events from menu options
 	},
 
 	methods: {
-		listen() {
-			// listen for menu events here
-		},
-
 		async createCollabSession() {
 			const docJSON = this.view?.state.doc.toJSON();
 			this.view?.destroy();
