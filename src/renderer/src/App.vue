@@ -38,10 +38,12 @@ import GithubClientService from './services/github-client.service';
 import Editor from './views/Editor.vue';
 import Navbar from './components/NavBar.vue';
 import Footer from './components/Footer.vue';
+import Notification from "./components/Notification.vue";
 import type { GitRepo } from '@/typings/GitService';
 
 export default defineComponent({
 	components: {
+	  Notification,
 		Navbar,
 		Editor,
 		Footer,
