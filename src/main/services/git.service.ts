@@ -195,6 +195,7 @@ export default class GitService {
 				for (const repo of repos) {
 					ghRepos.push({
 						id: repo.id,
+						avatar: repo.owner.avatar_url,
 						ownerLogin: repo.owner.login,
 						name: repo.name,
 						cloneUrl: repo.clone_url,
