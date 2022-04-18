@@ -67,7 +67,6 @@
 				type="button"
 				:disabled="repoSelect == null"
 				v-bind:class="getCloneRepoBtnClass()"
-				class="bg-slate-800 text-white p-2 rounded"
 				@click="useRepo"
 			>
 				Clone Repo
@@ -80,11 +79,12 @@
 </template>
 
 <script lang="ts">
-import type { GitRepo } from '@/typings/GitService';
-import { defineComponent, ref } from 'vue';
-import { RouterLink } from 'vue-router';
-import { Listbox, ListboxButton, ListboxLabel, ListboxOption, ListboxOptions } from '@headlessui/vue';
-import { CheckIcon, SelectorIcon } from '@heroicons/vue/solid';
+import type {GitRepo} from '@/typings/GitService';
+import {defineComponent} from 'vue';
+import {Listbox, ListboxButton, ListboxLabel, ListboxOption, ListboxOptions} from '@headlessui/vue';
+import {CheckIcon, SelectorIcon} from '@heroicons/vue/solid';
+import NotificationService from "../services/notification.service";
+import NotificationLevel from "../Interfaces/NotificationLevel";
 
 export default defineComponent({
 	components: {
@@ -126,7 +126,7 @@ export default defineComponent({
 	methods: {
 	  getCloneRepoBtnClass(){
 		  if(this.repoSelect == null){
-		  return 'bg-gray-300 text-white p-2 rounded cursor-not-allowed';
+			  return 'bg-gray-300 text-white p-2 rounded cursor-not-allowed';
 			}
 		  return 'bg-slate-800 text-white p-2 rounded';
 		},
@@ -142,7 +142,12 @@ export default defineComponent({
 				console.log(this.repo);
 				this.$emit('useRepo');
 			} else {
-				this.error = 'must select a repo';
+				NotificationService.notify(
+					NotificationLevel.Error,
+						'Clone Failed',
+						'A repo must be selected in order to clone.',
+						15
+				);
 			}
 		},
 	},
