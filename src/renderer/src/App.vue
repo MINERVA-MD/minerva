@@ -27,7 +27,6 @@
 			</keep-alive>
 		</transition>
 	</RouterView>
-		<Notification/>
 	<Footer />
 </template>
 
