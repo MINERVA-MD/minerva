@@ -27,6 +27,8 @@ module.exports = {
                 tsx: 'never',
             },
         ],
+		"no-shadow": "off",
+		"@typescript-eslint/no-shadow": ["error"],
         'no-underscore-dangle': 'off',
         "import/no-extraneous-dependencies": ["error", {"devDependencies": true}]
     },

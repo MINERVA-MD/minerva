@@ -16,6 +16,9 @@ import { Decoration, ViewPlugin, WidgetType } from '@codemirror/view';
 import { io, Socket } from 'socket.io-client';
 import { marked } from 'marked';
 import { ChangeSet, StateField } from '@codemirror/state';
+// import {MINERVA_LOCAL_SOCKET_SERVER_URL, MINERVA_SOCKET_SERVER_URL} from "../../../common/utils/secrets.util";
+export const MINERVA_SOCKET_SERVER_URL = 'https://text-sockets.herokuapp.com/';
+export const MINERVA_LOCAL_SOCKET_SERVER_URL = 'http://localhost:8080/';
 
 export default class EditorService {
 	doc: Text;
@@ -38,8 +41,8 @@ export default class EditorService {
 		this.doc = Text.of(documentData.doc);
 		this.updates = documentData.updates;
 		this.vueComponent = vueComponent;
-		const documenString = documentData.doc.join('\n');
-		this.vueComponent.parsedHTML = marked.parse(documenString);
+		const documentString = documentData.doc.join('\n');
+		this.vueComponent.parsedHTML = marked.parse(documentString);
 		this.view = new EditorView();
 		if (socket) {
 			this.socket = this.openSocketConnection();
@@ -77,7 +80,7 @@ export default class EditorService {
 
 		const view = new EditorView({
 			state,
-			parent: document.getElementById('editor-container') || undefined, // document.getElementById('editor'),
+			parent: document.getElementById('editor-container') || undefined,
 		});
 
 		this.view = view;
@@ -132,8 +135,8 @@ export default class EditorService {
 	}
 
 	openSocketConnection() {
-		return io('https://text-sockets.herokuapp.com/');
-		// return io('http://localhost:8080/');
+		return io(MINERVA_SOCKET_SERVER_URL);
+		// return io(MINERVA_LOCAL_SOCKET_SERVER_URL);
 	}
 
 	socketsCreateNewRoom(roomId: string) {
@@ -194,6 +197,7 @@ export default class EditorService {
 		});
 	}
 
+	// TODO: Pull this out into Util Class
 	static generateRoomId() {
 		let result = '';
 		const roomIdLength = 5;

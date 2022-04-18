@@ -42,6 +42,7 @@ import type { GitRepo } from '@/typings/GitService';
 
 export default defineComponent({
 	components: {
+	  Notification,
 		Navbar,
 		Editor,
 		Footer,
