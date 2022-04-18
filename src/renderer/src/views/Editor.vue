@@ -17,12 +17,13 @@
 <script lang="ts">
 import NavBar from '../components/NavBar.vue';
 import EditorService from '../services/editor.service';
-import type { EditorView } from '@codemirror/view';
-import type GithubClientService from '../services/github-client.service';
-import { defineComponent } from 'vue-demi';
-import type IGitClientService from '../Interfaces/IGitClientService';
-import type { GitRepo } from '@/typings/GitService';
-import type { Update } from '@codemirror/collab';
+import type {EditorView} from '@codemirror/view';
+import {defineComponent} from 'vue-demi';
+import type {GitRepo} from '@/typings/GitService';
+import type {Update} from '@codemirror/collab';
+import NotificationLevel from "../Interfaces/NotificationLevel";
+import NotificationService from "../services/notification.service";
+
 
 export default defineComponent({
 	props: ['gitService', 'loadedFile'],
@@ -57,6 +58,13 @@ export default defineComponent({
 			this.view = this.newEditorService(true, docJSON?.join('\n'));
 			this.roomId = EditorService.generateRoomId();
 			this.editorService?.socketsCreateNewRoom(this.roomId);
+			NotificationService.notify(
+				NotificationLevel.Error,
+					'Successfully Created Collaboration Session',
+					'Copy and share RoomID to collaborate with others.',
+					10
+
+			);
 			return this.roomId;
 		},
 
