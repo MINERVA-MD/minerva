@@ -89,7 +89,6 @@ export default defineComponent({
 			error: '',
 		};
 	},
-	mounted() {},
 	async updated() {
 		if (this.repoSelect !== this.repo && this.gitService) {
 			this.repo = this.repoSelect;
@@ -107,6 +106,7 @@ export default defineComponent({
 		},
 		useRepo() {
 			if (this.repo !== null) {
+				console.log(this.repo);
 				this.$emit('useRepo');
 			} else {
 				this.error = 'must select a repo';
