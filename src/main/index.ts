@@ -1,3 +1,4 @@
+/* eslint-disable import/no-mutable-exports */
 import { release } from 'os';
 import { join } from 'path';
 import { BrowserWindow, ipcMain, MenuItem, shell, app, Menu } from 'electron';
@@ -16,8 +17,8 @@ if (!app.requestSingleInstanceLock()) {
 	process.exit(0);
 }
 
-// eslint-disable-next-line import/no-mutable-exports
 let win: BrowserWindow | null = null;
+let splash: BrowserWindow | null = null;
 
 function createWindow() {
 	win = new BrowserWindow({
@@ -26,13 +27,22 @@ function createWindow() {
 		icon: join(__dirname, '..', 'common', 'assets', 'minerva_logo.svg'),
 		title: 'Main window',
 		// titleBarStyle: 'hidden'
+		show: false,
 		webPreferences: {
 			preload: join(__dirname, '../preload/index.cjs'),
 		},
 		autoHideMenuBar: true,
 	});
 
+	splash = new BrowserWindow({
+		width: 600,
+		height: 450,
+		transparent: true,
+		frame: false,
+	});
+
 	if (app.isPackaged) {
+		splash.loadFile(join(__dirname, 'splash.html'));
 		win.loadFile(join(__dirname, '../renderer/index.html'));
 	} else {
 		// 🚧 Use ['ENV_NAME'] avoid vite:define plugin
@@ -40,6 +50,7 @@ function createWindow() {
 		// eslint-disable-next-line
 		const url = `http://${process.env['VITE_DEV_SERVER_HOST']}:${process.env['VITE_DEV_SERVER_PORT']}`;
 
+		splash.loadFile(join(__dirname, '../../src/main/splash.html'));
 		win.loadURL(url);
 		win.webContents.openDevTools();
 	}
@@ -50,6 +61,9 @@ function createWindow() {
 			'main-process-message',
 			new Date().toLocaleString(),
 		);
+
+		splash?.destroy();
+		win?.show();
 	});
 
 	// Make all links open with the browser, not with the application
