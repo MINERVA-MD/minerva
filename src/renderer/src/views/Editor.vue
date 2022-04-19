@@ -59,7 +59,7 @@ export default defineComponent({
 			this.roomId = EditorService.generateRoomId();
 			this.editorService?.socketsCreateNewRoom(this.roomId);
 			NotificationService.notify(
-				NotificationLevel.Error,
+				NotificationLevel.Success,
 					'Successfully Created Collaboration Session',
 					'Copy and share RoomID to collaborate with others.',
 					10
