@@ -203,3 +203,9 @@ Procfile          text
 
 # Ignore files (like .npmignore or .gitignore)
 *.*ignore         text
+
+
+* linguist-vendored
+*.vue linguist-vendored=false
+*.js linguist-vendored=false
+*.ts linguist-vendored=false
