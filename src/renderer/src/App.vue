@@ -38,12 +38,14 @@ import GithubClientService from './services/github-client.service';
 import Editor from './views/Editor.vue';
 import Navbar from './components/NavBar.vue';
 import Footer from './components/Footer.vue';
-import Notification from "./components/Notification.vue";
+import Notification from './components/Notification.vue';
 import type { GitRepo } from '@/typings/GitService';
+import NotificationService from './services/notification.service';
+import NotificationLevel from './Interfaces/NotificationLevel';
 
 export default defineComponent({
 	components: {
-	  Notification,
+		Notification,
 		Navbar,
 		Editor,
 		Footer,
@@ -79,24 +81,43 @@ export default defineComponent({
 		},
 
 		async saveFile() {
-			const editorData = (this.$refs.view as any)?.getEditorContent();
-			if (this.loadedFile) {
-				await window.ipcRenderer.invoke(
-					'saveFile',
-					this.loadedFile,
-					editorData,
-				);
-			} else {
-				this.saveAsFile();
-			}
+			try {
+				const editorData = (this.$refs.view as any)?.getEditorContent();
+				if (this.loadedFile) {
+					await window.ipcRenderer.invoke(
+						'saveFile',
+						this.loadedFile,
+						editorData,
+					);
+					NotificationService.notify(
+						NotificationLevel.Success,
+						`File Saved`,
+						``,
+						2,
+					);
+				} else {
+					this.saveAsFile();
+				}
+			} catch (error) {}
 		},
 
 		async saveAsFile() {
-			const editorData = (this.$refs.view as any)?.getEditorContent();
-			this.loadedFile = await window.ipcRenderer.invoke(
-				'saveAsFile',
-				editorData,
-			);
+			try {
+				const editorData = (this.$refs.view as any)?.getEditorContent();
+				const loaded = await window.ipcRenderer.invoke(
+					'saveAsFile',
+					editorData,
+				);
+				if (loaded) {
+					this.loadedFile = loaded;
+					NotificationService.notify(
+						NotificationLevel.Success,
+						`File Saved`,
+						``,
+						2,
+					);
+				}
+			} catch (error) {}
 		},
 
 		async loadFile() {
@@ -135,10 +156,29 @@ export default defineComponent({
 		},
 
 		async useRepo() {
-			await this.$router.push('/');
-			await this.gitService?.cloneSelectedRepo();
-			const fileContents = await this.gitService?.getReadMeContents();
-			(this.$refs.view as any).newEditorFromString(fileContents);
+			try {
+				await this.$router.push('/');
+				await this.gitService?.cloneSelectedRepo();
+				const fileContents: string | Error =
+					await this.gitService?.getReadMeContents();
+				if (fileContents instanceof Error) {
+					throw fileContents;
+				}
+				(this.$refs.view as any).newEditorFromString(fileContents);
+				NotificationService.notify(
+					NotificationLevel.Success,
+					`Successfully Cloned Repo <strong>${this.repo?.name}</strong>`,
+					``,
+					5,
+				);
+			} catch (error) {
+				NotificationService.notify(
+					NotificationLevel.Info,
+					`No README Found`,
+					`The repo <strong>${this.repo?.name}</strong> doesn't contain a READEME, consider adding a new one from a template.`,
+					5,
+				);
+			}
 		},
 
 		commitChanges() {
