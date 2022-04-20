@@ -60,8 +60,7 @@ export default class GitService {
 						`${this.localRepoPath}/${repoName}/${fileName}`,
 						editorText,
 					);
-					await this.commitAndPush(repoName);
-					return 'success';
+					return await this.commitAndPush(repoName);
 				} catch (error) {
 					return error;
 				}
@@ -237,16 +236,19 @@ export default class GitService {
 				);
 				return fileData;
 			}
-			fs.writeFileSync(
-				`${this.localRepoPath}/${repoName}/${fileName}`,
-				'## No ReadMe Found in Repo \n *Readme created by minerva*',
-			);
 
-			const fileData = await fs.promises.readFile(
-				`${this.localRepoPath}/${repoName}/${fileName}`,
-				'utf8',
-			);
-			return fileData;
+			throw new Error(`The repo ${repoName} doesn't contain a README`);
+
+			// fs.writeFileSync(
+			// 	`${this.localRepoPath}/${repoName}/${fileName}`,
+			// 	'## No ReadMe Found in Repo \n *Readme created by minerva*',
+			// );
+
+			// const fileData = await fs.promises.readFile(
+			// 	`${this.localRepoPath}/${repoName}/${fileName}`,
+			// 	'utf8',
+			// );
+			// return fileData;
 		} catch (error) {
 			console.log(error);
 			return error;
@@ -262,8 +264,10 @@ export default class GitService {
 				.push(['-u', this.remote, 'main'], () => {
 					console.log('successfully pushed');
 				});
+			return true;
 		} catch (error) {
 			console.log(error);
+			return error;
 		}
 	}
 
