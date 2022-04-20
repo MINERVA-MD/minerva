@@ -60,8 +60,7 @@ export default class GitService {
 						`${this.localRepoPath}/${repoName}/${fileName}`,
 						editorText,
 					);
-					await this.commitAndPush(repoName);
-					return 'success';
+					return await this.commitAndPush(repoName);
 				} catch (error) {
 					return error;
 				}
@@ -265,8 +264,10 @@ export default class GitService {
 				.push(['-u', this.remote, 'main'], () => {
 					console.log('successfully pushed');
 				});
+			return true;
 		} catch (error) {
 			console.log(error);
+			return error;
 		}
 	}
 
