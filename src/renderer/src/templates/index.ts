@@ -6,6 +6,7 @@ import README3 from './Readme3';
 import README4 from './Readme4';
 import README5 from './Readme5';
 import SECURITY from './SECURITY';
+import BLANK from './blank';
 import COC from './CODE_OF_CONDUCT';
 
 const MD_TEMPLATES = {
@@ -16,6 +17,7 @@ const MD_TEMPLATES = {
 	README4,
 	README5,
 	SECURITY,
+	BLANK,
 };
 
 export default MD_TEMPLATES;
