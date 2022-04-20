@@ -10,15 +10,18 @@ import {
 	type Update,
 	receiveUpdates,
 } from '@codemirror/collab';
+import hljs from 'highlight.js';
 import { markdown } from '@codemirror/lang-markdown';
 import { Text } from '@codemirror/text';
 import { Decoration, ViewPlugin, WidgetType } from '@codemirror/view';
 import { io, Socket } from 'socket.io-client';
 import { marked } from 'marked';
 import { ChangeSet, StateField } from '@codemirror/state';
-// import {MINERVA_LOCAL_SOCKET_SERVER_URL, MINERVA_SOCKET_SERVER_URL} from "../../../common/utils/secrets.util";
-export const MINERVA_SOCKET_SERVER_URL = 'https://text-sockets.herokuapp.com/';
+
+import MARKED_SETTINGS from '../config/parsing';
+
 export const MINERVA_LOCAL_SOCKET_SERVER_URL = 'http://localhost:8080/';
+export const MINERVA_SOCKET_SERVER_URL = 'https://text-sockets.herokuapp.com/';
 
 export default class EditorService {
 	doc: Text;
@@ -49,6 +52,8 @@ export default class EditorService {
 		} else {
 			this.socket = null;
 		}
+
+		marked.setOptions(MARKED_SETTINGS);
 	}
 
 	generateEditor(doc?: Text, updates?: Update[]) {

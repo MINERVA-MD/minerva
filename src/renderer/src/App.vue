@@ -28,39 +28,46 @@
 		</transition>
 	</RouterView>
 	<Footer :gitService="gitService" :loadedFile="loadedFile" />
+	<TemplatePickerModal v-if="isModalOpen" @selectTemplate="selectTemplate"/>
 </template>
 
 <script lang="ts">
-import { RouterView, RouterLink } from 'vue-router';
-import { defineComponent } from 'vue-demi';
+import { ref } from 'vue';
 import './css/index.css';
+import { defineComponent } from 'vue-demi';
+import { RouterView, RouterLink } from 'vue-router';
+
 import GithubClientService from './services/github-client.service';
 import Editor from './views/Editor.vue';
 import Navbar from './components/NavBar.vue';
 import Footer from './components/Footer.vue';
-import Notification from './components/Notification.vue';
 import type { GitRepo } from '@/typings/GitService';
+import TemplatePickerModal from './components/TemplatePickerModal.vue';
 import NotificationService from './services/notification.service';
 import NotificationLevel from './Interfaces/NotificationLevel';
 
+let isModalOpen = ref(false)
+
 export default defineComponent({
 	components: {
+	  TemplatePickerModal,
 		Notification,
 		Navbar,
 		Editor,
 		Footer,
 	},
+
 	data(): {
 		roomId: string | null;
 		gitService: GithubClientService | null;
 		repo: GitRepo | null;
-		loadedFile: string | null;
+		loadedFile: string | null
 	} {
 		return {
 			roomId: '',
 			gitService: null,
 			repo: null,
-			loadedFile: null,
+			loadedFile: null
 		};
 	},
 	created() {
@@ -69,6 +76,13 @@ export default defineComponent({
 	mounted() {
 		this.menuListener();
 	},
+
+	setup() {
+		return {
+			isModalOpen
+		}
+	},
+
 	methods: {
 		newBlankEditor() {
 			this.$router.push('/');
@@ -96,7 +110,7 @@ export default defineComponent({
 						2,
 					);
 				} else {
-					this.saveAsFile();
+					await this.saveAsFile();
 				}
 			} catch (error) {}
 		},
@@ -183,6 +197,13 @@ export default defineComponent({
 				);
 			} catch (error) {
 				// logic to handle template modal
+		  NotificationService.notify(
+			  NotificationLevel.Warning,
+			  `Cloned Repo <strong>${this.repo?.name}</strong> has no README.`,
+			  `Select a template from the popup to get started. You can click cancel anytime to start with an empty README.`,
+			  4,
+		  );
+					isModalOpen.value = true;
 			}
 		},
 
@@ -204,11 +225,21 @@ export default defineComponent({
 				this.saveAsFile();
 			});
 		},
+	  selectTemplate(md: string) {
+			(this.$refs.view as any).newEditorFromString(md);
+			NotificationService.notify(
+				NotificationLevel.Success,
+				`Successfully added README to <strong>${this.repo?.name}</strong>.`,
+				``,
+				4,
+			);
+	  }
 	},
 });
 </script>
 
 <style>
+
 @import './css/github-markdown.css';
 
 .fade-enter-from {
