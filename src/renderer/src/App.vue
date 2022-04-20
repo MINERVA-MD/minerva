@@ -28,7 +28,7 @@
 		</transition>
 	</RouterView>
 	<Footer :gitService="gitService" :loadedFile="loadedFile" />
-	<TemplatePickerModal v-if="isModalOpen" @selectTemplate="selectTemplate"/>
+	<TemplatePickerModal v-if="isModalOpen" @selectTemplate="selectTemplate" />
 </template>
 
 <script lang="ts">
@@ -46,11 +46,11 @@ import TemplatePickerModal from './components/TemplatePickerModal.vue';
 import NotificationService from './services/notification.service';
 import NotificationLevel from './Interfaces/NotificationLevel';
 
-let isModalOpen = ref(false)
+let isModalOpen = ref(false);
 
 export default defineComponent({
 	components: {
-	  TemplatePickerModal,
+		TemplatePickerModal,
 		Notification,
 		Navbar,
 		Editor,
@@ -61,13 +61,13 @@ export default defineComponent({
 		roomId: string | null;
 		gitService: GithubClientService | null;
 		repo: GitRepo | null;
-		loadedFile: string | null
+		loadedFile: string | null;
 	} {
 		return {
 			roomId: '',
 			gitService: null,
 			repo: null,
-			loadedFile: null
+			loadedFile: null,
 		};
 	},
 	created() {
@@ -79,8 +79,8 @@ export default defineComponent({
 
 	setup() {
 		return {
-			isModalOpen
-		}
+			isModalOpen,
+		};
 	},
 
 	methods: {
@@ -196,23 +196,20 @@ export default defineComponent({
 					2,
 				);
 			} catch (error) {
-<<<<<<< HEAD
 				const templateContents = await window.ipcRenderer.invoke(
 					'use-template',
 					2,
 					this.gitService?.repo?.name,
 				);
 				(this.$refs.view as any).newEditorFromString(templateContents);
-=======
 				// logic to handle template modal
-		  NotificationService.notify(
-			  NotificationLevel.Warning,
-			  `Cloned Repo <strong>${this.repo?.name}</strong> has no README.`,
-			  `Select a template from the popup to get started. You can click cancel anytime to start with an empty README.`,
-			  4,
-		  );
-					isModalOpen.value = true;
->>>>>>> main
+				NotificationService.notify(
+					NotificationLevel.Warning,
+					`Cloned Repo <strong>${this.repo?.name}</strong> has no README.`,
+					`Select a template from the popup to get started. You can click cancel anytime to start with an empty README.`,
+					4,
+				);
+				isModalOpen.value = true;
 			}
 		},
 
@@ -234,7 +231,7 @@ export default defineComponent({
 				this.saveAsFile();
 			});
 		},
-	  selectTemplate(md: string) {
+		selectTemplate(md: string) {
 			(this.$refs.view as any).newEditorFromString(md);
 			NotificationService.notify(
 				NotificationLevel.Success,
@@ -242,13 +239,12 @@ export default defineComponent({
 				``,
 				4,
 			);
-	  }
+		},
 	},
 });
 </script>
 
 <style>
-
 @import './css/github-markdown.css';
 
 .fade-enter-from {
