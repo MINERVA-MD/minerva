@@ -28,7 +28,7 @@
 		</transition>
 	</RouterView>
 	<Footer :gitService="gitService" :loadedFile="loadedFile" />
-	<TemplatePickerModal v-if="isModalOpen" @selectTemplate="selectTemplate"/>
+	<TemplatePickerModal v-if="isModalOpen" @selectTemplate="selectTemplate" />
 </template>
 
 <script lang="ts">
@@ -46,11 +46,9 @@ import TemplatePickerModal from './components/TemplatePickerModal.vue';
 import NotificationService from './services/notification.service';
 import NotificationLevel from './Interfaces/NotificationLevel';
 
-let isModalOpen = ref(false)
-
 export default defineComponent({
 	components: {
-	  TemplatePickerModal,
+		TemplatePickerModal,
 		Notification,
 		Navbar,
 		Editor,
@@ -61,13 +59,15 @@ export default defineComponent({
 		roomId: string | null;
 		gitService: GithubClientService | null;
 		repo: GitRepo | null;
-		loadedFile: string | null
+		loadedFile: string | null;
+		isModalOpen: boolean;
 	} {
 		return {
 			roomId: '',
 			gitService: null,
 			repo: null,
-			loadedFile: null
+			loadedFile: null,
+			isModalOpen: false,
 		};
 	},
 	created() {
@@ -75,12 +75,6 @@ export default defineComponent({
 	},
 	mounted() {
 		this.menuListener();
-	},
-
-	setup() {
-		return {
-			isModalOpen
-		}
 	},
 
 	methods: {
@@ -197,13 +191,13 @@ export default defineComponent({
 				);
 			} catch (error) {
 				// logic to handle template modal
-		  NotificationService.notify(
-			  NotificationLevel.Warning,
-			  `Cloned Repo <strong>${this.repo?.name}</strong> has no README.`,
-			  `Select a template from the popup to get started. You can click cancel anytime to start with an empty README.`,
-			  4,
-		  );
-					isModalOpen.value = true;
+				NotificationService.notify(
+					NotificationLevel.Warning,
+					`Cloned Repo <strong>${this.repo?.name}</strong> has no README.`,
+					`Select a template from the popup to get started. You can click cancel anytime to start with an empty README.`,
+					4,
+				);
+				this.isModalOpen = true;
 			}
 		},
 
@@ -225,7 +219,7 @@ export default defineComponent({
 				this.saveAsFile();
 			});
 		},
-	  selectTemplate(md: string) {
+		selectTemplate(md: string) {
 			(this.$refs.view as any).newEditorFromString(md);
 			NotificationService.notify(
 				NotificationLevel.Success,
@@ -233,13 +227,12 @@ export default defineComponent({
 				``,
 				4,
 			);
-	  }
+		},
 	},
 });
 </script>
 
 <style>
-
 @import './css/github-markdown.css';
 
 .fade-enter-from {
