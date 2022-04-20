@@ -97,20 +97,28 @@ export default defineComponent({
 			const editorText = editorJSON?.join('\n');
 
 			try {
-				await window.ipcRenderer.invoke(
+				const res = await window.ipcRenderer.invoke(
 					'commit-changes',
 					this.gitService?.repo.name,
 					'README.md',
 					editorText,
 				);
+				if (res instanceof Error) throw res;
 
 				NotificationService.notify(
 					NotificationLevel.Success,
 					`Successfully Committed`,
 					`Changes committed and pushed to ${this.gitService?.repo.name}`,
-					5,
+					3,
 				);
-			} catch (error) {}
+			} catch (error) {
+				NotificationService.notify(
+					NotificationLevel.Error,
+					`Error Committing Changes`,
+					`There was an issue when trying to commit and push, try again.`,
+					3,
+				);
+			}
 		},
 
 		getEditorContent() {

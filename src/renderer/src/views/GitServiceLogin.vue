@@ -200,7 +200,6 @@ export default defineComponent({
 		},
 		useRepo() {
 			if (this.repo !== null) {
-				console.log(this.repo);
 				this.$emit('useRepo');
 			} else {
 				NotificationService.notify(

@@ -142,13 +142,24 @@ export default defineComponent({
 		},
 
 		async login() {
-			this.connectGit();
-			await this.gitService?.authorize();
+			try {
+				this.connectGit();
+				await this.gitService?.authorize();
+			} catch (error) {
+				NotificationService.notify(
+					NotificationLevel.Error,
+					`Log In Failed`,
+					``,
+					3,
+				);
+			}
 		},
 
 		async logout() {
-			await this.gitService?.logout();
-			this.gitService = null;
+			try {
+				await this.gitService?.logout();
+				this.gitService = null;
+			} catch (error) {}
 		},
 
 		selectRepo(repo: GitRepo) {
@@ -161,23 +172,17 @@ export default defineComponent({
 				await this.gitService?.cloneSelectedRepo();
 				const fileContents: string | Error =
 					await this.gitService?.getReadMeContents();
-				if (fileContents instanceof Error) {
-					throw fileContents;
-				}
+				if (fileContents instanceof Error) throw fileContents;
 				(this.$refs.view as any).newEditorFromString(fileContents);
+
 				NotificationService.notify(
 					NotificationLevel.Success,
-					`Successfully Cloned Repo <strong>${this.repo?.name}</strong>`,
+					`Cloned Repo <strong>${this.repo?.name}</strong>`,
 					``,
-					5,
+					2,
 				);
 			} catch (error) {
-				NotificationService.notify(
-					NotificationLevel.Info,
-					`No README Found`,
-					`The repo <strong>${this.repo?.name}</strong> doesn't contain a READEME, consider adding a new one from a template.`,
-					5,
-				);
+				// logic to handle template modal
 			}
 		},
 

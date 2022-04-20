@@ -2,7 +2,7 @@
 	<div
 		class="flex items-center px-4 absolute bottom-0 w-full h-5 bg-gray-200 text-gray-500 text-xs"
 	>
-		<div v-if="gitService" class="flex">
+		<div v-if="gitService && gitService.repo" class="flex">
 			{{ `@${gitService.repo?.ownerLogin}` }}
 			<svg
 				width="14"
@@ -13,7 +13,7 @@
 				stroke-width="2"
 				stroke-linecap="round"
 				stroke-linejoin="round"
-				class="feather feather-git-branch mx-1"
+				class="feather fether feather-git-branch mx-1"
 				version="1.1"
 				id="svg10"
 				sodipodi:docname="git.svg"
