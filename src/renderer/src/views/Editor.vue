@@ -17,13 +17,12 @@
 <script lang="ts">
 import NavBar from '../components/NavBar.vue';
 import EditorService from '../services/editor.service';
-import type {EditorView} from '@codemirror/view';
-import {defineComponent} from 'vue-demi';
-import type {GitRepo} from '@/typings/GitService';
-import type {Update} from '@codemirror/collab';
-import NotificationLevel from "../Interfaces/NotificationLevel";
-import NotificationService from "../services/notification.service";
-
+import type { EditorView } from '@codemirror/view';
+import { defineComponent } from 'vue-demi';
+import type { GitRepo } from '@/typings/GitService';
+import type { Update } from '@codemirror/collab';
+import NotificationLevel from '../Interfaces/NotificationLevel';
+import NotificationService from '../services/notification.service';
 
 export default defineComponent({
 	props: ['gitService', 'loadedFile'],
@@ -60,10 +59,9 @@ export default defineComponent({
 			this.editorService?.socketsCreateNewRoom(this.roomId);
 			NotificationService.notify(
 				NotificationLevel.Success,
-					'Successfully Created Collaboration Session',
-					'Copy and share RoomID to collaborate with others.',
-					10
-
+				'Successfully Created Collaboration Session',
+				'Copy and share RoomID to collaborate with others!',
+				5,
 			);
 			return this.roomId;
 		},
@@ -73,6 +71,12 @@ export default defineComponent({
 			this.view?.destroy();
 			this.view = this.newEditorService(true);
 			this.editorService?.socketsJoinRoom(this.roomId);
+			NotificationService.notify(
+				NotificationLevel.Success,
+				`Joined Room ${roomId}`,
+				'You have joined a collaborative session!',
+				5,
+			);
 		},
 
 		newEditorFromString(fileContents: string) {
@@ -92,12 +96,29 @@ export default defineComponent({
 			const editorJSON = this.view?.state.doc.toJSON();
 			const editorText = editorJSON?.join('\n');
 
-			await window.ipcRenderer.invoke(
-				'commit-changes',
-				this.gitService?.repo.name,
-				'README.md',
-				editorText,
-			);
+			try {
+				const res = await window.ipcRenderer.invoke(
+					'commit-changes',
+					this.gitService?.repo.name,
+					'README.md',
+					editorText,
+				);
+				if (res instanceof Error) throw res;
+
+				NotificationService.notify(
+					NotificationLevel.Success,
+					`Successfully Committed`,
+					`Changes committed and pushed to ${this.gitService?.repo.name}`,
+					3,
+				);
+			} catch (error) {
+				NotificationService.notify(
+					NotificationLevel.Error,
+					`Error Committing Changes`,
+					`There was an issue when trying to commit and push, try again.`,
+					3,
+				);
+			}
 		},
 
 		getEditorContent() {
