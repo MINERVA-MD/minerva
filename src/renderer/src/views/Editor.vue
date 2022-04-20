@@ -1,17 +1,37 @@
 <template>
-	<div class="view-container grid grid-cols-2 gap-2 p-3">
-		<div
-			class="overflow-auto editor-height border-r-2 outline-none border-gray-200 pr-2"
-			id="editor-container"
-		></div>
-		<div class="overflow-auto">
-			<article
-				class="markdown-body editor-height p-3"
-				id="parsed-html"
-				v-html="parsedHTML"
-			></article>
-		</div>
-	</div>
+<!--	<splitpanes class="default-theme view-container p-3">-->
+<!--		<pane-->
+<!--						class="overflow-auto editor-height border-r-2 outline-none border-gray-200 pr-2"-->
+<!--						id="editor-container"-->
+<!--						size="50" min-size="20" max-size="75"-->
+<!--		/>-->
+
+<!--		<pane class="overflow-auto" min-size="20" max-size="75">-->
+<!--			<article-->
+<!--					class="markdown-body editor-height p-3"-->
+<!--					id="parsed-html"-->
+<!--					v-html="parsedHTML"-->
+<!--			></article>-->
+<!--		</pane>-->
+<!--	</splitpanes>-->
+	<splitpanes class="default-theme view-container p-3">
+			<pane>
+				<div
+						class="overflow-auto editor-height"
+						id="editor-container"
+				></div>
+			</pane>
+
+		<pane>
+			<div class="overflow-auto">
+				<article
+						class="markdown-body editor-height p-3"
+						id="parsed-html"
+						v-html="parsedHTML"
+				></article>
+			</div>
+		</pane>
+	</splitpanes>
 </template>
 
 <script lang="ts">
@@ -23,6 +43,9 @@ import type {GitRepo} from '@/typings/GitService';
 import type {Update} from '@codemirror/collab';
 import NotificationLevel from "../Interfaces/NotificationLevel";
 import NotificationService from "../services/notification.service";
+
+import { Splitpanes, Pane } from 'splitpanes';
+import 'splitpanes/dist/splitpanes.css';
 
 
 export default defineComponent({
@@ -130,6 +153,14 @@ export default defineComponent({
 	unmounted() {
 		if (this.view) this.view.destroy();
 	},
-	components: { NavBar },
+	components: {
+		NavBar,
+	  Splitpanes,
+		Pane
+	},
 });
 </script>
+
+<style>
+@import '../css/github-markdown.css';
+</style>
