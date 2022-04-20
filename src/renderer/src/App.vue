@@ -182,7 +182,12 @@ export default defineComponent({
 					2,
 				);
 			} catch (error) {
-				// logic to handle template modal
+				const templateContents = await window.ipcRenderer.invoke(
+					'use-template',
+					2,
+					this.gitService?.repo?.name,
+				);
+				(this.$refs.view as any).newEditorFromString(templateContents);
 			}
 		},
 

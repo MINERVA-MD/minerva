@@ -3,8 +3,9 @@ import fs, { chownSync } from 'fs';
 import simpleGit from 'simple-git';
 import { Octokit } from '@octokit/core';
 import { app, ipcMain, BrowserWindow } from 'electron';
-
 import type { GitRepo } from '@/typings/GitService';
+import templates from '../templates/templates.json';
+
 import { GitHubOAuth } from '../../common/config/auth.config';
 import { MINERVA_DIR, SECRETS_PATH } from '../../common/utils/secrets.util';
 
@@ -82,6 +83,13 @@ export default class GitService {
 			await this.clearSessionData();
 			// this.clearSecrets();
 		});
+
+		ipcMain.handle(
+			'use-template',
+			async (event, templateId: string, repoName: string) => {
+				return this.useTemplate(templateId, repoName);
+			},
+		);
 	}
 
 	async generateOAuthToken() {
@@ -238,21 +246,26 @@ export default class GitService {
 			}
 
 			throw new Error(`The repo ${repoName} doesn't contain a README`);
-
-			// fs.writeFileSync(
-			// 	`${this.localRepoPath}/${repoName}/${fileName}`,
-			// 	'## No ReadMe Found in Repo \n *Readme created by minerva*',
-			// );
-
-			// const fileData = await fs.promises.readFile(
-			// 	`${this.localRepoPath}/${repoName}/${fileName}`,
-			// 	'utf8',
-			// );
-			// return fileData;
 		} catch (error) {
 			console.log(error);
 			return error;
 		}
+	}
+
+	async useTemplate(id: number, repoName: string) {
+		const { content } = templates.filter(template => {
+			return template.id === id;
+		})[0];
+
+		fs.writeFileSync(
+			`${this.localRepoPath}/${repoName}/README.md`,
+			content,
+		);
+		const fileData = await fs.promises.readFile(
+			`${this.localRepoPath}/${repoName}/README.md`,
+			'utf8',
+		);
+		return fileData;
 	}
 
 	async commitAndPush(repoName: string) {
@@ -278,5 +291,6 @@ export default class GitService {
 		ipcMain.removeHandler('get-file-content');
 		ipcMain.removeHandler('github-oauth');
 		ipcMain.removeHandler('logout');
+		ipcMain.removeHandler('use-template');
 	}
 }
