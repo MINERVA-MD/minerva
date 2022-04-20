@@ -123,7 +123,7 @@
 				</Listbox>
 				<button
 					type="button"
-					:disabled="repoSelect == null"
+					:disabled="repoSelect == undefined"
 					v-bind:class="getCloneRepoBtnClass()"
 					@click="useRepo"
 				>
@@ -162,16 +162,16 @@ export default defineComponent({
 	props: ['gitService'],
 	data(): {
 		repos: GitRepo[] | null;
-		repo: GitRepo | null;
-		repoSelect: GitRepo | null;
+		repo: GitRepo | undefined;
+		repoSelect: GitRepo | undefined;
 		username: String;
 		token: string;
 		error: string;
 	} {
 		return {
 			repos: null,
-			repo: null,
-			repoSelect: null,
+			repo: undefined,
+			repoSelect: undefined,
 			username: '',
 			token: '',
 			error: '',
@@ -186,7 +186,7 @@ export default defineComponent({
 	},
 	methods: {
 		getCloneRepoBtnClass() {
-			if (this.repoSelect == null) {
+			if (this.repoSelect == undefined) {
 				return 'bg-gray-300 text-white p-2 rounded cursor-not-allowed';
 			}
 			return 'bg-slate-800 text-white p-2 rounded';
@@ -199,7 +199,7 @@ export default defineComponent({
 			this.$emit('logout');
 		},
 		useRepo() {
-			if (this.repo !== null) {
+			if (this.repo !== undefined) {
 				this.$emit('useRepo');
 			} else {
 				NotificationService.notify(

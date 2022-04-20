@@ -1,6 +1,5 @@
 import { createApp } from 'vue';
 import { createPinia } from 'pinia';
-import Notification from './components/Notification.vue';
 
 import App from './App.vue';
 import router from './router';
