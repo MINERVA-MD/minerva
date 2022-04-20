@@ -86,8 +86,8 @@ export default class GitService {
 
 		ipcMain.handle(
 			'use-template',
-			async (event, templateId: string, repoName: string) => {
-				return this.useTemplate(templateId, repoName);
+			async (event, md: string, repoName: string) => {
+				return this.useTemplate(md, repoName);
 			},
 		);
 	}
@@ -252,20 +252,16 @@ export default class GitService {
 		}
 	}
 
-	async useTemplate(id: number, repoName: string) {
-		const { content } = templates.filter(template => {
-			return template.id === id;
-		})[0];
-
-		fs.writeFileSync(
-			`${this.localRepoPath}/${repoName}/README.md`,
-			content,
-		);
-		const fileData = await fs.promises.readFile(
-			`${this.localRepoPath}/${repoName}/README.md`,
-			'utf8',
-		);
-		return fileData;
+	async useTemplate(md: string, repoName: string) {
+		try {
+			fs.writeFileSync(`${this.localRepoPath}/${repoName}/README.md`, md);
+			return await fs.promises.readFile(
+				`${this.localRepoPath}/${repoName}/README.md`,
+				'utf8',
+			);
+		} catch (error) {
+			return error;
+		}
 	}
 
 	async commitAndPush(repoName: string) {
