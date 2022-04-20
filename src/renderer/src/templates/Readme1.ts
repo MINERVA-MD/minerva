@@ -1,4 +1,4 @@
-const README_ADVANCED = `<div id="top"></div>
+const README1 = `<div id="top"></div>
 
 <!-- PROJECT LOGO -->
 <br />
@@ -204,4 +204,4 @@ Project Link: [https://github.com/github_username/repo_name](https://github.com/
 [product-screenshot]: images/screenshot.png
 `;
 
-export default README_ADVANCED;
+export default README1;

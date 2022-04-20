@@ -8,8 +8,8 @@ import GitService from './services/git.service';
 import FileHandle from './services/fileHandle.service';
 
 const icon = app.isPackaged
-	? join(__dirname, '..', 'common', 'assets', 'favicon.ico')
-	: join(__dirname, '..', '..', 'src', 'common', 'assets', 'favicon.ico');
+	? join(__dirname, '..', 'common', 'assets', 'logo24x24.ico')
+	: join(__dirname, '..', '..', 'src', 'common', 'assets', 'logo24x24.ico');
 
 // Disable GPU Acceleration for Windows 7
 if (release().startsWith('6.1')) app.disableHardwareAcceleration();
@@ -42,6 +42,7 @@ function createWindow() {
 	splash = new BrowserWindow({
 		width: 600,
 		height: 450,
+		icon,
 		transparent: true,
 		frame: false,
 	});
