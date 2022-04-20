@@ -34,7 +34,7 @@
 						leave-to="opacity-0 scale-95"
 					>
 						<div
-							class="z-10 inline-block w-full max-w-fit my-4 h-full my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-xl"
+							class="z-10 inline-block flex-1 content w-full md:w-11/12 max-w-7xl my-4 my-8 overflow-y-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-xl screen-minus"
 						>
 							<div
 								class="bg-gray-50 px-4 py-4 sm:px-6 sm:flex sm:flex-row-reverse justify-between"
@@ -82,7 +82,7 @@
 														max-size="50"
 													>
 														<div
-															class="h-full relative flex flex-col border-r border-gray-200 bg-gray-100"
+															class="relative flex flex-col border-r border-gray-200 bg-gray-100"
 														>
 															<div>
 																<!--Sorted-->
@@ -92,11 +92,11 @@
 															</div>
 															<nav
 																aria-label="Message list"
-																class="overflow-y-auto"
+																class="h-full overflow-hidden flex flex-col"
 															>
 																<ul
 																	role="list"
-																	class="border-b border-gray-200 divide-y divide-gray-200"
+																	class="border-b border-gray-200 divide-y divide-gray-200 overflow-y-auto h-[calc(85vh-105px)]"
 																>
 																	<li
 																		v-for="template in templates"
@@ -243,7 +243,7 @@
 																	class="m-4"
 																>
 																	<div
-																		class="bg-white px-4 py-6 shadow sm:rounded-lg sm:px-6"
+																		class="bg-white px-4 py-6 shadow sm:rounded-lg sm:px-6 overflow-y-auto h-[calc(85vh-230px)]"
 																	>
 																		<div
 																			class="mt-4 text-sm text-gray-800"

@@ -1,10 +1,9 @@
 /* eslint-disable class-methods-use-this */
-import fs, { chownSync } from 'fs';
+import fs from 'fs';
 import simpleGit from 'simple-git';
 import { Octokit } from '@octokit/core';
 import { app, ipcMain, BrowserWindow } from 'electron';
 import type { GitRepo } from '@/typings/GitService';
-import templates from '../templates/templates.json';
 
 import { GitHubOAuth } from '../../common/config/auth.config';
 import { MINERVA_DIR, SECRETS_PATH } from '../../common/utils/secrets.util';
