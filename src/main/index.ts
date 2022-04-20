@@ -1,10 +1,15 @@
 /* eslint-disable import/no-mutable-exports */
-import { release } from 'os';
+
 import { join } from 'path';
+import { release } from 'os';
 import { BrowserWindow, ipcMain, MenuItem, shell, app, Menu } from 'electron';
 
 import GitService from './services/git.service';
 import FileHandle from './services/fileHandle.service';
+
+const icon = app.isPackaged
+	? join(__dirname, '..', 'common', 'assets', 'favicon.ico')
+	: join(__dirname, '..', '..', 'src', 'common', 'assets', 'favicon.ico');
 
 // Disable GPU Acceleration for Windows 7
 if (release().startsWith('6.1')) app.disableHardwareAcceleration();
@@ -24,7 +29,7 @@ function createWindow() {
 	win = new BrowserWindow({
 		width: 1400,
 		height: 900,
-		icon: join(__dirname, '..', 'common', 'assets', 'minerva_logo.svg'),
+		icon,
 		title: 'Main window',
 		// titleBarStyle: 'hidden'
 		show: false,

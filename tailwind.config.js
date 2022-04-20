@@ -1,3 +1,4 @@
+/* eslint-disable global-require */
 module.exports = {
 	content: ['./index.html', './src/**/*.{vue,js,ts,jsx,tsx,html}'],
 	theme: {
@@ -8,5 +9,9 @@ module.exports = {
 			},
 		},
 	},
-	plugins: [],
+	plugins: [
+		require('@tailwindcss/forms'),
+		require('@tailwindcss/line-clamp'),
+		require('@tailwindcss/aspect-ratio'),
+	],
 };

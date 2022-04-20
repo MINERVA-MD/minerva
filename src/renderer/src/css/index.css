@@ -16,7 +16,7 @@
 }
 
 .editor-height {
-	height: calc(100vh - 116px);
+	height: calc(100vh - 116px) !important;
 }
 
 /* Additional Codemirror styling */
@@ -28,3 +28,36 @@
 .cm-focused {
 	outline: none !important;
 }
+
+.splitpanes.default-theme .splitpanes__pane {
+	background-color: white !important;
+}
+
+.editor-container {
+	overflow: auto !important;
+	height: calc(100vh - 116px) !important;
+}
+
+
+/** {*/
+/*	scrollbar-width: auto;*/
+/*	scrollbar-color: #7675f2 #eeeeee;*/
+/*}*/
+
+/* Works on Chrome, Edge, and Safari */
+/**::-webkit-scrollbar {*/
+/*	width: 16px;*/
+/*}*/
+
+/**::-webkit-scrollbar-track {*/
+/*	background: #eeeeee;*/
+/*}*/
+
+/**::-webkit-scrollbar-thumb {*/
+/*	background-color: #7675f2;*/
+/*	border-radius: 0px;*/
+/*	border: 3px solid #eeeeee;*/
+/*}*/
+
+
+

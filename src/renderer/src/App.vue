@@ -28,6 +28,9 @@
 		</transition>
 	</RouterView>
 	<Footer :gitService="gitService" :loadedFile="loadedFile" />
+	<Modal>
+			<TemplatePicker/>
+	</Modal>
 </template>
 
 <script lang="ts">
@@ -40,9 +43,13 @@ import Navbar from './components/NavBar.vue';
 import Footer from './components/Footer.vue';
 import Notification from "./components/Notification.vue";
 import type { GitRepo } from '@/typings/GitService';
+import TemplatePicker from "./components/TemplatePicker.vue";
+import Modal from "./components/Modal.vue";
 
 export default defineComponent({
 	components: {
+	  Modal,
+	  TemplatePicker,
 	  Notification,
 		Navbar,
 		Editor,
@@ -164,6 +171,7 @@ export default defineComponent({
 </script>
 
 <style>
+
 @import './css/github-markdown.css';
 
 .fade-enter-from {
