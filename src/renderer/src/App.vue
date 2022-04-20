@@ -28,44 +28,46 @@
 		</transition>
 	</RouterView>
 	<Footer :gitService="gitService" :loadedFile="loadedFile" />
-	<Modal>
-			<TemplatePicker/>
-	</Modal>
+	<TemplatePickerModal v-if="isModalOpen" @selectTemplate="selectTemplate"/>
 </template>
 
 <script lang="ts">
-import { RouterView, RouterLink } from 'vue-router';
-import { defineComponent } from 'vue-demi';
+import { ref } from 'vue';
 import './css/index.css';
+import { defineComponent } from 'vue-demi';
+import { RouterView, RouterLink } from 'vue-router';
+
 import GithubClientService from './services/github-client.service';
 import Editor from './views/Editor.vue';
 import Navbar from './components/NavBar.vue';
 import Footer from './components/Footer.vue';
-import Notification from "./components/Notification.vue";
 import type { GitRepo } from '@/typings/GitService';
-import TemplatePicker from "./components/TemplatePicker.vue";
-import Modal from "./components/Modal.vue";
+import TemplatePickerModal from './components/TemplatePickerModal.vue';
+import NotificationService from './services/notification.service';
+import NotificationLevel from './Interfaces/NotificationLevel';
+
+let isModalOpen = ref(false)
 
 export default defineComponent({
 	components: {
-	  Modal,
-	  TemplatePicker,
-	  Notification,
+	  TemplatePickerModal,
+		Notification,
 		Navbar,
 		Editor,
 		Footer,
 	},
+
 	data(): {
 		roomId: string | null;
 		gitService: GithubClientService | null;
 		repo: GitRepo | null;
-		loadedFile: string | null;
+		loadedFile: string | null
 	} {
 		return {
 			roomId: '',
 			gitService: null,
 			repo: null,
-			loadedFile: null,
+			loadedFile: null
 		};
 	},
 	created() {
@@ -74,6 +76,13 @@ export default defineComponent({
 	mounted() {
 		this.menuListener();
 	},
+
+	setup() {
+		return {
+			isModalOpen
+		}
+	},
+
 	methods: {
 		newBlankEditor() {
 			this.$router.push('/');
@@ -86,24 +95,43 @@ export default defineComponent({
 		},
 
 		async saveFile() {
-			const editorData = (this.$refs.view as any)?.getEditorContent();
-			if (this.loadedFile) {
-				await window.ipcRenderer.invoke(
-					'saveFile',
-					this.loadedFile,
-					editorData,
-				);
-			} else {
-				this.saveAsFile();
-			}
+			try {
+				const editorData = (this.$refs.view as any)?.getEditorContent();
+				if (this.loadedFile) {
+					await window.ipcRenderer.invoke(
+						'saveFile',
+						this.loadedFile,
+						editorData,
+					);
+					NotificationService.notify(
+						NotificationLevel.Success,
+						`File Saved`,
+						``,
+						2,
+					);
+				} else {
+					await this.saveAsFile();
+				}
+			} catch (error) {}
 		},
 
 		async saveAsFile() {
-			const editorData = (this.$refs.view as any)?.getEditorContent();
-			this.loadedFile = await window.ipcRenderer.invoke(
-				'saveAsFile',
-				editorData,
-			);
+			try {
+				const editorData = (this.$refs.view as any)?.getEditorContent();
+				const loaded = await window.ipcRenderer.invoke(
+					'saveAsFile',
+					editorData,
+				);
+				if (loaded) {
+					this.loadedFile = loaded;
+					NotificationService.notify(
+						NotificationLevel.Success,
+						`File Saved`,
+						``,
+						2,
+					);
+				}
+			} catch (error) {}
 		},
 
 		async loadFile() {
@@ -128,13 +156,24 @@ export default defineComponent({
 		},
 
 		async login() {
-			this.connectGit();
-			await this.gitService?.authorize();
+			try {
+				this.connectGit();
+				await this.gitService?.authorize();
+			} catch (error) {
+				NotificationService.notify(
+					NotificationLevel.Error,
+					`Log In Failed`,
+					``,
+					3,
+				);
+			}
 		},
 
 		async logout() {
-			await this.gitService?.logout();
-			this.gitService = null;
+			try {
+				await this.gitService?.logout();
+				this.gitService = null;
+			} catch (error) {}
 		},
 
 		selectRepo(repo: GitRepo) {
@@ -142,10 +181,30 @@ export default defineComponent({
 		},
 
 		async useRepo() {
-			await this.$router.push('/');
-			await this.gitService?.cloneSelectedRepo();
-			const fileContents = await this.gitService?.getReadMeContents();
-			(this.$refs.view as any).newEditorFromString(fileContents);
+			try {
+				await this.$router.push('/');
+				await this.gitService?.cloneSelectedRepo();
+				const fileContents: string | Error =
+					await this.gitService?.getReadMeContents();
+				if (fileContents instanceof Error) throw fileContents;
+				(this.$refs.view as any).newEditorFromString(fileContents);
+
+				NotificationService.notify(
+					NotificationLevel.Success,
+					`Cloned Repo <strong>${this.repo?.name}</strong>`,
+					``,
+					2,
+				);
+			} catch (error) {
+				// logic to handle template modal
+		  NotificationService.notify(
+			  NotificationLevel.Warning,
+			  `Cloned Repo <strong>${this.repo?.name}</strong> has no README.`,
+			  `Select a template from the popup to get started. You can click cancel anytime to start with an empty README.`,
+			  4,
+		  );
+					isModalOpen.value = true;
+			}
 		},
 
 		commitChanges() {
@@ -166,6 +225,15 @@ export default defineComponent({
 				this.saveAsFile();
 			});
 		},
+	  selectTemplate(md: string) {
+			(this.$refs.view as any).newEditorFromString(md);
+			NotificationService.notify(
+				NotificationLevel.Success,
+				`Successfully added README to <strong>${this.repo?.name}</strong>.`,
+				``,
+				4,
+			);
+	  }
 	},
 });
 </script>
