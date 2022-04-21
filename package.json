@@ -1,7 +1,7 @@
 {
     "name": "Minerva",
     "version": "0.0.13",
-    "description": "Markdown Editor for Professionals",
+    "description": "A Collaborative Markdown Editor for Professionals",
     "main": "dist/main/index.cjs",
     "engines": {
         "node": ">=14.17.0"
