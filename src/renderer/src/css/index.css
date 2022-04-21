@@ -16,7 +16,7 @@
 }
 
 .editor-height {
-	height: calc(100vh - 116px) !important;
+	height: calc(100vh - 76px) !important;
 }
 
 /* Additional Codemirror styling */
