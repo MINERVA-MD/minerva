@@ -1,27 +1,168 @@
 {
-	"appId": "AppID",
+  "productName": "Minerva",
+  "appId": "com.github.minerva.minerva",
 	"asar": true,
 	"directories": {
-		"output": "release/${version}"
+	  "buildResources": "resources",
+	  "output": "release/${version}"
 	},
 	"files": ["dist"],
-	"mac": {
-		"artifactName": "${productName}_${version}.${ext}",
-		"target": ["dmg"]
+  	"fileAssociations": {
+	  "ext": [
+		"md",
+		"markdown",
+		"mmd",
+		"mdown",
+		"mdtxt",
+		"mdtext"
+	  ],
+	  "name": "Markdown",
+	  "description": "Markdown document",
+	  "role": "Editor",
+	  "icon": "resources/icons/md.icns"
 	},
+  "mac": {
+	"artifactName": "${productName}_${version}-${arch}-mac.${ext}",
+	"icon": "resources/icons/icon.icns",
+	"darkModeSupport": true,
+	"target": [
+	  {
+		"target": "dmg",
+		"arch": [
+		  "x64",
+		  "arm64"
+		]
+	  },
+	  {
+		"target": "zip",
+		"arch": [
+		  "x64",
+		  "arm64"
+		]
+	  }
+	]
+  },
+  "dmg": {
+	"artifactName": "${productName}_${version}-${arch}.${ext}",
+	"contents": [
+	  {
+		"x": 410,
+		"y": 240,
+		"type": "link",
+		"path": "/Applications"
+	  },
+	  {
+		"x": 130,
+		"y": 240,
+		"type": "file"
+	  }
+	]
+  },
 	"win": {
 		"target": [
 			{
 				"target": "nsis",
-				"arch": ["x64"]
+			  "arch": [
+				"ia32",
+				"x64"
+			  ]
+			},
+			{
+			  "target": "zip",
+			  "arch": [
+				"ia32",
+				"x64"
+			  ]
 			}
 		],
-		"artifactName": "${productName}_${version}.${ext}"
+	  "icon": "resources/icons/icon.ico",
+	  "requestedExecutionLevel": "asInvoker",
+	  "artifactName": "${productName}_${version}-${arch}-win.${ext}"
 	},
 	"nsis": {
 		"oneClick": false,
 		"perMachine": false,
 		"allowToChangeInstallationDirectory": true,
 		"deleteAppDataOnUninstall": false
-	}
+	},
+  "linux": {
+	"artifactName": "${productName}_${version}-${arch}.${ext}",
+	"executableName": "minerva",
+	"description": "A Collaborative Markdown Editor for Professionals.",
+	"maintainer": "Minerva Contributors",
+	"category": "Office;TextEditor;Utility",
+	"mimeTypes": [
+	  "text/markdown"
+	],
+	"icon": "resources/icons",
+	"desktop": {
+	  "StartupWMClass": "minerva",
+	  "Keywords": "minerva;"
+	},
+	"target": [
+	  {
+		"target": "AppImage"
+	  },
+	  {
+		"target": "deb"
+	  },
+	  {
+		"target": "rpm"
+	  },
+	  {
+		"target": "tar.gz"
+	  }
+	],
+	"fileAssociations": [
+	  {
+		"ext": "md",
+		"name": "Markdown",
+		"description": "Markdown document"
+	  },
+	  {
+		"ext": "markdown",
+		"name": "Markdown",
+		"description": "Markdown document"
+	  },
+	  {
+		"ext": "mmd",
+		"name": "Markdown",
+		"description": "Markdown document"
+	  },
+	  {
+		"ext": "mdown",
+		"name": "Markdown",
+		"description": "Markdown document"
+	  },
+	  {
+		"ext": "mdtxt",
+		"name": "Markdown",
+		"description": "Markdown document"
+	  },
+	  {
+		"ext": "mdtext",
+		"name": "Markdown",
+		"description": "Markdown document"
+	  }
+	]
+  },
+  "deb": {
+	"depends": [
+	  "libsecret-1-0",
+	  "libx11-xcb1",
+	  "libxkbfile1",
+	  "libfontconfig1"
+	],
+	"fpm": [
+	  "--license=Expat"
+	]
+  },
+  "rpm": {
+	"depends": [
+	  "libsecret",
+	  "libX11-xcb",
+	  "libxkbfile",
+	  "fontconfig"
+	]
+  }
 }
