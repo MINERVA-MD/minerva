@@ -201,6 +201,13 @@ export default defineComponent({
 				);
 			} catch (error) {
 				this.isModalOpen = true;
+
+				NotificationService.notify(
+					NotificationLevel.Success,
+					``,
+					``,
+					0.001,
+				);
 			}
 		},
 
