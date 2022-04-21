@@ -1,18 +1,18 @@
 <template>
-	<splitpanes class="default-theme view-container p-3">
-			<pane size="50" min-size="20" max-size="75">
-				<div
-						class="overflow-auto editor-height"
-						id="editor-container"
-				></div>
-			</pane>
+	<splitpanes class="default-theme view-container p-3 pl-0">
+		<pane size="50" min-size="20" max-size="75">
+			<div
+				class="overflow-auto editor-height"
+				id="editor-container"
+			></div>
+		</pane>
 
 		<pane size="50" min-size="20" max-size="75">
 			<div class="overflow-auto">
 				<article
-						class="markdown-body editor-height p-3"
-						id="parsed-html"
-						v-html="parsedHTML"
+					class="markdown-body editor-height p-3"
+					id="parsed-html"
+					v-html="parsedHTML"
 				></article>
 			</div>
 		</pane>
@@ -161,8 +161,8 @@ export default defineComponent({
 	},
 	components: {
 		NavBar,
-	  Splitpanes,
-		Pane
+		Splitpanes,
+		Pane,
 	},
 });
 </script>

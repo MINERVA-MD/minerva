@@ -32,7 +32,6 @@
 		v-if="isModalOpen"
 		:isModalOpen="isModalOpen"
 		@selectTemplate="selectTemplate"
-		@closeModal="closeTemplateModal"
 	/>
 </template>
 
@@ -230,9 +229,6 @@ export default defineComponent({
 				``,
 				2,
 			);
-		},
-		closeTemplateModal() {
-			this.isModalOpen = false;
 		},
 	},
 });

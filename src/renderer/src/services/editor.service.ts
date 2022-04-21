@@ -75,11 +75,6 @@ export default class EditorService {
 				collab({ startVersion: version }),
 				EditorView.lineWrapping,
 				this.editorClient(this.vueComponent, this.socket),
-				EditorView.theme({
-					'&': {
-						fontSize: '11.5pt',
-					},
-				}),
 			],
 		});
 
