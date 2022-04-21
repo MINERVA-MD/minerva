@@ -32,7 +32,6 @@
 		v-if="isModalOpen"
 		:isModalOpen="isModalOpen"
 		@selectTemplate="selectTemplate"
-		@closeModal="closeModal"
 	/>
 </template>
 
