@@ -61,6 +61,12 @@ function createWindow() {
 		win.webContents.openDevTools();
 	}
 
+	// Comment out if any routing issues
+	win.webContents.on('will-navigate', (e, url) => {
+		e.preventDefault();
+		shell.openExternal(url);
+	});
+
 	// Test active push message to Renderer-process
 	win.webContents.on('did-finish-load', () => {
 		win?.webContents.send(
