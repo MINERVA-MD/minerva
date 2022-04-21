@@ -2,7 +2,7 @@
 	<splitpanes class="default-theme view-container p-3 pl-0">
 		<pane size="50" min-size="20" max-size="75">
 			<div
-				class="overflow-auto editor-height"
+				class="overflow-auto editor-height p-1.5 pl-0"
 				id="editor-container"
 			></div>
 		</pane>
@@ -69,7 +69,7 @@ export default defineComponent({
 				NotificationLevel.Success,
 				'Successfully Created Collaboration Session',
 				'Copy and share RoomID to collaborate with others!',
-				5,
+				4,
 			);
 			return this.roomId;
 		},
@@ -83,7 +83,7 @@ export default defineComponent({
 				NotificationLevel.Success,
 				`Joined Room ${roomId}`,
 				'You have joined a collaborative session!',
-				5,
+				3,
 			);
 		},
 
