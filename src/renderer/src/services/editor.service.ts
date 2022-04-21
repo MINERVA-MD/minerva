@@ -122,7 +122,7 @@ export default class EditorService {
 								version: getSyncedVersion(view.state),
 								updates: unsentUpdates,
 							});
-						}, 20);
+						}, 50);
 					}
 				},
 			}));
