@@ -1,5 +1,5 @@
 <template>
-	<splitpanes class="default-theme view-container p-3 pl-0">
+	<splitpanes class="view-container p-3 pl-0">
 		<pane size="50" min-size="20" max-size="75">
 			<div
 				class="overflow-auto editor-height"
