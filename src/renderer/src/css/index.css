@@ -29,6 +29,11 @@
 	outline: none !important;
 }
 
+.splitpanes--vertical > .splitpanes__splitter {
+	width: 1px;
+	background-color: #d3d3d3;
+}
+
 .splitpanes.default-theme .splitpanes__pane {
 	background-color: white !important;
 }
