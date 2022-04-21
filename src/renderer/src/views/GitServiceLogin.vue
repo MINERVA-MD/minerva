@@ -5,6 +5,12 @@
 		>
 
 		<div class="flex flex-col w-96 space-y-4 mx-auto mt-32">
+			<h1
+				class="flex justify-center text-minerva-gray font-semibold text-3xl"
+			>
+				Sign in to Github
+			</h1>
+			<hr class="pb-8" />
 			<button
 				v-if="!gitService?.username"
 				class="bg-minerva-purple p-2 text-white rounded hover:opacity-90 transition-all duration-100 text-lg"
