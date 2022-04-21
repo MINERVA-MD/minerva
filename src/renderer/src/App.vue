@@ -181,6 +181,12 @@ export default defineComponent({
 		async useRepo() {
 			try {
 				await this.$router.push('/');
+				NotificationService.notify(
+					NotificationLevel.Info,
+					`Cloning repo...`,
+					``,
+					60,
+				);
 				await this.gitService?.cloneSelectedRepo();
 				const fileContents: string | Error =
 					await this.gitService?.getReadMeContents();
