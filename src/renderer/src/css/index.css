@@ -33,14 +33,21 @@
 	border-left: none !important;
 	width: 1px !important;
 	background-color: rgb(229 231 235) !important;
+	margin: 0 8px !important;
 }
 
 .splitpanes--vertical > .splitpanes__splitter::before {
 	width: 6px !important;
-	height: 56px !important;
-	background-color: rgb(181, 182, 184) !important;
+	height: 82px !important;
+	background-color: rgb(229 231 235) !important;
 	border-radius: 5px;
-	transform: translate(-1px, -90px) !important;
+	transform: translate(-1px, -110px) !important;
+}
+.splitpanes--vertical > .splitpanes__splitter:hover::before {
+	background-color: rgb(181, 182, 184) !important;
+}
+.splitpanes--vertical > .splitpanes__splitter:active::before {
+	background-color: rgb(181, 182, 184) !important;
 }
 
 .splitpanes--vertical > .splitpanes__splitter::after {
