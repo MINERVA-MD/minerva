@@ -1,28 +1,19 @@
 /* eslint-disable no-use-before-define */
+/* eslint-disable no-param-reassign */
 import fs from 'fs';
 import { contextBridge, ipcRenderer } from 'electron';
-import { marked } from 'marked';
-import { domReady } from './utils';
-import { useLoading } from './loading';
-
-const { appendLoading, removeLoading } = useLoading();
-
-(async () => {
-	await domReady();
-
-	appendLoading();
-})();
 
 // --------- Expose some API to the Renderer process. ---------
 contextBridge.exposeInMainWorld('fs', fs);
-contextBridge.exposeInMainWorld('removeLoading', removeLoading);
 contextBridge.exposeInMainWorld('ipcRenderer', withPrototype(ipcRenderer));
 
 // `exposeInMainWorld` can't detect attributes and methods of `prototype`, manually patching it.
 function withPrototype(obj: Record<string, any>) {
 	const protos = Object.getPrototypeOf(obj);
 
+	// eslint-disable-next-line no-restricted-syntax
 	for (const [key, value] of Object.entries(protos)) {
+		// eslint-disable-next-line no-continue
 		if (Object.prototype.hasOwnProperty.call(obj, key)) continue;
 
 		if (typeof value === 'function') {

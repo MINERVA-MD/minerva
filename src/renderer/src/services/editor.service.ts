@@ -1,3 +1,4 @@
+/* eslint-disable no-plusplus */
 /* eslint-disable import/no-relative-packages */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable class-methods-use-this */
@@ -7,12 +8,20 @@ import {
 	collab,
 	getSyncedVersion,
 	type Update,
+	receiveUpdates,
 } from '@codemirror/collab';
+import hljs from 'highlight.js';
 import { markdown } from '@codemirror/lang-markdown';
 import { Text } from '@codemirror/text';
-import { ViewPlugin } from '@codemirror/view';
-import type { Socket } from 'socket.io-client';
+import { Decoration, ViewPlugin, WidgetType } from '@codemirror/view';
+import { io, Socket } from 'socket.io-client';
 import { marked } from 'marked';
+import { ChangeSet, StateField } from '@codemirror/state';
+
+import MARKED_SETTINGS from '../config/parsing';
+
+export const MINERVA_LOCAL_SOCKET_SERVER_URL = 'http://localhost:8080/';
+export const MINERVA_SOCKET_SERVER_URL = 'https://text-sockets.herokuapp.com/';
 
 export default class EditorService {
 	doc: Text;
@@ -21,30 +30,49 @@ export default class EditorService {
 
 	socket: Socket | null;
 
-	view: EditorView | null = null;
+	roomId = '';
+
+	view: EditorView;
 
 	vueComponent: any;
 
 	constructor(
 		vueComponent: any,
 		documentData: { doc: string[]; updates: Update[] },
-		socket: Socket | null = null,
+		socket: boolean,
 	) {
 		this.doc = Text.of(documentData.doc);
 		this.updates = documentData.updates;
-		this.socket = socket;
 		this.vueComponent = vueComponent;
-		const documenString = documentData.doc.join('\n');
-		this.vueComponent.parsedHTML = marked.parse(documenString);
+		const documentString = documentData.doc.join('\n');
+		this.vueComponent.parsedHTML = marked.parse(documentString);
+		this.view = new EditorView();
+		if (socket) {
+			this.socket = this.openSocketConnection();
+		} else {
+			this.socket = null;
+		}
+
+		marked.setOptions(MARKED_SETTINGS);
 	}
 
-	generateEditor() {
+	generateEditor(doc?: Text, updates?: Update[]) {
+		let docText: Text = this.doc;
+		if (doc) {
+			docText = doc;
+		}
+
+		let version: number = this.updates.length;
+		if (updates) {
+			version = updates.length;
+		}
+
 		const state = EditorState.create({
-			doc: this.doc,
+			doc: docText,
 			extensions: [
 				basicSetup,
 				markdown(),
-				collab({ startVersion: this.updates.length }),
+				collab({ startVersion: version }),
 				EditorView.lineWrapping,
 				this.editorClient(this.vueComponent, this.socket),
 			],
@@ -52,17 +80,14 @@ export default class EditorService {
 
 		const view = new EditorView({
 			state,
-			parent: document.getElementById('editor-container') || undefined, // document.getElementById('editor'),
+			parent: document.getElementById('editor-container') || undefined,
 		});
 
 		this.view = view;
 		return view;
 	}
 
-	// parseMD(test: string) {
-	// 	const md = parse(test);
-	// 	return md;
-	// }
+	// setDocumentState(documentData: { doc: string[]; updates: Update[] }) {}
 
 	editorClient(vueComponent: any, socket: Socket | null) {
 		let plugin;
@@ -83,7 +108,6 @@ export default class EditorService {
 									updateJSON: u.changes.toJSON(),
 									clientID: u.clientID,
 								};
-
 								return serializedUpdate;
 							},
 						);
@@ -92,6 +116,13 @@ export default class EditorService {
 							version: getSyncedVersion(view.state),
 							updates: unsentUpdates,
 						});
+
+						setTimeout(() => {
+							socket.emit('clientOpUpdate', {
+								version: getSyncedVersion(view.state),
+								updates: unsentUpdates,
+							});
+						}, 20);
 					}
 				},
 			}));
@@ -108,5 +139,91 @@ export default class EditorService {
 			}));
 		}
 		return plugin;
+	}
+
+	openSocketConnection() {
+		return io(MINERVA_SOCKET_SERVER_URL);
+		// return io(MINERVA_LOCAL_SOCKET_SERVER_URL);
+	}
+
+	socketsCreateNewRoom(roomId: string) {
+		this.roomId = roomId;
+		this.doc = this.view.state.doc;
+
+		this.socket?.emit('create', {
+			roomId: this.roomId,
+			documentData: {
+				doc: this.view.state.doc,
+				updates: [],
+			},
+		});
+
+		this.socket?.on('created', documentData => {
+			this.socket?.on('serverOpUpdate', changes => {
+				const deserializedChangeSet = changes.updates.map(
+					(u: { updateJSON: any; clientID: string }) => {
+						return {
+							changes: ChangeSet.fromJSON(u.updateJSON),
+							clientID: u.clientID,
+						};
+					},
+				);
+
+				this.view?.update([
+					receiveUpdates(this.view.state, deserializedChangeSet),
+				]);
+			});
+		});
+	}
+
+	socketsJoinRoom(roomId: string) {
+		this.view.destroy();
+		this.roomId = roomId;
+
+		this.socket?.emit('join', this.roomId);
+		this.socket?.on('joined', documentData => {
+			this.view = this.generateEditor(
+				Text.of(documentData.doc),
+				documentData.updates,
+			);
+			this.vueComponent.view = this.view;
+
+			this.socket?.on('serverOpUpdate', changes => {
+				const deserializedChangeSet = changes.updates.map(
+					(u: { updateJSON: any; clientID: string }) => {
+						return {
+							changes: ChangeSet.fromJSON(u.updateJSON),
+							clientID: u.clientID,
+						};
+					},
+				);
+				this.view?.update([
+					receiveUpdates(this.view.state, deserializedChangeSet),
+				]);
+			});
+		});
+	}
+
+	// TODO: Pull this out into Util Class
+	static generateRoomId() {
+		let result = '';
+		const roomIdLength = 5;
+		const characters =
+			'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+		const charactersLength = characters.length;
+		for (let i = 0; i < roomIdLength; i++) {
+			result += characters.charAt(
+				Math.floor(Math.random() * charactersLength),
+			);
+		}
+		return result;
+	}
+
+	getEditorContent() {
+		return this.view.state.doc.toJSON().join('\n');
+	}
+
+	disconnectSocket() {
+		this.socket?.close();
 	}
 }

@@ -1,0 +1,84 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+	ul,
+	ol {
+		list-style: revert;
+		list-style-position: revert;
+	}
+}
+
+.titlebar {
+	-webkit-user-select: none;
+	-webkit-app-region: drag;
+}
+
+.editor-height {
+	height: calc(100vh - 76px) !important;
+}
+
+/* Additional Codemirror styling */
+.cm-activeLine,
+.cm-activeLineGutter {
+	background: none !important;
+}
+
+.cm-focused {
+	outline: none !important;
+}
+
+.splitpanes--vertical > .splitpanes__splitter {
+	border-left: none !important;
+	width: 1px !important;
+	background-color: rgb(229 231 235) !important;
+	margin: 0 8px !important;
+}
+
+.splitpanes--vertical > .splitpanes__splitter::before {
+	width: 6px !important;
+	height: 82px !important;
+	background-color: rgb(229 231 235) !important;
+	border-radius: 5px;
+	transform: translate(-1px, -110px) !important;
+}
+.splitpanes--vertical > .splitpanes__splitter:hover::before {
+	background-color: rgb(181, 182, 184) !important;
+}
+.splitpanes--vertical > .splitpanes__splitter:active::before {
+	background-color: rgb(181, 182, 184) !important;
+}
+
+.splitpanes--vertical > .splitpanes__splitter::after {
+	background-color: transparent !important;
+}
+
+.splitpanes.default-theme .splitpanes__pane {
+	background-color: white !important;
+}
+
+/* Height for Template Modal */
+.screen-minus {
+	height: 85vh;
+}
+
+/** {*/
+/*	scrollbar-width: auto;*/
+/*	scrollbar-color: #7675f2 #eeeeee;*/
+/*}*/
+
+/* Works on Chrome, Edge, and Safari */
+/**::-webkit-scrollbar {*/
+/*	width: 16px;*/
+/*}*/
+
+/**::-webkit-scrollbar-track {*/
+/*	background: #eeeeee;*/
+/*}*/
+
+/**::-webkit-scrollbar-thumb {*/
+/*	background-color: #7675f2;*/
+/*	border-radius: 0px;*/
+/*	border: 3px solid #eeeeee;*/
+/*}*/

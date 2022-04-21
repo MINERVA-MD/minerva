@@ -1,28 +1,27 @@
 {
     "compilerOptions": {
-      "target": "ES6",        
-      "module": "commonjs",                        
-      "lib": ["dom", "dom.iterable", "ESNext"],    
-      "outDir": "./dist",  
-      "rootDir": "./",      
-      "strict": true,                    
-      "baseUrl": "./",                      
+      "target": "ES6",
+      "module": "commonjs",
+      "lib": ["dom", "dom.iterable", "ESNext"],
+      "outDir": "./dist",
+      "rootDir": "./",
+      "strict": true,
+      "baseUrl": "./",
       "paths": {
-        "@common/*": ["src/common/*"]                                 
-      }, 
+        "@common/*": ["src/common/*"]
+      },
       "allowJs": true,
-		  "checkJs": true,
+	  "checkJs": true,
       "resolveJsonModule": true,
       "moduleResolution": "node",
       "allowSyntheticDefaultImports": true,
-      "esModuleInterop": true,   
+      "esModuleInterop": true,
       "experimentalDecorators": true,
       "emitDecoratorMetadata": true,
       "pretty": true,
-      "skipLibCheck": true,                     
+      "skipLibCheck": true,
       "forceConsistentCasingInFileNames": true
     },
       "include": ["src/**/*.ts"],
       "exclude": ["node_modules"]
   }
-  
