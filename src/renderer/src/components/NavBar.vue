@@ -13,30 +13,16 @@
 			<div class="mr-6 flex">
 				<Login :gitService="gitService" />
 			</div>
-			<button
-				@click="toggleMenu"
-				type="button"
-				class="cursor-pointer mr-6 opacity-80 hover:opacity-100"
-				id="menu-button"
-			>
-				<img
-					src="/icons/menu.svg"
-					class="pointer-events-none"
-					alt="menu"
-				/>
-			</button>
-			<div v-if="menuIsOpen === true">
-				<Menu
-					:gitService="gitService"
-					:loadedFile="loadedFile"
-					@newFile="newFile"
-					@saveFile="saveFile"
-					@saveAsFile="saveAsFile"
-					@loadFile="loadFile"
-					@createCollabSession="createCollabSession"
-					@joinSession="joinSession"
-				/>
-			</div>
+			<Menu
+				:gitService="gitService"
+				:loadedFile="loadedFile"
+				@newFile="newFile"
+				@saveFile="saveFile"
+				@saveAsFile="saveAsFile"
+				@loadFile="loadFile"
+				@createCollabSession="createCollabSession"
+				@joinSession="joinSession"
+			/>
 		</div>
 	</header>
 </template>
