@@ -30,17 +30,25 @@
 }
 
 .splitpanes--vertical > .splitpanes__splitter {
-	width: 1px;
-	background-color: #d3d3d3;
+	border-left: none !important;
+	width: 1px !important;
+	background-color: rgb(229 231 235) !important;
+}
+
+.splitpanes--vertical > .splitpanes__splitter::before {
+	width: 6px !important;
+	height: 56px !important;
+	background-color: rgb(181, 182, 184) !important;
+	border-radius: 5px;
+	transform: translate(-1px, -90px) !important;
+}
+
+.splitpanes--vertical > .splitpanes__splitter::after {
+	background-color: transparent !important;
 }
 
 .splitpanes.default-theme .splitpanes__pane {
 	background-color: white !important;
-}
-
-.editor-container {
-	overflow: auto !important;
-	height: calc(100vh - 116px) !important;
 }
 
 /* Height for Template Modal */
