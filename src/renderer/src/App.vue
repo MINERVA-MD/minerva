@@ -230,9 +230,6 @@ export default defineComponent({
 				2,
 			);
 		},
-		closeTemplateModal() {
-			this.isModalOpen = false;
-		},
 	},
 });
 </script>
