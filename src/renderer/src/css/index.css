@@ -29,13 +29,26 @@
 	outline: none !important;
 }
 
-.splitpanes.default-theme .splitpanes__pane {
-	background-color: white !important;
+.splitpanes--vertical > .splitpanes__splitter {
+	border-left: none !important;
+	width: 1px !important;
+	background-color: rgb(229 231 235) !important;
 }
 
-.editor-container {
-	overflow: auto !important;
-	height: calc(100vh - 116px) !important;
+.splitpanes--vertical > .splitpanes__splitter::before {
+	width: 6px !important;
+	height: 56px !important;
+	background-color: rgb(181, 182, 184) !important;
+	border-radius: 5px;
+	transform: translate(-1px, -90px) !important;
+}
+
+.splitpanes--vertical > .splitpanes__splitter::after {
+	background-color: transparent !important;
+}
+
+.splitpanes.default-theme .splitpanes__pane {
+	background-color: white !important;
 }
 
 /* Height for Template Modal */
