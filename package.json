@@ -1,6 +1,6 @@
 {
-    "name": "Minerva",
-    "version": "0.0.13",
+    "name": "minerva",
+    "version": "1.0.0",
     "description": "A Collaborative Markdown Editor for Professionals",
     "main": "dist/main/index.cjs",
     "engines": {
