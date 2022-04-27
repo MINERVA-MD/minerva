@@ -74,7 +74,7 @@ export default defineComponent({
 			return this.roomId;
 		},
 
-		joinCollabSession(roomId: string) {
+		async joinCollabSession(roomId: string) {
 			this.roomId = roomId;
 			this.view?.destroy();
 			this.view = this.newEditorService(true);
