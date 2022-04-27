@@ -180,6 +180,8 @@ export default class EditorService {
 				documentData.updates,
 			);
 			this.vueComponent.view = this.view;
+			const documentString = documentData.doc.join('\n');
+			this.vueComponent.parsedHTML = marked.parse(documentString);
 
 			this.socket?.on('serverOpUpdate', changes => {
 				const deserializedChangeSet = changes.updates.map(
