@@ -13,7 +13,7 @@
         "release:mac": "vue-tsc --project src/renderer/tsconfig.json --noEmit && node scripts/build.mjs && electron-builder build --mac",
         "release:win": "vue-tsc --project src/renderer/tsconfig.json --noEmit && node scripts/build.mjs && electron-builder build --w",
         "lint": "tsc --noEmit && eslint \"**/*.{js,ts}\" --quiet --fix",
-        "test": "cross-env NODE_ENV=test jest -i --colors --verbose --coverage --detectOpenHandles --passWithNoTests",
+        "test": "cross-env NODE_ENV=test jest -i --colors --verbose --coverage --passWithNoTests",
         "test:watch": "npm run test -- --watchAll"
     },
     "keywords": [
