@@ -2,7 +2,7 @@ import MarkdownIt from 'markdown-it';
 
 import type IParser from '../../interfaces/IParser';
 
-export default class MarkedParser implements IParser {
+export default class MarkdownItParser implements IParser {
 	private md: MarkdownIt;
 
 	constructor() {
