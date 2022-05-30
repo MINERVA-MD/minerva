@@ -12,7 +12,7 @@ module.exports = {
         'plugin:vue/vue3-recommended',
     ],
     plugins: ['prettier', 'eslint-plugin-tsdoc', '@typescript-eslint', 'import', 'eslint-plugin-tsdoc'],
-    ignorePatterns: ['.eslintrc.js', 'jest.config.js'],
+    ignorePatterns: ['.eslintrc.js', 'jest.config.js.js'],
     rules: {
         "tsdoc/syntax": "warn",
         'no-console': 'off',
