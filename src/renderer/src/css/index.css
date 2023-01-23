@@ -11,12 +11,13 @@
 }
 
 .titlebar {
+	user-select: none;
 	-webkit-user-select: none;
 	-webkit-app-region: drag;
 }
 
 .editor-height {
-	height: calc(100vh - 76px) !important;
+	height: calc(100vh - 88px) !important;
 }
 
 /* Additional Codemirror styling */
