@@ -253,5 +253,8 @@ ipcMain.on('github-connect', (event, username, token) => {
 });
 
 FileHandle.listen();
+if (process.argv.length >= 2 && process.argv[1] !== '.') {
+	FileHandle.loadFile()
+}
 
 export default win;

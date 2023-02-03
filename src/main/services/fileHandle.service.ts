@@ -30,15 +30,21 @@ export default class FileHandle {
 		}
 	}
 
-	static async loadFile() {
-		const { filePaths } = await dialog.showOpenDialog({
-			filters: [{ name: 'Markdown', extensions: ['md'] }],
-			properties: ['openFile'],
-		});
-		const content = fs.readFileSync(filePaths[0]).toString();
+	static async loadFile(path?: string) {
+		let filePath = path || '';
+		if (!path) {
+			const { filePaths } = await dialog.showOpenDialog({
+				filters: [{ name: 'Markdown', extensions: ['md'] }],
+				properties: ['openFile'],
+			});
+
+			filePath = filePaths[0];
+		}
+
+		const content = fs.readFileSync(filePath).toString();
 
 		return {
-			path: filePaths[0],
+			path: filePath,
 			content,
 		};
 	}
