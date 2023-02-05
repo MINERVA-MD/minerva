@@ -2,7 +2,7 @@
 
 import { join } from 'path';
 import { release } from 'os';
-import { BrowserWindow, ipcMain, MenuItem, shell, app, Menu } from 'electron';
+import { BrowserWindow, ipcMain, shell, app, Menu } from 'electron';
 
 import GitService from './services/git.service';
 import FileHandle from './services/fileHandle.service';
@@ -25,7 +25,7 @@ if (!app.requestSingleInstanceLock()) {
 let win: BrowserWindow | null = null;
 let splash: BrowserWindow | null = null;
 
-function createWindow() {
+async function createWindow() {
 	win = new BrowserWindow({
 		width: 1400,
 		height: 900,
@@ -79,9 +79,17 @@ function createWindow() {
 	});
 
 	// Make all links open with the browser, not with the application
-	win.webContents.setWindowOpenHandler(({ url }) => {
+	win?.webContents.setWindowOpenHandler(({ url }) => {
 		if (url.startsWith('https:')) shell.openExternal(url);
 		return { action: 'deny' };
+	});
+
+	// if opened with file handle
+	win.webContents.on('did-finish-load', async () => {
+		const openWithPath = process?.argv[2] || '';
+		const fileHandle = await FileHandle.openWithFile(openWithPath);
+		console.log(fileHandle);
+		win?.webContents.send('global-openWith', fileHandle);
 	});
 }
 
@@ -253,8 +261,4 @@ ipcMain.on('github-connect', (event, username, token) => {
 });
 
 FileHandle.listen();
-if (process.argv.length >= 2 && process.argv[1] !== '.') {
-	FileHandle.loadFile()
-}
-
 export default win;
