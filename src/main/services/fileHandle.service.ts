@@ -30,22 +30,33 @@ export default class FileHandle {
 		}
 	}
 
-	static async loadFile(path?: string) {
-		let filePath = path || '';
-		if (!path) {
-			const { filePaths } = await dialog.showOpenDialog({
-				filters: [{ name: 'Markdown', extensions: ['md'] }],
-				properties: ['openFile'],
-			});
+	static async loadFile() {
+		const { filePaths } = await dialog.showOpenDialog({
+			filters: [{ name: 'Markdown', extensions: ['md'] }],
+			properties: ['openFile'],
+		});
 
-			filePath = filePaths[0];
+		const [filePath] = filePaths;
+
+		if (!fs.lstatSync(filePath).isFile()) {
+			return `${filePath} is not a file`;
 		}
 
-		const content = fs.readFileSync(filePath).toString();
-
+		let content = '';
+		try {
+			content = fs.readFileSync(filePath).toString();
+		} catch (error) {
+			console.error(error);
+		}
 		return {
 			path: filePath,
 			content,
 		};
+	}
+
+	static async openWithFile(path: string) {
+		if (!fs.lstatSync(path).isFile()) {
+			return `${path} is not a file`;
+		}
 	}
 }
