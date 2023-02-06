@@ -10,7 +10,7 @@
 		<pane size="50" min-size="20" max-size="75">
 			<div class="overflow-auto">
 				<article
-					class="markdown-body editor-height p-3"
+					class="screenplay editor-height p-3"
 					id="parsed-html"
 					v-html="parsedHTML"
 				></article>
@@ -169,4 +169,5 @@ export default defineComponent({
 
 <style>
 @import '../css/github-markdown.css';
+@import '../css/fountain.css';
 </style>

@@ -19,6 +19,9 @@ import { marked } from 'marked';
 import { ChangeSet, StateField } from '@codemirror/state';
 
 import MARKED_SETTINGS from '../config/parsing';
+import type MarkupParser from './parsers/markupParser';
+import Markdown from './parsers/markdown';
+import Fountain from './parsers/fountain';
 
 export const MINERVA_LOCAL_SOCKET_SERVER_URL = 'http://localhost:8080/';
 export const MINERVA_SOCKET_SERVER_URL = 'https://text-sockets.herokuapp.com/';
@@ -35,6 +38,8 @@ export default class EditorService {
 	view: EditorView;
 
 	vueComponent: any;
+
+	parser: MarkupParser = Markdown;
 
 	constructor(
 		vueComponent: any,
@@ -93,13 +98,14 @@ export default class EditorService {
 		let plugin;
 		if (socket !== null) {
 			plugin = ViewPlugin.define(view => ({
-				update(editorUpdate) {
+				update: editorUpdate => {
 					if (editorUpdate.docChanged) {
 						// update parser
 						const doc = view.state.doc.toJSON();
 						const documentString = doc.join('\n');
 						// eslint-disable-next-line no-param-reassign
-						vueComponent.parsedHTML = marked.parse(documentString);
+						vueComponent.parsedHTML =
+							Fountain.parse(documentString);
 
 						// send updates to server
 						const unsentUpdates = sendableUpdates(view.state).map(
@@ -121,12 +127,14 @@ export default class EditorService {
 			}));
 		} else {
 			plugin = ViewPlugin.define(view => ({
-				update(editorUpdate) {
+				update: editorUpdate => {
 					if (editorUpdate.docChanged) {
 						const doc = view.state.doc.toJSON();
 						const documentString = doc.join('\n');
 						// eslint-disable-next-line no-param-reassign
-						vueComponent.parsedHTML = marked.parse(documentString);
+						vueComponent.parsedHTML =
+							Fountain.parse(documentString);
+						console.log(Fountain.parse(documentString));
 					}
 				},
 			}));
