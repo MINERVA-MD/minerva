@@ -36,27 +36,39 @@ export default class FileHandle {
 			properties: ['openFile'],
 		});
 
-		const [filePath] = filePaths;
-
-		if (!fs.lstatSync(filePath).isFile()) {
-			return `${filePath} is not a file`;
-		}
+		const [path] = filePaths;
 
 		let content = '';
 		try {
-			content = fs.readFileSync(filePath).toString();
+			content = fs.readFileSync(path).toString();
 		} catch (error) {
 			console.error(error);
 		}
 		return {
-			path: filePath,
+			path,
 			content,
 		};
 	}
 
-	static async openWithFile(path: string) {
-		if (!fs.lstatSync(path).isFile()) {
-			return `${path} is not a file`;
+	static openWithFile(
+		path?: string,
+	): undefined | { path: string; content: string } {
+		if (!path) {
+			return undefined;
 		}
+		if (!fs.lstatSync(path).isFile()) {
+			return undefined;
+		}
+
+		let content = '';
+		try {
+			content = fs.readFileSync(path).toString();
+		} catch (error) {
+			console.error(error);
+		}
+		return {
+			path,
+			content,
+		};
 	}
 }

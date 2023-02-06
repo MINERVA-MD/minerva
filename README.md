@@ -101,7 +101,7 @@ This project exists thanks to all the people who contribute.
 
 ## License
 
-[MIT](LICENSE.md) © Jamie Samuel
+[GPL-3.0](LICENSE.md) © Minerva-MD
 
 <!-- ACKNOWLEDGMENTS -->
 

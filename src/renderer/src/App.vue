@@ -79,7 +79,6 @@ export default defineComponent({
 	},
 	mounted() {
 		this.listeners();
-		console.log('Hi');
 	},
 
 	methods: {
@@ -244,6 +243,11 @@ export default defineComponent({
 					this.loadedFile = fileHandle.path;
 				},
 			);
+
+			// debug
+			window.ipcRenderer.on('debug-log', (_, content: any) => {
+				console.log('debug: ', content);
+			});
 		},
 		async selectTemplate(md: string) {
 			(this.$refs.view as any).newEditorFromString(md);
