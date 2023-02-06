@@ -4,7 +4,13 @@ export default class NotificationService {
 	constructor() {
 		window.ipcRenderer.on(
 			'notify',
-			(_: Electron.IpcRendererEvent, level: NotificationLevel, title: string, message: string, timeout = 5) => {
+			(
+				_: Electron.IpcRendererEvent,
+				level: NotificationLevel,
+				title: string,
+				message: string,
+				timeout = 5,
+			) => {
 				NotificationService.notify(level, title, message, timeout);
 			},
 		);
