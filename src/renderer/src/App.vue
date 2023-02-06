@@ -65,6 +65,7 @@ export default defineComponent({
 		repo: GitRepo | null;
 		loadedFile: string | null;
 		isModalOpen: boolean;
+		target: string;
 	} {
 		return {
 			roomId: '',
@@ -72,6 +73,7 @@ export default defineComponent({
 			repo: null,
 			loadedFile: null,
 			isModalOpen: false,
+			target: 'markdown',
 		};
 	},
 	created() {
@@ -269,6 +271,7 @@ export default defineComponent({
 
 <style>
 @import './css/github-markdown.css';
+@import './css/fountain.css';
 
 .fade-enter-from {
 	opacity: 0%;

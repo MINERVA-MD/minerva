@@ -86,6 +86,7 @@
         "@octokit/core": "^3.6.0",
         "axios": "^0.26.1",
         "electron-oauth2": "^3.0.0",
+        "fountain-js": "^1.0.0",
         "fs": "^0.0.1-security",
         "highlight.js": "^11.5.1",
         "jest": "^28.1.0",

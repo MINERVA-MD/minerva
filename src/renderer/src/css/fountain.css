@@ -1,0 +1,52 @@
+.screenplay {
+	font-family: Courier, 'Courier New', monospace;
+	font-size: 12px;
+	max-width: 6in;
+	padding: 5px 14px 15px 14px !important;
+	margin: 0 auto 16px !important;
+}
+
+.screenplay p {
+	text-align: left !important;
+	letter-spacing: 0 !important;
+	margin-top: 0px !important;
+	margin-bottom: 0px !important;
+}
+
+.screenplay h3,
+.screenplay p,
+.screenplay h4 {
+	padding-top: 1em !important;
+}
+
+.screenplay h3 {
+	font-weight: bold;
+}
+
+.screenplay p {
+	padding-right: 5% !important;
+}
+
+.screenplay h4 {
+	padding-left: 40% !important;
+}
+
+.dialogue {
+	padding-left: 20% !important;
+	padding-right: 20% !important;
+}
+
+.parenthetical {
+	padding-left: 32% !important;
+	padding-right: 30% !important;
+}
+
+.dialogue + .parenthetical {
+	padding-bottom: 0 !important;
+}
+
+h2 {
+	padding-top: 3ex !important;
+	padding-left: 65% !important;
+	padding-bottom: 1.5ex !important;
+}
