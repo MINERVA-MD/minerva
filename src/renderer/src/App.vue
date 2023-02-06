@@ -78,7 +78,7 @@ export default defineComponent({
 		this.$router.push('/');
 	},
 	mounted() {
-		this.menuListener();
+		this.listeners();
 	},
 
 	methods: {
@@ -133,7 +133,8 @@ export default defineComponent({
 		},
 
 		async loadFile() {
-			const file = await window.ipcRenderer.invoke('loadFile');
+			const file: { path: string; content: string } =
+				await window.ipcRenderer.invoke('loadFile');
 			this.loadedFile = file.path;
 
 			(this.$refs.view as any)?.newEditorFromString(file.content);
@@ -215,7 +216,8 @@ export default defineComponent({
 			(this.$refs.view as any)?.commitChanges();
 		},
 
-		menuListener() {
+		listeners() {
+			// menu
 			window.ipcRenderer.on('menu-new', () => {
 				this.newBlankEditor();
 			});
@@ -223,10 +225,28 @@ export default defineComponent({
 				this.loadFile();
 			});
 			window.ipcRenderer.on('menu-save', () => {
+				console.log('call save');
 				this.saveFile();
 			});
 			window.ipcRenderer.on('menu-saveAs', () => {
 				this.saveAsFile();
+			});
+
+			// global listeners
+			window.ipcRenderer.on(
+				'global-openWith',
+				(_, fileHandle: { path: string; content: string }) => {
+					console.log(fileHandle);
+					(this.$refs.view as any)?.newEditorFromString(
+						fileHandle.content,
+					);
+					this.loadedFile = fileHandle.path;
+				},
+			);
+
+			// debug
+			window.ipcRenderer.on('debug-log', (_, content: any) => {
+				console.log('debug: ', content);
 			});
 		},
 		async selectTemplate(md: string) {

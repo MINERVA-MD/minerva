@@ -23,8 +23,8 @@
         "starter",
         "boilerplate"
     ],
-    "author": "Jamie Samuel",
-    "license": "MIT",
+    "author": "Minerva-MD",
+    "license": "GPL-3.0",
     "devDependencies": {
         "@rushstack/eslint-patch": "^1.1.0",
         "@tailwindcss/aspect-ratio": "^0.4.0",

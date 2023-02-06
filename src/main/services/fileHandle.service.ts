@@ -35,10 +35,39 @@ export default class FileHandle {
 			filters: [{ name: 'Markdown', extensions: ['md'] }],
 			properties: ['openFile'],
 		});
-		const content = fs.readFileSync(filePaths[0]).toString();
 
+		const [path] = filePaths;
+
+		let content = '';
+		try {
+			content = fs.readFileSync(path).toString();
+		} catch (error) {
+			console.error(error);
+		}
 		return {
-			path: filePaths[0],
+			path,
+			content,
+		};
+	}
+
+	static openWithFile(
+		path?: string,
+	): undefined | { path: string; content: string } {
+		if (!path) {
+			return undefined;
+		}
+		if (!fs.lstatSync(path).isFile()) {
+			return undefined;
+		}
+
+		let content = '';
+		try {
+			content = fs.readFileSync(path).toString();
+		} catch (error) {
+			console.error(error);
+		}
+		return {
+			path,
 			content,
 		};
 	}

@@ -2,10 +2,12 @@
 
 import { join } from 'path';
 import { release } from 'os';
-import { BrowserWindow, ipcMain, MenuItem, shell, app, Menu } from 'electron';
+import { BrowserWindow, ipcMain, shell, app, Menu } from 'electron';
 
 import GitService from './services/git.service';
 import FileHandle from './services/fileHandle.service';
+
+// TODO: MM - clean up config, refactor in to separate config files
 
 const icon = app.isPackaged
 	? join(__dirname, '..', 'common', 'assets', 'logo24x24.ico')
@@ -16,6 +18,8 @@ if (release().startsWith('6.1')) app.disableHardwareAcceleration();
 
 // Set application name for Windows 10+ notifications
 if (process.platform === 'win32') app.setAppUserModelId(app.getName());
+const isMac = process.platform === 'darwin';
+let macOpenFile: string;
 
 if (!app.requestSingleInstanceLock()) {
 	app.quit();
@@ -25,7 +29,7 @@ if (!app.requestSingleInstanceLock()) {
 let win: BrowserWindow | null = null;
 let splash: BrowserWindow | null = null;
 
-function createWindow() {
+async function createWindow() {
 	win = new BrowserWindow({
 		width: 1400,
 		height: 900,
@@ -79,13 +83,22 @@ function createWindow() {
 	});
 
 	// Make all links open with the browser, not with the application
-	win.webContents.setWindowOpenHandler(({ url }) => {
+	win?.webContents.setWindowOpenHandler(({ url }) => {
 		if (url.startsWith('https:')) shell.openExternal(url);
 		return { action: 'deny' };
 	});
+
+	// load file opened with app
+	win?.webContents.on('did-finish-load', async () => {
+		let openWithPath;
+		if (process.argv.length > 1) {
+			openWithPath = process?.argv[1];
+		}
+		const fileHandle = FileHandle.openWithFile(macOpenFile || openWithPath);
+		if (fileHandle) win?.webContents.send('global-openWith', fileHandle);
+	});
 }
 
-const isMac = process.platform === 'darwin';
 const template: any = [
 	...(isMac
 		? [
@@ -218,6 +231,18 @@ Menu.setApplicationMenu(menu);
 
 app.whenReady().then(createWindow);
 
+/**
+ * macOS sepcific open-with-file behaviour
+ *
+ * OS open file event triggers before the app is ready so we store the path
+ * and read it when the application is ready.
+ */
+app.on('will-finish-launching', () => {
+	app.on('open-file', async (event, path) => {
+		macOpenFile = path;
+	});
+});
+
 app.on('window-all-closed', () => {
 	win = null;
 	if (process.platform !== 'darwin') app.quit();
@@ -253,5 +278,4 @@ ipcMain.on('github-connect', (event, username, token) => {
 });
 
 FileHandle.listen();
-
 export default win;
