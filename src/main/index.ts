@@ -7,6 +7,8 @@ import { BrowserWindow, ipcMain, shell, app, Menu } from 'electron';
 import GitService from './services/git.service';
 import FileHandle from './services/fileHandle.service';
 
+// TODO: MM - clean up config, refactor in to separate config files
+
 const icon = app.isPackaged
 	? join(__dirname, '..', 'common', 'assets', 'logo24x24.ico')
 	: join(__dirname, '..', '..', 'src', 'common', 'assets', 'logo24x24.ico');
@@ -16,6 +18,8 @@ if (release().startsWith('6.1')) app.disableHardwareAcceleration();
 
 // Set application name for Windows 10+ notifications
 if (process.platform === 'win32') app.setAppUserModelId(app.getName());
+const isMac = process.platform === 'darwin';
+let macOpenFile: string;
 
 if (!app.requestSingleInstanceLock()) {
 	app.quit();
@@ -84,16 +88,17 @@ async function createWindow() {
 		return { action: 'deny' };
 	});
 
-	// if opened with file handle
-	win.webContents.on('did-finish-load', async () => {
-		const openWithPath = process?.argv[2] || '';
-		const fileHandle = await FileHandle.openWithFile(openWithPath);
-		console.log(fileHandle);
-		win?.webContents.send('global-openWith', fileHandle);
+	// load file opened with app
+	win?.webContents.on('did-finish-load', async () => {
+		let openWithPath;
+		if (process.argv.length > 1) {
+			openWithPath = process?.argv[1];
+		}
+		const fileHandle = FileHandle.openWithFile(macOpenFile || openWithPath);
+		if (fileHandle) win?.webContents.send('global-openWith', fileHandle);
 	});
 }
 
-const isMac = process.platform === 'darwin';
 const template: any = [
 	...(isMac
 		? [
@@ -225,6 +230,18 @@ const menu = Menu.buildFromTemplate(template);
 Menu.setApplicationMenu(menu);
 
 app.whenReady().then(createWindow);
+
+/**
+ * macOS sepcific open-with-file behaviour
+ *
+ * OS open file event triggers before the app is ready so we store the path
+ * and read it when the application is ready.
+ */
+app.on('will-finish-launching', () => {
+	app.on('open-file', async (event, path) => {
+		macOpenFile = path;
+	});
+});
 
 app.on('window-all-closed', () => {
 	win = null;

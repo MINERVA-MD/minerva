@@ -26,17 +26,10 @@ function watchMain(server) {
 				name: 'electron-main-watcher',
 				writeBundle() {
 					electronProcess && electronProcess.kill();
-					electronProcess = spawn(
-						electron,
-						[
-							'.',
-							'/Users/matteo/Documents/Minerva/repos/dotfiles/README.md',
-						],
-						{
-							stdio: 'inherit',
-							env,
-						},
-					);
+					electronProcess = spawn(electron, ['.'], {
+						stdio: 'inherit',
+						env,
+					});
 				},
 			},
 		],
