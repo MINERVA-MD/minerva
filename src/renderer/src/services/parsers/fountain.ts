@@ -6,7 +6,8 @@ export default class Fountain extends MarkupParser {
 
 	static parse(content: string) {
 		const script = new Ftn().parse(content);
-		console.log(script);
-		return script.html.script;
+		return script.html.script === '<p>undefined</p>'
+			? ''
+			: script.html.script;
 	}
 }
