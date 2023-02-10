@@ -18,6 +18,7 @@
 					:is="Component"
 					:gitService="gitService"
 					:loadedFile="loadedFile"
+					:target="target"
 					ref="view"
 					@login="login"
 					@logout="logout"
@@ -27,7 +28,11 @@
 			</keep-alive>
 		</transition>
 	</RouterView>
-	<Footer :gitService="gitService" :loadedFile="loadedFile" />
+	<Footer
+		:gitService="gitService"
+		:loadedFile="loadedFile"
+		:target="parserService?. || 'markdown'"
+	/>
 	<TemplatePickerModal
 		v-if="isModalOpen"
 		:isModalOpen="isModalOpen"
@@ -49,6 +54,7 @@ import type { GitRepo } from '@/typings/GitService';
 import TemplatePickerModal from './components/TemplatePickerModal.vue';
 import NotificationService from './services/notification.service';
 import NotificationLevel from './Interfaces/NotificationLevel';
+import MarkupParser from './services/parsers/markupParser';
 
 export default defineComponent({
 	components: {
@@ -62,18 +68,18 @@ export default defineComponent({
 	data(): {
 		roomId: string | null;
 		gitService: GithubClientService | null;
+		parserService: MarkupParser | null;
 		repo: GitRepo | null;
 		loadedFile: string | null;
 		isModalOpen: boolean;
-		target: string;
 	} {
 		return {
 			roomId: '',
 			gitService: null,
+			parserService: null,
 			repo: null,
 			loadedFile: null,
 			isModalOpen: false,
-			target: 'markdown',
 		};
 	},
 	created() {
@@ -81,6 +87,7 @@ export default defineComponent({
 	},
 	mounted() {
 		this.listeners();
+		this.
 	},
 
 	methods: {
