@@ -79,7 +79,7 @@ export default defineComponent({
 		return {
 			roomId: '',
 			gitService: null,
-			parserService: new Fountain(),
+			parserService: new Markdown(),
 			repo: null,
 			loadedFile: null,
 			isModalOpen: false,
