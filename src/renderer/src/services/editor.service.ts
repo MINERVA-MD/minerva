@@ -134,7 +134,6 @@ export default class EditorService {
 						// eslint-disable-next-line no-param-reassign
 						vueComponent.parsedHTML =
 							Fountain.parse(documentString);
-						console.log(Fountain.parse(documentString));
 					}
 				},
 			}));
