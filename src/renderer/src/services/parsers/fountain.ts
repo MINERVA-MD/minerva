@@ -1,10 +1,13 @@
 import { Fountain as Ftn } from 'fountain-js';
-import MarkupParser, { type Target } from './markupParser';
+import type { Target, MarkupParser } from './markupParser';
 
-export default class Fountain extends MarkupParser {
-	static target: Target = 'fountain';
+export default class Fountain implements MarkupParser {
+	target: Target = 'fountain';
 
-	static parse(content: string) {
+	className = 'screenplay';
+
+	// eslint-disable-next-line class-methods-use-this
+	parse(content: string) {
 		const script = new Ftn().parse(content);
 		return script.html.script === '<p>undefined</p>'
 			? ''
