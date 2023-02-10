@@ -1,13 +1,15 @@
 import { marked } from 'marked';
-import type { Target } from './markupParser';
-import MarkupParser from './markupParser';
+import MARKED_SETTINGS from '../../config/parsing';
+import type { Target, MarkupParser } from './markupParser';
 
-export default class Markdown extends MarkupParser {
-	static target: Target = 'markdown';
+export default class Markdown implements MarkupParser {
+	target: Target = 'markdown';
 
-	static cssPath = './css/index.css';
+	className = 'markdown-body';
 
-	static parse(content: string) {
+	// eslint-disable-next-line class-methods-use-this
+	parse(content: string) {
+		marked.setOptions(MARKED_SETTINGS);
 		return marked.parse(content);
 	}
 }

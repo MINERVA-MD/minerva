@@ -18,7 +18,7 @@
 					:is="Component"
 					:gitService="gitService"
 					:loadedFile="loadedFile"
-					:target="target"
+					:parserService="parserService"
 					ref="view"
 					@login="login"
 					@logout="logout"
@@ -31,7 +31,8 @@
 	<Footer
 		:gitService="gitService"
 		:loadedFile="loadedFile"
-		:target="parserService?. || 'markdown'"
+		:parserService="parserService"
+		@changeTarget="changeTarget"
 	/>
 	<TemplatePickerModal
 		v-if="isModalOpen"
@@ -41,7 +42,6 @@
 </template>
 
 <script lang="ts">
-import { ref } from 'vue';
 import './css/index.css';
 import { defineComponent } from 'vue-demi';
 import { RouterView, RouterLink } from 'vue-router';
@@ -54,7 +54,10 @@ import type { GitRepo } from '@/typings/GitService';
 import TemplatePickerModal from './components/TemplatePickerModal.vue';
 import NotificationService from './services/notification.service';
 import NotificationLevel from './Interfaces/NotificationLevel';
-import MarkupParser from './services/parsers/markupParser';
+import type { MarkupParser } from './services/parsers/markupParser';
+import Markdown from './services/parsers/markdown';
+import type { Target } from './services/parsers/markupParser';
+import Fountain from './services/parsers/fountain';
 
 export default defineComponent({
 	components: {
@@ -68,7 +71,7 @@ export default defineComponent({
 	data(): {
 		roomId: string | null;
 		gitService: GithubClientService | null;
-		parserService: MarkupParser | null;
+		parserService: MarkupParser;
 		repo: GitRepo | null;
 		loadedFile: string | null;
 		isModalOpen: boolean;
@@ -76,7 +79,7 @@ export default defineComponent({
 		return {
 			roomId: '',
 			gitService: null,
-			parserService: null,
+			parserService: new Fountain(),
 			repo: null,
 			loadedFile: null,
 			isModalOpen: false,
@@ -87,7 +90,6 @@ export default defineComponent({
 	},
 	mounted() {
 		this.listeners();
-		this.
 	},
 
 	methods: {
@@ -147,6 +149,20 @@ export default defineComponent({
 			this.loadedFile = file.path;
 
 			(this.$refs.view as any)?.newEditorFromString(file.content);
+		},
+
+		changeTarget(target: Target) {
+			switch (target) {
+				case 'markdown':
+					this.parserService = new Markdown();
+					break;
+				case 'fountain':
+					this.parserService = new Fountain();
+					break;
+
+				default:
+					break;
+			}
 		},
 
 		async createCollabSession() {
@@ -234,7 +250,6 @@ export default defineComponent({
 				this.loadFile();
 			});
 			window.ipcRenderer.on('menu-save', () => {
-				console.log('call save');
 				this.saveFile();
 			});
 			window.ipcRenderer.on('menu-saveAs', () => {
@@ -245,7 +260,6 @@ export default defineComponent({
 			window.ipcRenderer.on(
 				'global-openWith',
 				(_, fileHandle: { path: string; content: string }) => {
-					console.log(fileHandle);
 					(this.$refs.view as any)?.newEditorFromString(
 						fileHandle.content,
 					);
@@ -254,9 +268,7 @@ export default defineComponent({
 			);
 
 			// debug
-			window.ipcRenderer.on('debug-log', (_, content: any) => {
-				console.log('debug: ', content);
-			});
+			window.ipcRenderer.on('debug-log', (_, content: any) => {});
 		},
 		async selectTemplate(md: string) {
 			(this.$refs.view as any).newEditorFromString(md);

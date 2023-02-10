@@ -14,7 +14,8 @@
 			</div>
 		</div>
 		<select
-			:value="target"
+			@change="switchTarget"
+			:value="parserService.target"
 			class="h-full py-0 text-xs bg-transparent border-none"
 		>
 			<option value="markdown">markdown</option>
@@ -31,8 +32,15 @@ import FolderIcon from './svgs/FolderIcon.vue';
 export default defineComponent({
 	// take in props for file or repo connected... whether git is connected, etc
 	setup() {},
-	props: ['gitService', 'loadedFile', 'target'],
+	props: ['gitService', 'loadedFile', 'parserService'],
 	components: { GitIcon, FolderIcon },
-	methods: {},
+	methods: {
+		switchTarget(e: Event) {
+			this.$emit(
+				'changeTarget',
+				(e.currentTarget as HTMLInputElement).value,
+			);
+		},
+	},
 });
 </script>
