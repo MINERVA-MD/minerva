@@ -19,6 +19,7 @@ import { marked } from 'marked';
 import { ChangeSet, StateField } from '@codemirror/state';
 
 import MARKED_SETTINGS from '../config/parsing';
+import type { MarkupParser } from './parsers/markupParser';
 
 export const MINERVA_LOCAL_SOCKET_SERVER_URL = 'http://localhost:8080/';
 export const MINERVA_SOCKET_SERVER_URL = 'https://text-sockets.herokuapp.com/';
@@ -36,7 +37,10 @@ export default class EditorService {
 
 	vueComponent: any;
 
+	parserService: MarkupParser;
+
 	constructor(
+		parserService: MarkupParser,
 		vueComponent: any,
 		documentData: { doc: string[]; updates: Update[] },
 		socket: boolean,
@@ -45,15 +49,14 @@ export default class EditorService {
 		this.updates = documentData.updates;
 		this.vueComponent = vueComponent;
 		const documentString = documentData.doc.join('\n');
-		this.vueComponent.parsedHTML = marked.parse(documentString);
+		this.vueComponent.parsedHTML = parserService.parse(documentString);
 		this.view = new EditorView();
 		if (socket) {
 			this.socket = this.openSocketConnection();
 		} else {
 			this.socket = null;
 		}
-
-		marked.setOptions(MARKED_SETTINGS);
+		this.parserService = parserService;
 	}
 
 	generateEditor(doc?: Text, updates?: Update[]) {
@@ -87,19 +90,18 @@ export default class EditorService {
 		return view;
 	}
 
-	// setDocumentState(documentData: { doc: string[]; updates: Update[] }) {}
-
 	editorClient(vueComponent: any, socket: Socket | null) {
 		let plugin;
 		if (socket !== null) {
 			plugin = ViewPlugin.define(view => ({
-				update(editorUpdate) {
+				update: editorUpdate => {
 					if (editorUpdate.docChanged) {
 						// update parser
 						const doc = view.state.doc.toJSON();
 						const documentString = doc.join('\n');
 						// eslint-disable-next-line no-param-reassign
-						vueComponent.parsedHTML = marked.parse(documentString);
+						vueComponent.parsedHTML =
+							this.parserService.parse(documentString);
 
 						// send updates to server
 						const unsentUpdates = sendableUpdates(view.state).map(
@@ -121,12 +123,13 @@ export default class EditorService {
 			}));
 		} else {
 			plugin = ViewPlugin.define(view => ({
-				update(editorUpdate) {
+				update: editorUpdate => {
 					if (editorUpdate.docChanged) {
 						const doc = view.state.doc.toJSON();
 						const documentString = doc.join('\n');
 						// eslint-disable-next-line no-param-reassign
-						vueComponent.parsedHTML = marked.parse(documentString);
+						vueComponent.parsedHTML =
+							this.parserService.parse(documentString);
 					}
 				},
 			}));

@@ -10,7 +10,8 @@
 		<pane size="50" min-size="20" max-size="75">
 			<div class="overflow-auto">
 				<article
-					class="markdown-body editor-height p-3"
+					class="editor-height p-3"
+					:class="parserService.className"
 					id="parsed-html"
 					v-html="parsedHTML"
 				></article>
@@ -31,9 +32,11 @@ import NotificationService from '../services/notification.service';
 
 import { Splitpanes, Pane } from 'splitpanes';
 import 'splitpanes/dist/splitpanes.css';
+import type { MarkupParser } from '../services/parsers/markupParser';
+import Markdown from '../services/parsers/markdown';
 
 export default defineComponent({
-	props: ['gitService', 'loadedFile'],
+	props: ['gitService', 'loadedFile', 'parserService'],
 	data(): {
 		editorService: EditorService | null;
 		view: EditorView | null;
@@ -55,14 +58,24 @@ export default defineComponent({
 	},
 
 	mounted() {
-		this.view = this.newEditorService();
+		this.view = this.newEditorService(this.parserService);
+	},
+
+	watch: {
+		parserService: function () {
+			this.newEditorFromString(this.getEditorContent() || '');
+		},
 	},
 
 	methods: {
 		async createCollabSession() {
 			const docJSON = this.view?.state.doc.toJSON();
 			this.view?.destroy();
-			this.view = this.newEditorService(true, docJSON?.join('\n'));
+			this.view = this.newEditorService(
+				this.parserService,
+				true,
+				docJSON?.join('\n'),
+			);
 			this.roomId = EditorService.generateRoomId();
 			this.editorService?.socketsCreateNewRoom(this.roomId);
 			NotificationService.notify(
@@ -77,7 +90,7 @@ export default defineComponent({
 		async joinCollabSession(roomId: string) {
 			this.roomId = roomId;
 			this.view?.destroy();
-			this.view = this.newEditorService(true);
+			this.view = this.newEditorService(undefined, true);
 			this.editorService?.socketsJoinRoom(this.roomId);
 			NotificationService.notify(
 				NotificationLevel.Success,
@@ -89,7 +102,11 @@ export default defineComponent({
 
 		newEditorFromString(fileContents: string) {
 			if (this.view) this.view.destroy();
-			this.view = this.newEditorService(false, fileContents);
+			this.view = this.newEditorService(
+				this.parserService,
+				false,
+				fileContents,
+			);
 		},
 
 		newBlankEditor() {
@@ -97,7 +114,7 @@ export default defineComponent({
 			if (this.editorService?.socket)
 				this.editorService.disconnectSocket();
 			this.view?.destroy();
-			this.view = this.newEditorService();
+			this.view = this.newEditorService(this.parserService);
 		},
 
 		async commitChanges() {
@@ -134,6 +151,7 @@ export default defineComponent({
 		},
 
 		newEditorService(
+			parserService: MarkupParser = new Markdown(),
 			socket = false,
 			startDoc: string = '',
 			startUpdates: Update[] = [],
@@ -144,6 +162,7 @@ export default defineComponent({
 
 			const doc = startDoc.split('\n');
 			this.editorService = new EditorService(
+				parserService,
 				this,
 				{
 					doc: doc,
@@ -169,4 +188,5 @@ export default defineComponent({
 
 <style>
 @import '../css/github-markdown.css';
+@import '../css/fountain.css';
 </style>
