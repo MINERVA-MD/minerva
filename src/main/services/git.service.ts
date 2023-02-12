@@ -1,6 +1,5 @@
 /* eslint-disable class-methods-use-this */
 import fs from 'fs';
-import mdi from 'markdown-it';
 import simpleGit from 'simple-git';
 import { Octokit } from '@octokit/core';
 import { app, ipcMain, BrowserWindow } from 'electron';
