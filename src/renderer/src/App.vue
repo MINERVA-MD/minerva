@@ -149,6 +149,18 @@ export default defineComponent({
 			this.loadedFile = file.path;
 
 			(this.$refs.view as any)?.newEditorFromString(file.content);
+			const fileExtension = this.loadedFile?.split('.').pop();
+
+			switch (fileExtension) {
+				case 'md':
+					this.changeTarget('markdown');
+					break;
+				case 'fountain':
+					this.changeTarget('fountain');
+					break;
+				default:
+					break;
+			}
 		},
 
 		changeTarget(target: Target) {
