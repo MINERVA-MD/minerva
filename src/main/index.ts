@@ -6,6 +6,7 @@ import { BrowserWindow, ipcMain, shell, app, Menu } from 'electron';
 
 import GitService from './services/git.service';
 import FileHandle from './services/fileHandle.service';
+import Preferences from './services/preferences';
 
 // TODO: MM - clean up config, refactor in to separate config files
 
@@ -264,6 +265,8 @@ app.on('activate', () => {
 		createWindow();
 	}
 });
+
+const preferenceService = new Preferences();
 
 let gitService: GitService | null = null;
 ipcMain.on('github-connect', (event, username, token) => {

@@ -20,10 +20,25 @@
 	height: calc(100vh - 88px) !important;
 }
 
-/* Additional Codemirror styling */
+/* Codemirror styling */
+.cm-editor {
+	height: 100%;
+}
+
 .cm-activeLine,
 .cm-activeLineGutter {
 	background: none !important;
+}
+
+.cm-gutter,
+.cm-panel {
+	/* Tailwind gray-200 */
+	background-color: rgb(229 231 235);
+}
+
+.cm-gutterElement {
+	/* tailwind gray-400 */
+	color: rgb(107 114 128);
 }
 
 .cm-focused {
