@@ -32,7 +32,12 @@ export default class FileHandle {
 
 	static async loadFile() {
 		const { filePaths } = await dialog.showOpenDialog({
-			filters: [{ name: 'Markdown', extensions: ['md'] }],
+			filters: [
+				{
+					name: 'Supported files',
+					extensions: ['md', 'markdown', 'fountain'],
+				},
+			],
 			properties: ['openFile'],
 		});
 
