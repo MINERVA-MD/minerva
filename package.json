@@ -84,6 +84,7 @@
         "@headlessui/vue": "^1.5.0",
         "@heroicons/vue": "^1.0.6",
         "@octokit/core": "^3.6.0",
+        "@replit/codemirror-vim": "^0.19.1",
         "axios": "^0.26.1",
         "electron-oauth2": "^3.0.0",
         "fountain-js": "^1.0.0",

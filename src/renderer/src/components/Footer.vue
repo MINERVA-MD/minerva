@@ -1,6 +1,6 @@
 <template>
 	<div
-		class="flex items-center justify-between px-4 absolute bottom-0 w-full h-5 bg-gray-200 text-gray-500 text-xs"
+		class="flex items-center justify-between px-4 absolute bottom-0 w-full h-5 bg-gray-200 text-gray-600 text-xs"
 	>
 		<div class="">
 			<div v-if="gitService && gitService.repo" class="flex">

@@ -10,15 +10,15 @@ import {
 	type Update,
 	receiveUpdates,
 } from '@codemirror/collab';
-import hljs from 'highlight.js';
 import { markdown } from '@codemirror/lang-markdown';
 import { Text } from '@codemirror/text';
-import { Decoration, ViewPlugin, WidgetType } from '@codemirror/view';
+import { ViewPlugin } from '@codemirror/view';
 import { io, Socket } from 'socket.io-client';
 import { marked } from 'marked';
-import { ChangeSet, StateField } from '@codemirror/state';
+import { ChangeSet } from '@codemirror/state';
 
-import MARKED_SETTINGS from '../config/parsing';
+import { vim, Vim } from '@replit/codemirror-vim';
+
 import type { MarkupParser } from './parsers/markupParser';
 
 export const MINERVA_LOCAL_SOCKET_SERVER_URL = 'http://localhost:8080/';
@@ -73,6 +73,7 @@ export default class EditorService {
 		const state = EditorState.create({
 			doc: docText,
 			extensions: [
+				// vim({ status: true }),
 				basicSetup,
 				markdown(),
 				collab({ startVersion: version }),
