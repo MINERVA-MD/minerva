@@ -1,5 +1,5 @@
 import fs from 'fs';
-import { PREFERENCES_PATH } from '../../common/config/globals';
+import { MINERVA_PATH, PREFERENCES_PATH } from '../../common/config/globals';
 import defaultPreferences from '../config/defaultPreferences.json';
 
 export interface MinervaPreferences {
@@ -10,7 +10,9 @@ export interface MinervaPreferences {
 }
 
 export default class Preferences {
-	path = PREFERENCES_PATH;
+	minervaDir = MINERVA_PATH;
+
+	configPath = PREFERENCES_PATH;
 
 	private current: MinervaPreferences;
 
@@ -20,8 +22,14 @@ export default class Preferences {
 	}
 
 	createPreferencesIfNoneExist() {
-		if (!fs.existsSync(this.path)) {
-			fs.writeFileSync(this.path, JSON.stringify(defaultPreferences));
+		if (!fs.existsSync(this.minervaDir)) {
+			fs.mkdirSync(this.minervaDir);
+		}
+		if (!fs.existsSync(this.configPath)) {
+			fs.writeFileSync(
+				this.configPath,
+				JSON.stringify(defaultPreferences),
+			);
 		}
 	}
 
@@ -33,11 +41,10 @@ export default class Preferences {
 	}
 
 	loadFromFile() {
-		const fileContents = fs.readFileSync(this.path).toString();
+		const fileContents = fs.readFileSync(this.configPath).toString();
 		if (!fileContents) {
 			return undefined;
 		}
-
 		return JSON.parse(fileContents);
 	}
 }
