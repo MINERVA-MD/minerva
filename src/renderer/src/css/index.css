@@ -30,14 +30,38 @@
 	background: none !important;
 }
 
-.cm-gutter,
 .cm-panel {
 	/* Tailwind gray-200 */
 	background-color: rgb(229 231 235);
+	/* Tailwind gray-600 */
+	color: #4b5563;
+	border: none;
+}
+
+.cm-panels-bottom {
+	width: 50%;
+}
+
+.cm-panels-bottom,
+.cm-vim-panel {
+	/* Tailwind gray-400 */
+	color: rgb(107 114 128);
+	border-radius: 0 3px 0 0;
+}
+
+.cm-vim-panel input {
+	font-size: 0.8rem;
+	line-height: 1.1rem;
+	padding: 0 0.5rem;
+}
+
+.cm-gutter {
+	/* Tailwind gray-100 */
+	background-color: #f3f4f6;
 }
 
 .cm-gutterElement {
-	/* tailwind gray-400 */
+	/* Tailwind gray-400 */
 	color: rgb(107 114 128);
 }
 
