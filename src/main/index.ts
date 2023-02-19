@@ -267,6 +267,9 @@ app.on('activate', () => {
 });
 
 const preferenceService = new Preferences();
+ipcMain.handle('get-config', () => {
+	return preferenceService.getPreferences();
+});
 
 let gitService: GitService | null = null;
 ipcMain.on('github-connect', (event, username, token) => {

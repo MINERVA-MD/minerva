@@ -1,4 +1,4 @@
-import type { GitRepo } from '@/typings/GitService';
+import type { GitRepo } from '@/types/GitService';
 
 export default interface IGitClientService {
 	username: string;

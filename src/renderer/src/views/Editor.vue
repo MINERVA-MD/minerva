@@ -25,7 +25,7 @@ import NavBar from '../components/NavBar.vue';
 import EditorService from '../services/editor.service';
 import type { EditorView } from '@codemirror/view';
 import { defineComponent } from 'vue-demi';
-import type { GitRepo } from '@/typings/GitService';
+import type { GitRepo } from '@/types/GitService';
 import type { Update } from '@codemirror/collab';
 import NotificationLevel from '../Interfaces/NotificationLevel';
 import NotificationService from '../services/notification.service';
@@ -34,9 +34,10 @@ import { Splitpanes, Pane } from 'splitpanes';
 import 'splitpanes/dist/splitpanes.css';
 import type { MarkupParser } from '../services/parsers/markupParser';
 import Markdown from '../services/parsers/markdown';
+import type { MinervaPreferences } from '@/types/MinervaPreferences';
 
 export default defineComponent({
-	props: ['gitService', 'loadedFile', 'parserService'],
+	props: ['gitService', 'loadedFile', 'parserService', 'config'],
 	data(): {
 		editorService: EditorService | null;
 		view: EditorView | null;
@@ -163,6 +164,7 @@ export default defineComponent({
 			const doc = startDoc.split('\n');
 			this.editorService = new EditorService(
 				parserService,
+				this.config,
 				this,
 				{
 					doc: doc,
