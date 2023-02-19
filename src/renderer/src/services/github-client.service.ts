@@ -1,4 +1,4 @@
-import type { GitRepo } from '../../../typings/GitService';
+import type { GitRepo } from '../../../types/GitService';
 import type IGitClientService from '../Interfaces/IGitClientService';
 
 export default class GithubClientService implements IGitClientService {

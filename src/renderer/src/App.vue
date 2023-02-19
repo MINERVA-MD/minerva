@@ -11,7 +11,7 @@
 		@joinCollabSession="joinCollabSession"
 		@commitChanges="commitChanges"
 	/>
-	<RouterView v-slot="{ Component }">
+	<RouterView v-if="config" v-slot="{ Component }">
 		<transition name="fade">
 			<keep-alive>
 				<component
@@ -19,6 +19,7 @@
 					:gitService="gitService"
 					:loadedFile="loadedFile"
 					:parserService="parserService"
+					:config="config"
 					ref="view"
 					@login="login"
 					@logout="logout"
@@ -50,7 +51,8 @@ import GithubClientService from './services/github-client.service';
 import Editor from './views/Editor.vue';
 import Navbar from './components/NavBar.vue';
 import Footer from './components/Footer.vue';
-import type { GitRepo } from '@/typings/GitService';
+import type { GitRepo } from '@/types/GitService';
+import type { MinervaPreferences } from '../../types/MinervaPreferences';
 import TemplatePickerModal from './components/TemplatePickerModal.vue';
 import NotificationService from './services/notification.service';
 import NotificationLevel from './Interfaces/NotificationLevel';
@@ -69,6 +71,7 @@ export default defineComponent({
 	},
 
 	data(): {
+		config: MinervaPreferences | null;
 		roomId: string | null;
 		gitService: GithubClientService | null;
 		parserService: MarkupParser;
@@ -77,6 +80,7 @@ export default defineComponent({
 		isModalOpen: boolean;
 	} {
 		return {
+			config: null,
 			roomId: '',
 			gitService: null,
 			parserService: new Markdown(),
@@ -88,6 +92,11 @@ export default defineComponent({
 	created() {
 		this.$router.push('/');
 	},
+
+	async beforeMount() {
+		this.config = await window.ipcRenderer.invoke('get-config');
+	},
+
 	mounted() {
 		this.listeners();
 	},
@@ -280,7 +289,9 @@ export default defineComponent({
 			);
 
 			// debug
-			window.ipcRenderer.on('debug-log', (_, content: any) => {});
+			window.ipcRenderer.on('debug-log', (_, content: any) => {
+				console.log(content);
+			});
 		},
 		async selectTemplate(md: string) {
 			(this.$refs.view as any).newEditorFromString(md);

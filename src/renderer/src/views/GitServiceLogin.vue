@@ -141,7 +141,7 @@
 </template>
 
 <script lang="ts">
-import type { GitRepo } from '@/typings/GitService';
+import type { GitRepo } from '@/types/GitService';
 import { defineComponent } from 'vue';
 import {
 	Listbox,
