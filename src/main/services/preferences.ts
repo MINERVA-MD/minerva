@@ -1,24 +1,18 @@
 import fs from 'fs';
+import type { MinervaPreferences } from '../../types/MinervaPreferences';
 import { MINERVA_PATH, PREFERENCES_PATH } from '../../common/config/globals';
 import defaultPreferences from '../config/defaultPreferences.json';
-
-export interface MinervaPreferences {
-	editor: {
-		vimMode: boolean;
-	};
-	theme: [];
-}
 
 export default class Preferences {
 	minervaDir = MINERVA_PATH;
 
 	configPath = PREFERENCES_PATH;
 
-	private current: MinervaPreferences;
+	private config: MinervaPreferences;
 
 	constructor() {
 		this.createPreferencesIfNoneExist();
-		this.current = this.getPreferences();
+		this.config = this.getPreferences();
 	}
 
 	createPreferencesIfNoneExist() {
@@ -33,18 +27,15 @@ export default class Preferences {
 		}
 	}
 
-	getPreferences() {
-		if (this.current) {
-			return this.current;
+	getPreferences(): MinervaPreferences {
+		if (this.config) {
+			return this.config;
 		}
 		return this.loadFromFile();
 	}
 
-	loadFromFile() {
+	loadFromFile(): MinervaPreferences {
 		const fileContents = fs.readFileSync(this.configPath).toString();
-		if (!fileContents) {
-			return undefined;
-		}
 		return JSON.parse(fileContents);
 	}
 }
