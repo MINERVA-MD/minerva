@@ -1,10 +1,9 @@
 /* eslint-disable class-methods-use-this */
 import fs from 'fs';
-import mdi from 'markdown-it';
 import simpleGit from 'simple-git';
 import { Octokit } from '@octokit/core';
 import { app, ipcMain, BrowserWindow } from 'electron';
-import type { GitRepo } from '@/typings/GitService';
+import type { GitRepo } from '@/types/GitService';
 
 import { GitHubOAuth } from '../../common/config/auth.config';
 import { MINERVA_DIR, SECRETS_PATH } from '../../common/utils/secrets.util';

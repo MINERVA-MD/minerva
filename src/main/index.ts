@@ -6,6 +6,7 @@ import { BrowserWindow, ipcMain, shell, app, Menu } from 'electron';
 
 import GitService from './services/git.service';
 import FileHandle from './services/fileHandle.service';
+import Preferences from './services/preferences';
 
 // TODO: MM - clean up config, refactor in to separate config files
 
@@ -263,6 +264,11 @@ app.on('activate', () => {
 	} else {
 		createWindow();
 	}
+});
+
+const preferenceService = new Preferences();
+ipcMain.handle('get-config', () => {
+	return preferenceService.getPreferences();
 });
 
 let gitService: GitService | null = null;

@@ -10,15 +10,15 @@ import {
 	type Update,
 	receiveUpdates,
 } from '@codemirror/collab';
-import hljs from 'highlight.js';
 import { markdown } from '@codemirror/lang-markdown';
 import { Text } from '@codemirror/text';
-import { Decoration, ViewPlugin, WidgetType } from '@codemirror/view';
+import { ViewPlugin } from '@codemirror/view';
 import { io, Socket } from 'socket.io-client';
 import { marked } from 'marked';
-import { ChangeSet, StateField } from '@codemirror/state';
+import { ChangeSet } from '@codemirror/state';
+import { vim, Vim } from '@replit/codemirror-vim';
+import type { MinervaPreferences } from '../../../types/MinervaPreferences';
 
-import MARKED_SETTINGS from '../config/parsing';
 import type { MarkupParser } from './parsers/markupParser';
 
 export const MINERVA_LOCAL_SOCKET_SERVER_URL = 'http://localhost:8080/';
@@ -39,12 +39,17 @@ export default class EditorService {
 
 	parserService: MarkupParser;
 
+	config: MinervaPreferences;
+
 	constructor(
 		parserService: MarkupParser,
+		config: MinervaPreferences,
 		vueComponent: any,
 		documentData: { doc: string[]; updates: Update[] },
 		socket: boolean,
 	) {
+		this.parserService = parserService;
+		this.config = config;
 		this.doc = Text.of(documentData.doc);
 		this.updates = documentData.updates;
 		this.vueComponent = vueComponent;
@@ -56,7 +61,6 @@ export default class EditorService {
 		} else {
 			this.socket = null;
 		}
-		this.parserService = parserService;
 	}
 
 	generateEditor(doc?: Text, updates?: Update[]) {
@@ -73,6 +77,7 @@ export default class EditorService {
 		const state = EditorState.create({
 			doc: docText,
 			extensions: [
+				...this.getEditorSettingsFromConfig(),
 				basicSetup,
 				markdown(),
 				collab({ startVersion: version }),
@@ -223,5 +228,15 @@ export default class EditorService {
 
 	disconnectSocket() {
 		this.socket?.close();
+	}
+
+	getEditorSettingsFromConfig() {
+		const preferences = [];
+
+		if (this.config?.editor?.vimMode) {
+			preferences.push(vim({ status: true }));
+		}
+
+		return preferences;
 	}
 }
